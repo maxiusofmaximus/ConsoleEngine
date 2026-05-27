@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>ConsoleEngine.Scenes</RootNamespace>
+    <AssemblyName>ConsoleEngine.Scenes</AssemblyName>
+    <Description>Scene system, dialogue player, and transition engine for ConsoleEngine terminal games.</Description>
+    <Version>0.2.0</Version>
+    <Authors>maxiusofmaximus</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Locale\ConsoleEngine.Locale.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Rendering\ConsoleEngine.Rendering.csproj" />
+  </ItemGroup>
+</Project>

@@ -17,5 +17,7 @@ obj/
 .DS_Store
 
 ## Samples runtime output
-samples/*/GameData/
-!samples/*/GameData/locale/
+## (exclude saves/config but track locale source files)
+samples/*/GameData/save/
+samples/*/GameData/saves/
+samples/*/GameData/config.json

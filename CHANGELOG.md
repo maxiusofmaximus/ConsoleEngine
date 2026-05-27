@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.2.0] — 2026-05-26
+
+### Added
+
+- **ConsoleEngine.Scenes** — scene system, dialogue player, and transition engine
+  - `SceneDefinition` — data model for narrative scenes (ASCII art, PNG sprite, narration lines)
+  - `DialogueDefinition` — two-character dialogue data model with optional PNG sprite for left character
+  - `TransitionType` — enum of available transition effects
+  - `ScenePlayer.Play(SceneDefinition)` — two-pass renderer: bottom-anchored art, top-flowing text
+  - `DialoguePlayer.Play(DialogueDefinition)` — renders two characters at the bottom with dialogue at the top
+  - `TransitionEngine.Out(TransitionType)` — animated screen transitions:
+    - `Cut` — instant clear
+    - `FadeToBlack` — fills rows with ░→▒→▓→█ in 4 passes
+    - `WipeDown` — black curtain sweeps from top to bottom
+    - `WipeUp` — black curtain sweeps from bottom to top
+    - `CloseIn` — darkness closes from all four edges toward the centre
+- **samples/DinoGame** — Chrome-Dino-style terminal game showcasing v0.2.0
+  - Smooth jump physics with gravity arc (≈ 1 second airborne)
+  - Scrolling cacti that get faster over time
+  - Animated dino running sprite (2-frame) and dead sprite
+  - Background clouds with parallax scroll (0.35× obstacle speed)
+  - HUD with live score + high score
+  - Game-over overlay with restart/quit
+  - Intro screen built with `ScenePlayer`
+  - English and Spanish locale files
+
 ## [0.1.0] — 2026-05-26
 
 ### Added

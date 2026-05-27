@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
 
 ---
 
@@ -21,6 +21,7 @@ It handles everything that is not game-specific:
 | `ConsoleEngine.Rendering` | PNG → ANSI half-block pixel art, animation primitives |
 | `ConsoleEngine.Config` | Shared game config (language, audio, display) |
 | `ConsoleEngine.Persistence` | JSON save slots and config persistence |
+| `ConsoleEngine.Scenes` | Scene player, dialogue player, transition effects |
 
 ---
 
@@ -83,11 +84,14 @@ Console.SetCursorPosition(0, 6);
 Console.WriteLine(CL.Get("menu.title"));
 ```
 
-### 4. Run the sample
+### 4. Run the samples
 
 ```bash
-cd samples/HelloConsoleEngine
-dotnet run
+# Minimal pixel-art + locale demo
+cd samples/HelloConsoleEngine && dotnet run
+
+# Chrome-Dino-style terminal game (v0.2.0)
+cd samples/DinoGame && dotnet run
 ```
 
 ---
@@ -173,6 +177,46 @@ display mode (windowed/borderless/fullscreen), aspect ratio (4:3 / 16:9 / 16:10)
 
 ---
 
+## Scenes, Dialogue & Transitions
+
+```csharp
+using ConsoleEngine.Scenes;
+
+// ── Narrative scene ─────────────────────────────────────────────────────────
+ScenePlayer.Play(new SceneDefinition
+{
+    Title    = "Chapter 1 — The Forest",
+    AsciiArt = new[]
+    {
+        "    /\\  /\\  /\\   ",
+        "   /  \\/  \\/  \\  ",
+        "══════════════════",
+        "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓",
+    },
+    Lines    = new[] { "The forest was silent.", "Too silent." },
+    TextColor = ConsoleColor.Gray,
+    ArtColor  = ConsoleColor.DarkGreen,
+});
+
+// ── Two-character dialogue ────────────────────────────────────────────────────
+DialoguePlayer.Play(new DialogueDefinition
+{
+    LeftLabel  = "KIM",
+    LeftColor  = ConsoleColor.Cyan,
+    LeftArt    = new[] { " o ", "/|\\", "/ \\" },
+    RightLabel = "SCOUT",
+    RightColor = ConsoleColor.Yellow,
+    RightArt   = new[] { " o ", "\\|/", "\\ /" },
+    Lines      = new[] { "KIM: Did you hear that?", "SCOUT: ... yeah." },
+});
+
+// ── Transition out before drawing the next scene ─────────────────────────────
+TransitionEngine.Out(TransitionType.WipeDown);
+ScenePlayer.Play(nextScene);
+```
+
+---
+
 ## Save System
 
 ```csharp
@@ -201,8 +245,10 @@ ConsoleEngine/
     ConsoleEngine.Rendering/    ← PixelArtRenderer, AnimationEngine
     ConsoleEngine.Config/       ← GameConfig, GameSettingsCatalog, GameSettingsCommands
     ConsoleEngine.Persistence/  ← SaveRepository<T>, GameConfigRepository
+    ConsoleEngine.Scenes/        ← ScenePlayer, DialoguePlayer, TransitionEngine
   samples/
-    HelloConsoleEngine/         ← minimal working example
+    HelloConsoleEngine/         ← minimal working example (locale + pixel art)
+    DinoGame/                   ← Chrome-Dino-style game (v0.2.0 showcase)
   ConsoleEngine.sln
 ```
 
@@ -213,7 +259,7 @@ ConsoleEngine/
 | Version | Planned features |
 |---|---|
 | **0.1.0** ✅ | Core, Locale, Rendering, Config, Persistence |
-| 0.2.0 | Scene system, dialogue player, transition engine |
+| **0.2.0** ✅ | Scene system, dialogue player, transition engine, DinoGame sample |
 | 0.3.0 | World movement framework, exploration HUD |
 | 0.4.0 | ConsoleEngine.Editor (Avalonia) — visual scene editor |
 | 1.0.0 | Stable API, NuGet packages, full documentation |
