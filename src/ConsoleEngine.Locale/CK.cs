@@ -90,6 +90,17 @@ public static class CK
         public const string Hud = "cli.walk.hud"; // {0} = location name, {1} = time of day
     }
 
+    // ── World / exploration ───────────────────────────────────────────────────
+
+    public static class World
+    {
+        public const string Exits      = "cli.world.exits";
+        public const string NoExits    = "cli.world.no_exits";
+        public const string NoExit     = "cli.world.no_exit";      // "Nothing that way."
+        public const string Waited     = "cli.world.waited";       // "Time passes..."
+        public const string UnknownCmd = "cli.world.unknown_cmd";  // {0} = typed command
+    }
+
     // ── Errors ───────────────────────────────────────────────────────────────
 
     public static class Error

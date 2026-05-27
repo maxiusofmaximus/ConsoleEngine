@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>ConsoleEngine.World</RootNamespace>
+    <AssemblyName>ConsoleEngine.World</AssemblyName>
+    <Description>World movement framework and exploration HUD for ConsoleEngine terminal games.</Description>
+    <Version>0.3.0</Version>
+    <Authors>maxiusofmaximus</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Locale\ConsoleEngine.Locale.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Rendering\ConsoleEngine.Rendering.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Scenes\ConsoleEngine.Scenes.csproj" />
+  </ItemGroup>
+</Project>

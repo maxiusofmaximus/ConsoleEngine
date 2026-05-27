@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](CHANGELOG.md)
 
 ---
 
@@ -22,6 +22,7 @@ It handles everything that is not game-specific:
 | `ConsoleEngine.Config` | Shared game config (language, audio, display) |
 | `ConsoleEngine.Persistence` | JSON save slots and config persistence |
 | `ConsoleEngine.Scenes` | Scene player, dialogue player, transition effects |
+| `ConsoleEngine.World`  | Location graph, time system, exploration HUD loop |
 
 ---
 
@@ -92,6 +93,9 @@ cd samples/HelloConsoleEngine && dotnet run
 
 # Chrome-Dino-style terminal game (v0.2.0)
 cd samples/DinoGame && dotnet run
+
+# Five-room interactive exploration (v0.3.0)
+cd samples/WorldDemo && dotnet run
 ```
 
 ---
@@ -177,6 +181,49 @@ display mode (windowed/borderless/fullscreen), aspect ratio (4:3 / 16:9 / 16:10)
 
 ---
 
+## World Movement & Exploration
+
+```csharp
+using ConsoleEngine.World;
+
+// ── Build a world map ──────────────────────────────────────────────────────────
+var map = new WorldMap(new[]
+{
+    new LocationDefinition
+    {
+        Id          = "town",
+        Name        = "Market Town",
+        Description = new[] { "Merchants call out their wares.", "Children chase a dog." },
+        AsciiArt    = new[] { "  ╔═╗  ╔═╗  ", "  ║ ║  ║ ║  ", "──╚═╝──╚═╝──" },
+        ArtColor    = ConsoleColor.DarkYellow,
+        Exits       = new Dictionary<string, string> { ["north"] = "forest" },
+    },
+    new LocationDefinition
+    {
+        Id          = "forest",
+        Name        = "Dark Forest",
+        Description = new[] { "The trees close in.", "Something watches." },
+        Exits       = new Dictionary<string, string> { ["south"] = "town" },
+    },
+});
+
+// ── Start exploring ────────────────────────────────────────────────────────────
+var state  = new WorldState { CurrentLocationId = "town", Day = 1 };
+var result = ExplorationPlayer.Run(map, state, new ExplorationOptions
+{
+    MoveTransition = TransitionType.WipeDown,
+});
+
+// result == ExplorationResult.ReturnToMenu or ExplorationResult.Quit
+```
+
+**Built-in commands the player can type:** `north / n`, `south / s`, `east / e`, `west / w`,
+`up / u`, `down / d`, `in`, `out`, `go <dir>`, `look`, `exits`, `wait`, `help`, `menu`, `quit`.
+
+**`IExplorationAction`** lets you add custom commands per-location (talk to an NPC, buy from a shop, rest, etc.).
+
+---
+
 ## Scenes, Dialogue & Transitions
 
 ```csharp
@@ -246,9 +293,11 @@ ConsoleEngine/
     ConsoleEngine.Config/       ← GameConfig, GameSettingsCatalog, GameSettingsCommands
     ConsoleEngine.Persistence/  ← SaveRepository<T>, GameConfigRepository
     ConsoleEngine.Scenes/        ← ScenePlayer, DialoguePlayer, TransitionEngine
+    ConsoleEngine.World/         ← LocationDefinition, WorldMap, ExplorationPlayer
   samples/
     HelloConsoleEngine/         ← minimal working example (locale + pixel art)
     DinoGame/                   ← Chrome-Dino-style game (v0.2.0 showcase)
+    WorldDemo/                  ← five-room exploration demo (v0.3.0 showcase)
   ConsoleEngine.sln
 ```
 
@@ -260,7 +309,7 @@ ConsoleEngine/
 |---|---|
 | **0.1.0** ✅ | Core, Locale, Rendering, Config, Persistence |
 | **0.2.0** ✅ | Scene system, dialogue player, transition engine, DinoGame sample |
-| 0.3.0 | World movement framework, exploration HUD |
+| **0.3.0** ✅ | World movement framework, exploration HUD, WorldDemo sample |
 | 0.4.0 | ConsoleEngine.Editor (Avalonia) — visual scene editor |
 | 1.0.0 | Stable API, NuGet packages, full documentation |
 

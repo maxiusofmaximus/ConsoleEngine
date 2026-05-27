@@ -5,6 +5,34 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.3.0] — 2026-05-26
+
+### Added
+
+- **ConsoleEngine.World** — world movement framework and exploration HUD
+  - `TimeOfDay` enum (`Morning / Afternoon / Evening / Night`) with `Next()` and `LocaleKey()` extension methods
+  - `LocationDefinition` — node in the world graph: ID, name, description, ASCII art, PNG sprite, exits dictionary
+  - `WorldMap` — immutable indexed collection with `Get`, `TryGet`, `TryMove` (O(1) look-ups)
+  - `WorldState` — mutable snapshot of current location + time + day; `AdvanceTime(steps)` wraps Night→Morning
+  - `ExplorationResult` — `ReturnToMenu | Quit`
+  - `IExplorationAction` + `ExplorationOutcome` — extension point for custom per-location commands
+  - `ExplorationOptions` — text/HUD colours, move transition, `ShowExits`, `CustomActions`, `OnLocationEnter` callback
+  - `ExplorationPlayer.Run(map, state, options)` — full interactive exploration loop with:
+    - HUD bar (location · time of day · day number · key hints)
+    - Bottom-anchored ASCII art / PNG sprite in content area
+    - Flowing description, exits list, and feedback messages
+    - Built-in commands: cardinal directions, `look`, `exits`, `wait`, `help`, `menu`, `quit`
+    - Direction aliases: `n/s/e/w/u/d` → canonical names
+    - Optional animated transitions between locations (`TransitionType`)
+- **`CK.World`** — locale key constants for world commands added to `CK.cs`
+  - `Exits`, `NoExits`, `NoExit`, `Waited`, `UnknownCmd`
+- **samples/WorldDemo** — five-room interactive exploration demo
+  - Locations: Crossroads → Forest → Hilltop, Crossroads → Ruins → Cave
+  - Intro screen via `ScenePlayer`, outro via `ScenePlayer`
+  - `FadeToBlack` transition between locations
+  - Custom action (`look up`) available only on the hilltop — shows `IExplorationAction` usage
+  - English and Spanish locale files
+
 ## [0.2.0] — 2026-05-26
 
 ### Added
