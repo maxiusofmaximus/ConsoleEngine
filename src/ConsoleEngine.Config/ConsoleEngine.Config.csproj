@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>ConsoleEngine.Config</RootNamespace>
+    <AssemblyName>ConsoleEngine.Config</AssemblyName>
+    <Description>Shared game configuration, settings catalog, and CLI settings commands for ConsoleEngine.</Description>
+    <Version>0.1.0</Version>
+    <Authors>maxiusofmaximus</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+  </PropertyGroup>
+</Project>

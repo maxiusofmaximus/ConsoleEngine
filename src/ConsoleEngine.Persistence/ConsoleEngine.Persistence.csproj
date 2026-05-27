@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>ConsoleEngine.Persistence</RootNamespace>
+    <AssemblyName>ConsoleEngine.Persistence</AssemblyName>
+    <Description>JSON and Markdown persistence layer for ConsoleEngine — save slots, config, and content files.</Description>
+    <Version>0.1.0</Version>
+    <Authors>maxiusofmaximus</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Config\ConsoleEngine.Config.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Locale\ConsoleEngine.Locale.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConsoleEngine — .NET Terminal Game Framework</title>
+  <meta name="description" content="A .NET 8 framework for building terminal / CLI games with pixel-art sprites, Markdown localisation, animation, and player-editable content." />
+  <style>
+    :root {
+      --bg:       #0d0d0d;
+      --surface:  #141414;
+      --border:   #2a2a2a;
+      --accent:   #e03030;
+      --gold:     #c8a84b;
+      --text:     #e8e8e8;
+      --muted:    #777;
+      --code-bg:  #1a1a1a;
+      --radius:   8px;
+      --mono:     'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ─────────────────────────────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0;
+      background: rgba(13,13,13,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+      z-index: 100;
+    }
+    .nav-brand { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 1.1rem; }
+    .nav-brand img { width: 24px; height: 24px; image-rendering: pixelated; }
+    .nav-links { display: flex; gap: 1.5rem; font-size: .9rem; color: var(--muted); }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ────────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 88vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: radial-gradient(ellipse at 50% 0%, rgba(224,48,48,.12) 0%, transparent 60%);
+    }
+    .hero-icon { font-size: 4rem; margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 800; letter-spacing: -.02em; }
+    .hero h1 span { color: var(--accent); }
+    .hero .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 600px;
+      margin: 1rem auto 2rem;
+    }
+    .badge-row { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem; }
+    .badge { background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: .25rem .9rem; font-size: .8rem; font-family: var(--mono); }
+    .btn-row { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .65rem 1.5rem; border-radius: var(--radius);
+      font-size: .95rem; font-weight: 600; cursor: pointer; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+
+    /* ── Terminal preview ────────────────────────────────────────────────── */
+    .terminal-wrap {
+      max-width: 700px; margin: 3rem auto 0;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,.6);
+    }
+    .terminal-bar {
+      background: #1e1e1e; padding: .5rem .9rem;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title { margin-left: auto; margin-right: auto; font-size: .75rem; color: var(--muted); font-family: var(--mono); }
+    .terminal-body {
+      background: #0a0a0a; padding: 1.25rem 1.5rem;
+      font-family: var(--mono); font-size: .85rem; line-height: 1.6;
+      white-space: pre;
+    }
+    .t-green  { color: #4ec994; }
+    .t-yellow { color: #c8a84b; }
+    .t-red    { color: #e03030; }
+    .t-cyan   { color: #56c8d8; }
+    .t-gray   { color: #666; }
+    .t-white  { color: #e8e8e8; }
+
+    /* ── Sections ────────────────────────────────────────────────────────── */
+    section { padding: 5rem 2rem; max-width: 1000px; margin: 0 auto; }
+    section + section { border-top: 1px solid var(--border); }
+    .section-label { font-size: .78rem; font-family: var(--mono); color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 1rem; }
+    p  { color: #b0b0b0; max-width: 680px; margin-bottom: 1rem; }
+
+    /* ── Module grid ─────────────────────────────────────────────────────── */
+    .module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 2rem; }
+    .module-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem;
+      transition: border-color .2s;
+    }
+    .module-card:hover { border-color: var(--accent); }
+    .module-name { font-family: var(--mono); font-size: .85rem; color: var(--gold); margin-bottom: .4rem; }
+    .module-desc { font-size: .875rem; color: #999; }
+
+    /* ── Code blocks ─────────────────────────────────────────────────────── */
+    pre {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem;
+      font-family: var(--mono); font-size: .82rem; line-height: 1.65;
+      overflow-x: auto; margin: 1.5rem 0; color: #c8c8c8;
+    }
+    code { font-family: var(--mono); font-size: .88em; color: var(--gold); }
+
+    /* ── Walkthrough steps ───────────────────────────────────────────────── */
+    .step-list { list-style: none; margin-top: 1.5rem; }
+    .step-list li {
+      display: flex; gap: 1rem; margin-bottom: 2rem;
+      align-items: flex-start;
+    }
+    .step-num {
+      min-width: 36px; height: 36px;
+      background: var(--accent); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: .9rem;
+    }
+    .step-body h3 { font-size: 1rem; margin-bottom: .3rem; }
+    .step-body p  { font-size: .9rem; margin-bottom: .5rem; }
+
+    /* ── Roadmap ─────────────────────────────────────────────────────────── */
+    .roadmap { margin-top: 1.5rem; }
+    .roadmap-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: .75rem 0; border-bottom: 1px solid var(--border);
+    }
+    .v-badge {
+      font-family: var(--mono); font-size: .78rem;
+      padding: .15rem .6rem; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .v-done  { background: rgba(78,201,148,.15); color: #4ec994; border: 1px solid #4ec994; }
+    .v-next  { background: rgba(200,168,75,.12);  color: var(--gold); border: 1px solid var(--gold); }
+    .v-later { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+    .roadmap-desc { font-size: .9rem; color: #999; }
+
+    /* ── Footer ──────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: .875rem;
+    }
+    footer .heart { color: var(--accent); }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-brand">
+    <span>👾</span>
+    <span>ConsoleEngine</span>
+  </div>
+  <div class="nav-links">
+    <a href="#modules">Modules</a>
+    <a href="#walkthrough">Walkthrough</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="https://github.com/maxiusofmaximus/ConsoleEngine" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────────── -->
+<section class="hero" style="max-width:100%;padding-top:5rem;padding-bottom:3rem;">
+  <div class="hero-icon">👾</div>
+  <h1>Console<span>Engine</span></h1>
+  <p class="tagline">
+    A .NET 8 framework for building terminal / CLI games with pixel-art sprites,
+    Markdown-driven localisation, and player-editable content.
+  </p>
+  <div class="badge-row">
+    <span class="badge">v0.1.0</span>
+    <span class="badge">.NET 8</span>
+    <span class="badge">MIT License</span>
+    <span class="badge">11 Languages</span>
+    <span class="badge">ANSI Truecolor</span>
+  </div>
+  <div class="btn-row">
+    <a class="btn btn-primary" href="https://github.com/maxiusofmaximus/ConsoleEngine" target="_blank">⭐ View on GitHub</a>
+    <a class="btn btn-secondary" href="#walkthrough">Get Started →</a>
+  </div>
+
+  <!-- Terminal preview -->
+  <div class="terminal-wrap">
+    <div class="terminal-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      <span class="terminal-title">HelloConsoleEngine — dotnet run</span>
+    </div>
+    <div class="terminal-body"><span class="t-yellow">    ▄▄▄▄</span>
+<span class="t-yellow">  ▄██████▄</span>
+<span class="t-yellow">  ██</span><span class="t-gray">▄</span><span class="t-yellow">██</span><span class="t-gray">▄</span><span class="t-yellow">██</span>
+<span class="t-yellow">  ████████</span>
+<span class="t-yellow">  ██</span><span class="t-red">▀▀▀▀</span><span class="t-yellow">██</span>  <span class="t-cyan">Welcome to ConsoleEngine!</span>
+<span class="t-yellow">  ██</span><span class="t-red">████</span><span class="t-yellow">██</span>  <span class="t-gray">A terminal RPG framework for .NET 8.</span>
+<span class="t-yellow">  ▀██████▀</span>  <span class="t-gray">ConsoleEngine v0.1.0</span>
+<span class="t-yellow">    ▀▀▀▀</span>
+
+<span class="t-gray">  Press Enter to exit. </span><span class="t-white">_</span></div>
+  </div>
+</section>
+
+<!-- ── Modules ───────────────────────────────────────────────────────────────── -->
+<section id="modules">
+  <div class="section-label">Architecture</div>
+  <h2>Modular by design</h2>
+  <p>Reference only what you need. Each module is a standalone .NET 8 class library
+     with no game-specific dependencies.</p>
+  <div class="module-grid">
+    <div class="module-card">
+      <div class="module-name">ConsoleEngine.Core</div>
+      <div class="module-desc">Shared contracts: <code>ILocalizationService</code>, <code>LocalizationTable</code>, <code>EngineVersion</code>. No external dependencies.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-name">ConsoleEngine.Locale</div>
+      <div class="module-desc"><code>CL</code> static façade, <code>CK</code> base keys, Markdown loader, in-memory service. 11 languages, hot-reload, graceful degradation.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-name">ConsoleEngine.Rendering</div>
+      <div class="module-desc">PNG → ANSI half-block pixel art. Char-map sprites. <code>AnimationEngine</code> for frame-by-frame terminal animation.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-name">ConsoleEngine.Config</div>
+      <div class="module-desc">Shared <code>GameConfig</code> — language, audio, display — consumed by both CLI runtime and Unity/Godot front-end.</div>
+    </div>
+    <div class="module-card">
+      <div class="module-name">ConsoleEngine.Persistence</div>
+      <div class="module-desc">Slot-based JSON save system and config repository. Generic <code>SaveRepository&lt;T&gt;</code> works with any serialisable model.</div>
+    </div>
+    <div class="module-card" style="border-style:dashed;opacity:.6;">
+      <div class="module-name">ConsoleEngine.Editor</div>
+      <div class="module-desc">Planned — Avalonia visual editor with drag-and-drop, visual scripting, embedded AI terminal, and hot-reload.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Walkthrough ───────────────────────────────────────────────────────────── -->
+<section id="walkthrough">
+  <div class="section-label">Getting Started</div>
+  <h2>From zero to running game in 5 steps</h2>
+  <ol class="step-list">
+
+    <li>
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Clone the repository</h3>
+        <p>Clone ConsoleEngine and reference the projects from your game's <code>.csproj</code>.</p>
+        <pre>git clone https://github.com/maxiusofmaximus/ConsoleEngine.git</pre>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Add project references</h3>
+        <p>Reference the modules you need. A typical game uses all five:</p>
+        <pre>&lt;ItemGroup&gt;
+  &lt;ProjectReference Include="path/to/ConsoleEngine.Core/..." /&gt;
+  &lt;ProjectReference Include="path/to/ConsoleEngine.Locale/..." /&gt;
+  &lt;ProjectReference Include="path/to/ConsoleEngine.Rendering/..." /&gt;
+  &lt;ProjectReference Include="path/to/ConsoleEngine.Config/..." /&gt;
+  &lt;ProjectReference Include="path/to/ConsoleEngine.Persistence/..." /&gt;
+&lt;/ItemGroup&gt;</pre>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Create your locale file</h3>
+        <p>Drop a Markdown table at <code>GameData/locale/en.md</code>. No tools required.</p>
+        <pre># Locale: en
+
+## Entries
+
+| Key              | Value              |
+|------------------|--------------------|
+| menu.title       | My Terminal Game   |
+| greeting         | Hello, {0}!        |</pre>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h3>Initialise and render</h3>
+        <p>Three lines to get a localised, pixel-art terminal game running:</p>
+        <pre>PixelArtRenderer.EnableAnsi();          // enable truecolor on Windows
+CL.Initialize("GameData", "en");        // load locale
+Console.WriteLine(CL.Get("menu.title")); // → "My Terminal Game"</pre>
+      </div>
+    </li>
+
+    <li>
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h3>Run the sample</h3>
+        <p>The <code>HelloConsoleEngine</code> sample shows localisation + pixel art in 40 lines of code:</p>
+        <pre>cd samples/HelloConsoleEngine
+dotnet run</pre>
+      </div>
+    </li>
+
+  </ol>
+</section>
+
+<!-- ── Localisation ──────────────────────────────────────────────────────────── -->
+<section id="locale">
+  <div class="section-label">Localisation</div>
+  <h2>11 languages. No JSON. No build step.</h2>
+  <p>Locale files are plain Markdown tables. They are diff-friendly, editable in any text editor,
+     and read at runtime with no compilation required.</p>
+  <p>Missing keys fall back to English automatically. Hot-reload a language by calling
+     <code>CL.Initialize()</code> again — no restart needed.</p>
+  <pre>// Switch to Spanish at runtime — takes effect immediately
+CL.Initialize("GameData", language: "es");
+Console.WriteLine(CL.Get("menu.title")); // → "Mi Juego de Terminal"</pre>
+  <p>Supported: <code>en</code> · <code>ja</code> · <code>zh-Hans</code> · <code>es</code> · <code>pt</code>
+     · <code>de</code> · <code>ru</code> · <code>it</code> · <code>fr</code> · <code>ca</code> · <code>ko</code></p>
+</section>
+
+<!-- ── Pixel art ─────────────────────────────────────────────────────────────── -->
+<section id="rendering">
+  <div class="section-label">Rendering</div>
+  <h2>Pixel art in your terminal</h2>
+  <p>ConsoleEngine renders sprites using Unicode <code>▀</code> half-block characters and ANSI
+     truecolor — no graphics library, no window, just the terminal.</p>
+  <pre>// Render a PNG at column 10, row 5 — pixels with alpha &lt; 128 are transparent
+PixelArtRenderer.RenderPng("Sprites/hero.png", col: 10, row: 5);
+
+// Or build a sprite from a char-map palette (no PNG file needed)
+var palette = new Dictionary&lt;char, PixelArtRenderer.Rgb&gt;
+{
+    ['#'] = new(255, 200, 50),   // gold
+    ['.'] = new(0, 0, 0),        // transparent
+};
+string[] map = { ".###.", "#####", ".###." };
+var sprite = PixelArtRenderer.BuildSprite(map, palette, transparent: new(0,0,0));
+PixelArtRenderer.RenderRgb(sprite, col: 10, row: 5);</pre>
+</section>
+
+<!-- ── Roadmap ───────────────────────────────────────────────────────────────── -->
+<section id="roadmap">
+  <div class="section-label">Roadmap</div>
+  <h2>What's coming</h2>
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <span class="v-badge v-done">v0.1.0 ✓</span>
+      <span class="roadmap-desc">Core · Locale · Rendering · Config · Persistence · HelloConsoleEngine sample</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="v-badge v-next">v0.2.0</span>
+      <span class="roadmap-desc">Scene system · Dialogue player · Transition engine</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="v-badge v-next">v0.3.0</span>
+      <span class="roadmap-desc">World movement framework · Exploration HUD · Location graph</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="v-badge v-later">v0.4.0</span>
+      <span class="roadmap-desc">ConsoleEngine.Editor — Avalonia visual editor with drag-and-drop and embedded AI terminal</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="v-badge v-later">v1.0.0</span>
+      <span class="roadmap-desc">Stable API · NuGet packages · Full documentation site · Plugin system</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>Made with <span class="heart">❤️</span> by <a href="https://github.com/maxiusofmaximus" target="_blank">maxiusofmaximus</a></p>
+  <p style="margin-top:.4rem;">
+    <a href="https://github.com/maxiusofmaximus/ConsoleEngine" target="_blank">GitHub</a> ·
+    <a href="https://github.com/maxiusofmaximus/ConsoleEngine/blob/main/LICENSE" target="_blank">MIT License</a> ·
+    <a href="https://github.com/maxiusofmaximus/ConsoleEngine/blob/main/CHANGELOG.md" target="_blank">Changelog</a>
+  </p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>HelloConsoleEngine</AssemblyName>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+    <ProjectReference Include="..\..\src\ConsoleEngine.Locale\ConsoleEngine.Locale.csproj" />
+    <ProjectReference Include="..\..\src\ConsoleEngine.Rendering\ConsoleEngine.Rendering.csproj" />
+    <ProjectReference Include="..\..\src\ConsoleEngine.Config\ConsoleEngine.Config.csproj" />
+    <ProjectReference Include="..\..\src\ConsoleEngine.Persistence\ConsoleEngine.Persistence.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="GameData\locale\en.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="GameData\locale\es.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

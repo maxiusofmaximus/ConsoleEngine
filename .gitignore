@@ -1,0 +1,21 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.nupkg
+*.snupkg
+
+## Rider / JetBrains
+.idea/
+
+## VS Code
+.vscode/
+
+## macOS
+.DS_Store
+
+## Samples runtime output
+samples/*/GameData/
+!samples/*/GameData/locale/
