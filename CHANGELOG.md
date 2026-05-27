@@ -5,6 +5,31 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.0] — 2026-05-27
+
+### Added
+
+- **ConsoleEngine.Editor** — Avalonia 12 desktop scene editor
+  - `SceneDocument` — JSON-serialisable model mirroring `SceneDefinition`; fields: title, lines, asciiArt, artColor, textColor, spritePath, promptContinue
+  - `SceneFileEntry` — immutable list-item model with `DisplayName` (prefixed `* ` when unsaved)
+  - `MainViewModel` — full `INotifyPropertyChanged` view model with:
+    - `LoadProject(folder)` — enumerates all `*.scene.json` files recursively, O(1) re-display
+    - `LoadScene(entry)` — deserialises JSON and populates flat bindable properties
+    - `CreateNewScene(folder)` — allocates a unique `sceneNNN.scene.json` filename and marks dirty
+    - `TrySave(entry)` — serialises to indented JSON, clears dirty flag, refreshes list entry
+    - `RebuildPreview()` — generates a 54-char-wide monospace terminal preview string on every edit
+    - `SyncAndPreview()` — round-trips flat properties back to the document model before rebuild
+  - `MainWindow.axaml` — three-panel layout (220 px file list | preview | 300 px properties)
+    - Toolbar: Open Project / New Scene / Save with `IsEnabled` bindings
+    - Left panel: `ListBox` with `x:DataType="SceneFileEntry"` compiled bindings
+    - Centre panel: dark (`#0C0C0C`) monospace `TextBlock` preview, scrollable
+    - Right panel: Title `TextBox`, Text/Art color `ComboBox`, Continue prompt `CheckBox`,
+      Narration and ASCII Art multi-line `TextBox` editors
+    - Status bar (`#007ACC` blue) with live `StatusText`
+  - Avalonia compiled bindings (`x:DataType`) throughout — zero runtime reflection binding
+
+---
+
 ## [0.3.0] — 2026-05-26
 
 ### Added

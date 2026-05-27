@@ -1,0 +1,175 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ConsoleEngine.Editor.ViewModels"
+        xmlns:models="using:ConsoleEngine.Editor.Models"
+        x:Class="ConsoleEngine.Editor.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="ConsoleEngine Editor — v0.4.0"
+        Width="1280" Height="760"
+        MinWidth="900" MinHeight="560"
+        WindowStartupLocation="CenterScreen"
+        Background="#1E1E1E">
+
+    <Grid RowDefinitions="38,*,26">
+
+        <!-- ── Toolbar ── -->
+        <Border Grid.Row="0" Background="#252526" BorderBrush="#3C3C3C" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="6" Margin="8,0">
+                <Button x:Name="BtnOpen"   Content="📁  Open Project"  Padding="8,4" Click="OnOpenProject"/>
+                <Button x:Name="BtnNew"    Content="➕  New Scene"     Padding="8,4" Click="OnNewScene"
+                        IsEnabled="{Binding HasProject}"/>
+                <Button x:Name="BtnSave"   Content="💾  Save"          Padding="8,4" Click="OnSave"
+                        IsEnabled="{Binding CanSave}"/>
+                <Rectangle Width="1" Fill="#444" Margin="4,4"/>
+                <TextBlock Text="{Binding ProjectPath}" VerticalAlignment="Center"
+                           FontSize="11" Opacity="0.55" TextTrimming="LeadingEllipsis"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ── Three-panel body ── -->
+        <Grid Grid.Row="1" ColumnDefinitions="220,4,*,4,300">
+
+            <!-- ── Left: scene file list ── -->
+            <Border Grid.Column="0" Background="#252526" BorderBrush="#3C3C3C" BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#2D2D2D"
+                            BorderBrush="#3C3C3C" BorderThickness="0,0,0,1" Padding="10,6">
+                        <TextBlock Text="SCENES" FontSize="10" FontWeight="Bold"
+                                   Foreground="#888" LetterSpacing="2"/>
+                    </Border>
+                    <ListBox x:Name="SceneList"
+                             ItemsSource="{Binding SceneFiles}"
+                             SelectedItem="{Binding SelectedFile, Mode=TwoWay}"
+                             Background="Transparent"
+                             SelectionChanged="OnSceneSelected"
+                             Padding="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:SceneFileEntry">
+                                <TextBlock Text="{Binding DisplayName}"
+                                           FontSize="12"
+                                           FontFamily="Cascadia Mono,Consolas,monospace"
+                                           Padding="10,4"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- resize splitter 1 -->
+            <GridSplitter Grid.Column="1" Background="#3C3C3C"
+                          ResizeDirection="Columns" Width="4"/>
+
+            <!-- ── Centre: terminal preview ── -->
+            <Border Grid.Column="2" Background="#0C0C0C">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#111111"
+                            BorderBrush="#2A2A2A" BorderThickness="0,0,0,1" Padding="10,6">
+                        <TextBlock Text="TERMINAL PREVIEW" FontSize="10" FontWeight="Bold"
+                                   Foreground="#888" LetterSpacing="2"/>
+                    </Border>
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Padding="16,12">
+                        <TextBlock x:Name="PreviewBlock"
+                                   Text="{Binding PreviewText}"
+                                   FontFamily="Cascadia Mono,Consolas,Courier New,monospace"
+                                   FontSize="13"
+                                   Foreground="#C8C8C8"
+                                   TextWrapping="NoWrap"
+                                   VerticalAlignment="Top"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- resize splitter 2 -->
+            <GridSplitter Grid.Column="3" Background="#3C3C3C"
+                          ResizeDirection="Columns" Width="4"/>
+
+            <!-- ── Right: properties ── -->
+            <Border Grid.Column="4" Background="#252526"
+                    BorderBrush="#3C3C3C" BorderThickness="1,0,0,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#2D2D2D"
+                            BorderBrush="#3C3C3C" BorderThickness="0,0,0,1" Padding="10,6">
+                        <TextBlock Text="PROPERTIES" FontSize="10" FontWeight="Bold"
+                                   Foreground="#888" LetterSpacing="2"/>
+                    </Border>
+
+                    <ScrollViewer IsEnabled="{Binding HasDocument}" Padding="0">
+                        <StackPanel Margin="12,10" Spacing="14">
+
+                            <!-- Title -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="TITLE" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBox Text="{Binding SceneTitle, Mode=TwoWay}"
+                                         FontSize="13" PlaceholderText="Scene title…"/>
+                            </StackPanel>
+
+                            <!-- Text Color -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="TEXT COLOR" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <ComboBox SelectedItem="{Binding TextColor, Mode=TwoWay}"
+                                          ItemsSource="{Binding AvailableColors}"
+                                          HorizontalAlignment="Stretch" FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Art Color -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="ART COLOR" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <ComboBox SelectedItem="{Binding ArtColor, Mode=TwoWay}"
+                                          ItemsSource="{Binding AvailableColors}"
+                                          HorizontalAlignment="Stretch" FontSize="12"/>
+                            </StackPanel>
+
+                            <!-- Continue prompt -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="SHOW CONTINUE PROMPT" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <CheckBox IsChecked="{Binding PromptContinue, Mode=TwoWay}"
+                                          Content="[ PRESS ENTER TO CONTINUE ]"
+                                          FontSize="11"/>
+                            </StackPanel>
+
+                            <Rectangle Height="1" Fill="#3C3C3C"/>
+
+                            <!-- Narration lines -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="NARRATION LINES" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="One line per row." FontSize="10" Foreground="#555"/>
+                                <TextBox Text="{Binding LinesText, Mode=TwoWay}"
+                                         AcceptsReturn="True"
+                                         MinHeight="130"
+                                         FontFamily="Cascadia Mono,Consolas,monospace"
+                                         FontSize="12"
+                                         TextWrapping="NoWrap"
+                                         PlaceholderText="Write narration lines here…"/>
+                            </StackPanel>
+
+                            <!-- ASCII art -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="ASCII ART" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="One row per line. Use monospace characters." FontSize="10" Foreground="#555"/>
+                                <TextBox Text="{Binding AsciiArtText, Mode=TwoWay}"
+                                         AcceptsReturn="True"
+                                         MinHeight="110"
+                                         FontFamily="Cascadia Mono,Consolas,monospace"
+                                         FontSize="12"
+                                         TextWrapping="NoWrap"
+                                         PlaceholderText="Draw your scene art here…"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+        </Grid>
+
+        <!-- ── Status bar ── -->
+        <Border Grid.Row="2" Background="#007ACC" Padding="10,0">
+            <TextBlock Text="{Binding StatusText}"
+                       VerticalAlignment="Center"
+                       FontSize="11" Foreground="White"/>
+        </Border>
+
+    </Grid>
+</Window>

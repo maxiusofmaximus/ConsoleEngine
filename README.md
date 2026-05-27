@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/version-0.3.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.0-blue)](CHANGELOG.md)
 
 ---
 
@@ -23,6 +23,7 @@ It handles everything that is not game-specific:
 | `ConsoleEngine.Persistence` | JSON save slots and config persistence |
 | `ConsoleEngine.Scenes` | Scene player, dialogue player, transition effects |
 | `ConsoleEngine.World`  | Location graph, time system, exploration HUD loop |
+| `ConsoleEngine.Editor` | Avalonia desktop editor for `.scene.json` files |
 
 ---
 
@@ -282,6 +283,43 @@ MySession loaded = saves.LoadMostRecent();
 
 ---
 
+## Scene Editor (ConsoleEngine.Editor)
+
+ConsoleEngine.Editor is a standalone Avalonia desktop application for creating and editing
+`.scene.json` files that `ScenePlayer` can load at runtime.
+
+```
+cd src/ConsoleEngine.Editor && dotnet run
+```
+
+**Three-panel layout:**
+
+| Panel | What it does |
+|---|---|
+| **Left** | Lists every `*.scene.json` in the open project folder |
+| **Centre** | Terminal-style preview — shows how the scene will look in the game |
+| **Right** | Properties editor: title, narration lines, ASCII art, text/art colours, continue prompt |
+
+**Workflow:**
+1. Click **📁 Open Project** → pick your game's project folder
+2. Select a scene file from the left panel to load it, or click **➕ New Scene** to create one
+3. Edit title, lines and ASCII art in the right panel — the preview updates live
+4. Click **💾 Save** (or `Ctrl+S`) to write the `.scene.json` to disk
+
+**File format** (`.scene.json`):
+```json
+{
+  "title": "Chapter 1 — The Forest",
+  "lines": ["The forest was silent.", "Too silent."],
+  "asciiArt": ["    /\\  /\\  /\\   ", "   /  \\/  \\/  \\  ", "══════════════════"],
+  "artColor": "DarkGreen",
+  "textColor": "Gray",
+  "promptContinue": true
+}
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -294,6 +332,7 @@ ConsoleEngine/
     ConsoleEngine.Persistence/  ← SaveRepository<T>, GameConfigRepository
     ConsoleEngine.Scenes/        ← ScenePlayer, DialoguePlayer, TransitionEngine
     ConsoleEngine.World/         ← LocationDefinition, WorldMap, ExplorationPlayer
+    ConsoleEngine.Editor/        ← Avalonia scene editor (MainWindow, MainViewModel, SceneDocument)
   samples/
     HelloConsoleEngine/         ← minimal working example (locale + pixel art)
     DinoGame/                   ← Chrome-Dino-style game (v0.2.0 showcase)
@@ -310,7 +349,7 @@ ConsoleEngine/
 | **0.1.0** ✅ | Core, Locale, Rendering, Config, Persistence |
 | **0.2.0** ✅ | Scene system, dialogue player, transition engine, DinoGame sample |
 | **0.3.0** ✅ | World movement framework, exploration HUD, WorldDemo sample |
-| 0.4.0 | ConsoleEngine.Editor (Avalonia) — visual scene editor |
+| **0.4.0** ✅ | ConsoleEngine.Editor (Avalonia) — visual scene editor for `.scene.json` files |
 | 1.0.0 | Stable API, NuGet packages, full documentation |
 
 ---
