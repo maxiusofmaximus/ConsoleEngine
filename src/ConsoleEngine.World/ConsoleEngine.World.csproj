@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>ConsoleEngine.World</RootNamespace>
+    <PackageId>ConsoleEngine.World</PackageId>
     <AssemblyName>ConsoleEngine.World</AssemblyName>
-    <Description>World movement framework and exploration HUD for ConsoleEngine terminal games.</Description>
-    <Version>0.3.0</Version>
-    <Authors>maxiusofmaximus</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <RootNamespace>ConsoleEngine.World</RootNamespace>
+    <Description>World movement framework, location graph, time system, and interactive exploration HUD for ConsoleEngine.</Description>
+    <PackageTags>$(PackageTags);world;exploration;rpg;locations</PackageTags>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>

@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>ConsoleEngine.Locale</RootNamespace>
+    <PackageId>ConsoleEngine.Locale</PackageId>
     <AssemblyName>ConsoleEngine.Locale</AssemblyName>
-    <Description>Localisation system for ConsoleEngine: Markdown-driven, 11 languages, hot-reload.</Description>
-    <Version>0.1.0</Version>
-    <Authors>maxiusofmaximus</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <RootNamespace>ConsoleEngine.Locale</RootNamespace>
+    <Description>Markdown-driven localisation for ConsoleEngine: 11 languages, hot-reload, format args, and key-constant catalogue.</Description>
+    <PackageTags>$(PackageTags);localisation;i18n;l10n;markdown</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />

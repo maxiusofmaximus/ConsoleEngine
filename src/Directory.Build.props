@@ -1,0 +1,49 @@
+<Project>
+
+  <!--
+    Shared build and NuGet metadata for all ConsoleEngine library projects.
+    Individual csproj files only need to declare what's unique to them
+    (PackageId, Description, package-specific tags, and dependencies).
+  -->
+
+  <PropertyGroup>
+    <!-- Framework / compilation -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- XML doc warnings are informational, not build-breaking, during active development. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- NuGet package identity -->
+    <Version>1.0.0</Version>
+    <Authors>maxiusofmaximus</Authors>
+    <Company>maxiusofmaximus</Company>
+    <Copyright>Copyright © 2026 maxiusofmaximus</Copyright>
+
+    <!-- NuGet package links -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/maxiusofmaximus/ConsoleEngine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- NuGet discovery -->
+    <PackageTags>terminal;console;game;engine;ascii;ansi;dotnet;cli</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <!-- Include solution-level README and icon in every package -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\README.md"
+          Pack="true" PackagePath="\" Visible="false"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\README.md')" />
+    <None Include="$(MSBuildThisFileDirectory)..\assets\icon.png"
+          Pack="true" PackagePath="\" Visible="false"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\assets\icon.png')" />
+  </ItemGroup>
+
+</Project>

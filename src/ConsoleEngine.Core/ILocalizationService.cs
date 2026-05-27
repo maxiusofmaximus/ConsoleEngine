@@ -23,7 +23,7 @@ public interface ILocalizationService
     string Get(string key, params object[] args);
 
     /// <summary>
-    /// Switches the active language. Subsequent <see cref="Get"/> calls reflect the new language.
+    /// Switches the active language. Subsequent <see cref="Get(string)"/> calls reflect the new language.
     /// Falls back to English silently if the requested language is not loaded.
     /// </summary>
     void SetLanguage(string languageCode);

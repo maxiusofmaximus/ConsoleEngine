@@ -1,16 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>ConsoleEngine.Rendering</RootNamespace>
+    <PackageId>ConsoleEngine.Rendering</PackageId>
     <AssemblyName>ConsoleEngine.Rendering</AssemblyName>
-    <Description>Pixel-art renderer and animation engine for ConsoleEngine terminal games.</Description>
-    <Version>0.1.0</Version>
-    <Authors>maxiusofmaximus</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <RootNamespace>ConsoleEngine.Rendering</RootNamespace>
+    <Description>PNG → ANSI half-block pixel-art renderer and animation engine for ConsoleEngine terminal games.</Description>
+    <PackageTags>$(PackageTags);rendering;ansi;pixel-art;animation</PackageTags>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>

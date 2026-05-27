@@ -18,7 +18,7 @@ namespace ConsoleEngine.Locale;
 /// </code>
 ///
 /// Graceful degradation: if not yet initialised (or locale files are absent),
-/// <see cref="Get"/> returns the raw key so the game stays functional.
+/// <see cref="Get(string)"/> returns the raw key so the game stays functional.
 /// </summary>
 /// <remarks>Named <c>CL</c> for brevity at call sites.</remarks>
 public static class CL

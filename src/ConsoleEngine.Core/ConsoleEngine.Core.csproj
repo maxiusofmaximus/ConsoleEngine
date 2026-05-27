@@ -1,15 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>latest</LangVersion>
-    <RootNamespace>ConsoleEngine.Core</RootNamespace>
+    <PackageId>ConsoleEngine.Core</PackageId>
     <AssemblyName>ConsoleEngine.Core</AssemblyName>
-    <Description>Core contracts and models for ConsoleEngine — the .NET terminal game framework.</Description>
-    <Version>0.1.0</Version>
-    <Authors>maxiusofmaximus</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/maxiusofmaximus/ConsoleEngine</RepositoryUrl>
+    <RootNamespace>ConsoleEngine.Core</RootNamespace>
+    <Description>Core contracts, interfaces, and shared models for ConsoleEngine — the .NET 8 terminal game framework.</Description>
+    <PackageTags>$(PackageTags);core;contracts;interfaces</PackageTags>
   </PropertyGroup>
 </Project>

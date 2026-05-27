@@ -1,5 +1,5 @@
+using System.Text.Json;
 using ConsoleEngine.Config;
-using Newtonsoft.Json;
 
 namespace ConsoleEngine.Persistence;
 
@@ -12,6 +12,13 @@ public sealed class GameConfigRepository
 {
     private readonly string _filePath;
 
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        WriteIndented           = true,
+        PropertyNameCaseInsensitive = true,
+    };
+
+    /// <param name="configDirectory">Directory that contains <c>config.json</c> (created if absent).</param>
     public GameConfigRepository(string configDirectory)
     {
         ArgumentNullException.ThrowIfNull(configDirectory);
@@ -19,14 +26,18 @@ public sealed class GameConfigRepository
         _filePath = Path.Combine(configDirectory, "config.json");
     }
 
+    /// <summary>
+    /// Loads <c>config.json</c>, normalises values, and returns the result.
+    /// Returns a default config if the file is missing or corrupt.
+    /// </summary>
     public GameConfig Load()
     {
         GameConfig config;
         try
         {
             if (!File.Exists(_filePath)) return CreateDefault();
-            string json = File.ReadAllText(_filePath);
-            config = JsonConvert.DeserializeObject<GameConfig>(json) ?? CreateDefault();
+            config = JsonSerializer.Deserialize<GameConfig>(File.ReadAllText(_filePath), JsonOptions)
+                     ?? CreateDefault();
         }
         catch { config = CreateDefault(); }
 
@@ -34,10 +45,11 @@ public sealed class GameConfigRepository
         return config;
     }
 
+    /// <summary>Serialises <paramref name="config"/> to <c>config.json</c>.</summary>
     public void Save(GameConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        File.WriteAllText(_filePath, JsonConvert.SerializeObject(config, Formatting.Indented));
+        File.WriteAllText(_filePath, JsonSerializer.Serialize(config, JsonOptions));
     }
 
     private static GameConfig CreateDefault() => new();

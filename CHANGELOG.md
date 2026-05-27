@@ -5,6 +5,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.0.0] — 2026-05-27
+
+### Added
+
+- **NuGet packaging** — all 7 library modules are now NuGet-ready
+  - `src/Directory.Build.props` centralises `Version`, `Authors`, `PackageLicenseExpression`, `PackageTags`, `PackageReadmeFile`, and `PackageIcon` for every project
+  - Individual `.csproj` files reduced to only their unique properties
+- **`SceneLoader`** (`ConsoleEngine.Scenes`) — loads `.scene.json` files from disk; `Load()` and `TryLoad()` variants
+- **`WorldLoader`** (`ConsoleEngine.World`) — loads `.world.json` files from disk; `Load()` and `TryLoad()` variants
+- **`ExplorationOptions.HudHint`** — configurable HUD hint string (default: `[look] [exits] [wait] [menu] [quit]`)
+- **GitHub Actions CI** (`.github/workflows/ci.yml`) — build + dry-run pack on every push and pull request to `main`
+- **GitHub Actions NuGet publish** (`.github/workflows/nuget-publish.yml`) — auto-publishes all 7 packages to NuGet.org on `v*` tag push
+- **`assets/icon.png`** — 128×128 package icon
+
+### Changed
+
+- **`SceneDefinition`** changed from `sealed class` to `sealed record` — enables `with` expressions for partial overrides (e.g. injecting dynamic lines into a JSON-loaded template)
+- **`LocationDefinition`** changed from `sealed class` to `sealed record`
+- **`DialogueDefinition`** changed from `sealed class` to `sealed record`
+- **`SaveRepository<T>`** migrated from `Newtonsoft.Json` to `System.Text.Json` (built into .NET 8; zero extra dependency)
+- **`GameConfigRepository`** migrated from `Newtonsoft.Json` to `System.Text.Json`
+- **`samples/DinoGame`** — intro scene extracted from compiled code to `GameData/scenes/intro.scene.json`
+- **`samples/WorldDemo`** — intro and outro scenes extracted to JSON; world definition extracted to `GameData/world/world.world.json`; `TheWorld.Build()` reduced from 155 lines to a single `WorldLoader.Load()` call
+- **`EngineVersion`** updated to `1.0.0`
+
+### Fixed
+
+- `CS0419` ambiguous cref warnings in `ILocalizationService` and `CL` XML docs
+- `CS1734` invalid `<paramref>` in `SaveRepository<T>` class-level doc
+
+---
+
 ## [0.4.0] — 2026-05-27
 
 ### Added

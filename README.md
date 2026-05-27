@@ -5,7 +5,9 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/version-0.4.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)](CHANGELOG.md)
+[![NuGet](https://img.shields.io/badge/NuGet-1.0.0-blue)](https://www.nuget.org/profiles/maxiusofmaximus)
+[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/ci.yml)
 
 ---
 
@@ -29,7 +31,19 @@ It handles everything that is not game-specific:
 
 ## Quick Start
 
-### 1. Reference the projects
+### 1. Install from NuGet
+
+```bash
+dotnet add package ConsoleEngine.Core
+dotnet add package ConsoleEngine.Locale
+dotnet add package ConsoleEngine.Rendering
+dotnet add package ConsoleEngine.Config
+dotnet add package ConsoleEngine.Persistence
+dotnet add package ConsoleEngine.Scenes       # optional: scene & dialogue player
+dotnet add package ConsoleEngine.World        # optional: exploration / world movement
+```
+
+Or reference the projects directly from source:
 
 ```xml
 <!-- YourGame.csproj -->
@@ -344,13 +358,13 @@ ConsoleEngine/
 
 ## Roadmap
 
-| Version | Planned features |
+| Version | Features |
 |---|---|
 | **0.1.0** ✅ | Core, Locale, Rendering, Config, Persistence |
 | **0.2.0** ✅ | Scene system, dialogue player, transition engine, DinoGame sample |
 | **0.3.0** ✅ | World movement framework, exploration HUD, WorldDemo sample |
 | **0.4.0** ✅ | ConsoleEngine.Editor (Avalonia) — visual scene editor for `.scene.json` files |
-| 1.0.0 | Stable API, NuGet packages, full documentation |
+| **1.0.0** ✅ | Stable API, NuGet packages, full documentation, CI/CD pipeline |
 
 ---
 

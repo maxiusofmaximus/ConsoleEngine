@@ -5,7 +5,7 @@ namespace ConsoleEngine.Scenes;
 /// Both characters are anchored to the bottom of the screen;
 /// dialogue lines flow from the top.
 /// </summary>
-public sealed class DialogueDefinition
+public sealed record DialogueDefinition
 {
     // ── Left character ────────────────────────────────────────────────────────
 
