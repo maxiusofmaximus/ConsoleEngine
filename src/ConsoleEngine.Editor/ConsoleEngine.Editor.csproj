@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia"              Version="12.0.3" />
-    <PackageReference Include="Avalonia.Desktop"      Version="12.0.3" />
+    <PackageReference Include="Avalonia"               Version="12.0.3" />
+    <PackageReference Include="Avalonia.Desktop"       Version="12.0.3" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.0.3" />
   </ItemGroup>
 
@@ -24,5 +24,28 @@
     <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
     <ProjectReference Include="..\ConsoleEngine.Scenes\ConsoleEngine.Scenes.csproj" />
   </ItemGroup>
+
+  <!--
+    Build SceneRunner alongside the Editor and copy its bootstrap files into
+    the Editor output directory so the Play button can launch it directly
+    without needing `dotnet run`.
+  -->
+  <Target Name="BuildAndCopySceneRunner" AfterTargets="Build">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\ConsoleEngine.SceneRunner\ConsoleEngine.SceneRunner.csproj"
+             Properties="Configuration=$(Configuration);Platform=$(Platform)"
+             Targets="Build" />
+    <PropertyGroup>
+      <_RunnerOut>$(MSBuildThisFileDirectory)..\ConsoleEngine.SceneRunner\bin\$(Configuration)\net8.0\</_RunnerOut>
+    </PropertyGroup>
+    <ItemGroup>
+      <_RunnerFiles Include="$(_RunnerOut)ConsoleEngine.SceneRunner.exe"
+                    Condition="Exists('$(_RunnerOut)ConsoleEngine.SceneRunner.exe')" />
+      <_RunnerFiles Include="$(_RunnerOut)ConsoleEngine.SceneRunner.dll"
+                    Condition="Exists('$(_RunnerOut)ConsoleEngine.SceneRunner.dll')" />
+      <_RunnerFiles Include="$(_RunnerOut)ConsoleEngine.SceneRunner.runtimeconfig.json"
+                    Condition="Exists('$(_RunnerOut)ConsoleEngine.SceneRunner.runtimeconfig.json')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_RunnerFiles)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

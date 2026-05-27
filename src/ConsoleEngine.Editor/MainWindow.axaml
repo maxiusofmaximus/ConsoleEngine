@@ -15,15 +15,44 @@
 
         <!-- ── Toolbar ── -->
         <Border Grid.Row="0" Background="#252526" BorderBrush="#3C3C3C" BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="6" Margin="8,0">
-                <Button x:Name="BtnOpen"   Content="📁  Open Project"  Padding="8,4" Click="OnOpenProject"/>
-                <Button x:Name="BtnNew"    Content="➕  New Scene"     Padding="8,4" Click="OnNewScene"
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="8,0">
+
+                <!-- Group 1: Project -->
+                <Button x:Name="BtnOpen"    Content="📁  Open Project" Padding="8,4" Click="OnOpenProject"/>
+                <Button x:Name="BtnNew"     Content="➕  New Scene"    Padding="8,4" Click="OnNewScene"
                         IsEnabled="{Binding HasProject}"/>
-                <Button x:Name="BtnSave"   Content="💾  Save"          Padding="8,4" Click="OnSave"
+                <Button x:Name="BtnSave"    Content="💾  Save"         Padding="8,4" Click="OnSave"
                         IsEnabled="{Binding CanSave}"/>
+                <Button x:Name="BtnReload"  Content="🔄  Reload"       Padding="8,4" Click="OnReload"
+                        IsEnabled="{Binding CanReload}"
+                        ToolTip.Tip="Reload all scene files from disk without closing the editor"/>
+
                 <Rectangle Width="1" Fill="#444" Margin="4,4"/>
+
+                <!-- Group 2: Playback -->
+                <Button x:Name="BtnPlay"    Content="▶  Play"          Padding="8,4" Click="OnPlay"
+                        IsEnabled="{Binding CanPlay}"
+                        ToolTip.Tip="Save and preview the active scene in a real terminal window"/>
+                <Button x:Name="BtnStop"    Content="⏹  Stop"          Padding="8,4" Click="OnStop"
+                        IsEnabled="{Binding CanStop}"
+                        ToolTip.Tip="Terminate the running terminal preview"/>
+
+                <Rectangle Width="1" Fill="#444" Margin="4,4"/>
+
+                <!-- Group 3: Scene operations -->
+                <Button x:Name="BtnDuplicate" Content="⧉  Duplicate"   Padding="8,4" Click="OnDuplicate"
+                        IsEnabled="{Binding CanDuplicate}"
+                        ToolTip.Tip="Copy this scene to a new file"/>
+                <Button x:Name="BtnDelete"    Content="🗑  Delete"      Padding="8,4" Click="OnDelete"
+                        IsEnabled="{Binding CanDelete}"
+                        ToolTip.Tip="Permanently delete this scene file"/>
+
+                <Rectangle Width="1" Fill="#444" Margin="4,4"/>
+
+                <!-- Project path breadcrumb -->
                 <TextBlock Text="{Binding ProjectPath}" VerticalAlignment="Center"
-                           FontSize="11" Opacity="0.55" TextTrimming="PrefixCharacterEllipsis"/>
+                           FontSize="11" Opacity="0.55"
+                           TextTrimming="PrefixCharacterEllipsis"/>
             </StackPanel>
         </Border>
 
