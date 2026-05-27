@@ -5,16 +5,20 @@ on:
     tags:
       - 'v*'
 
+# Restrict GITHUB_TOKEN to read-only — publishing uses NUGET_API_KEY, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
 jobs:
   publish:
     name: Pack & publish
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
 
       - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9  # v4
         with:
           dotnet-version: '8.0.x'
 
@@ -35,4 +39,10 @@ jobs:
           dotnet pack src/ConsoleEngine.World/ConsoleEngine.World.csproj         --configuration Release --no-build --output ./artifacts
 
       - name: Push to NuGet.org
-        run: dotnet nuget push "./artifacts/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        # Pass the API key as an environment variable, not as a CLI argument.
+        # ${{ secrets.* }} interpolation in `run:` embeds the value in the process
+        # command line (/proc/<pid>/cmdline); env: passes it via the environment
+        # block, which is not visible to other processes on the runner.
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
