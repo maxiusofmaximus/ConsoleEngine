@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using ConsoleEngine.Core;
 using ConsoleEngine.Editor.Models;
 
 namespace ConsoleEngine.Editor.ViewModels;
@@ -36,6 +37,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private bool   _promptContinue = true;
     private string _previewText = string.Empty;
     private string _statusText  = "Open a project folder to begin.";
+
+    // ── Static metadata ───────────────────────────────────────────────────
+    public static string WindowTitle { get; } = $"ConsoleEngine Editor — v{EngineVersion.Full}";
 
     // ── Observable collections ────────────────────────────────────────────
     public ObservableCollection<SceneFileEntry> SceneFiles { get; } = new();
@@ -124,7 +128,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _doc = null;
         Notify(nameof(HasDocument));
 
+        // Exclude build artefact directories so bin/ copies don't appear as duplicates.
+        static bool IsArtifactPath(string path) =>
+            path.Contains(Path.DirectorySeparatorChar + "bin"  + Path.DirectorySeparatorChar) ||
+            path.Contains(Path.DirectorySeparatorChar + "obj"  + Path.DirectorySeparatorChar);
+
         foreach (string f in Directory.EnumerateFiles(folderPath, "*.scene.json", SearchOption.AllDirectories)
+                                      .Where(f => !IsArtifactPath(f))
                                       .OrderBy(x => x))
         {
             SceneFiles.Add(new SceneFileEntry(f));
