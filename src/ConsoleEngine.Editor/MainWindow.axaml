@@ -22,7 +22,7 @@
                         IsEnabled="{Binding CanSave}"/>
                 <Rectangle Width="1" Fill="#444" Margin="4,4"/>
                 <TextBlock Text="{Binding ProjectPath}" VerticalAlignment="Center"
-                           FontSize="11" Opacity="0.55" TextTrimming="LeadingEllipsis"/>
+                           FontSize="11" Opacity="0.55" TextTrimming="PrefixCharacterEllipsis"/>
             </StackPanel>
         </Border>
 

@@ -1,0 +1,30 @@
+{
+  "asciiArt": [
+    "  ▲▲  ▲  ",
+    " ████ ██  ",
+    " ████ ██  ",
+    "──┼───────",
+    "════════════════════════════════════════════════════════════════════════════════",
+    "▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓"
+  ],
+  "lines": [
+    "",
+    "  ┌──────────────────────────────────────┐",
+    "  │                                      │",
+    "  │   W O R L D   D E M O               │",
+    "  │   ConsoleEngine  v0.3.0              │",
+    "  │                                      │",
+    "  │   A five-room exploration demo.      │",
+    "  │                                      │",
+    "  │   Commands: north · south · east     │",
+    "  │             west · in · out · look   │",
+    "  │             exits · wait · help      │",
+    "  │             menu · quit              │",
+    "  │                                      │",
+    "  └──────────────────────────────────────┘"
+  ],
+  "textColor": "Cyan",
+  "artColor": "DarkGreen",
+  "promptContinue": true,
+  "continuePrompt": "  [ PRESS ENTER TO EXPLORE ]"
+}

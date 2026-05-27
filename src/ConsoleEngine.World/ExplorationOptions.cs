@@ -41,6 +41,13 @@ public sealed class ExplorationOptions
     /// </summary>
     public bool ShowExits { get; init; } = true;
 
+    /// <summary>
+    /// Text shown on the right side of the HUD bar, listing the available commands.
+    /// Override to reflect only the commands your game exposes.
+    /// Default: <c>"[look] [exits] [wait] [menu] [quit]"</c>.
+    /// </summary>
+    public string HudHint { get; init; } = "[look] [exits] [wait] [menu] [quit]";
+
     // ── Extension points ──────────────────────────────────────────────────────
 
     /// <summary>

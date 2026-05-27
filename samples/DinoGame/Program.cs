@@ -13,7 +13,7 @@ string gameDataRoot = Path.Combine(AppContext.BaseDirectory, "GameData");
 CL.Initialize(gameDataRoot, "en");
 
 // ── Intro scene ────────────────────────────────────────────────────────────────
-ShowIntro();
+ScenePlayer.Play(SceneLoader.Load(Path.Combine(gameDataRoot, "scenes", "intro.scene.json")));
 
 // ── Game loop ──────────────────────────────────────────────────────────────────
 int highScore = 0;
@@ -25,49 +25,6 @@ while (true)
 
 AnimationEngine.ShowCursor();
 Console.ResetColor();
-
-// ══════════════════════════════════════════════════════════════════════════════
-//  INTRO
-// ══════════════════════════════════════════════════════════════════════════════
-
-void ShowIntro()
-{
-    int w = Console.WindowWidth;
-
-    // Pad dino + cactus art to sit at the right of the screen
-    string rightPad = new(' ', Math.Max(0, w - 14));
-
-    ScenePlayer.Play(new SceneDefinition
-    {
-        AsciiArt = new[]
-        {
-            rightPad + "  ▄█      ",
-            rightPad + " ▄███  ▄█▄",
-            rightPad + "  ██   ███",
-            rightPad + "  █ ▀  ███",
-            new string('═', w),
-            new string('▓', w),
-        },
-        Lines = new[]
-        {
-            "",
-            "  ┌────────────────────────────────────┐",
-            "  │                                    │",
-            "  │       D I N O   G A M E            │",
-            "  │       ConsoleEngine  v0.2.0        │",
-            "  │                                    │",
-            "  │   ▸  SPACE  or  ↑    to jump       │",
-            "  │   ▸  ESC              to quit       │",
-            "  │                                    │",
-            "  │   Dodge the cacti. Don't die.      │",
-            "  │                                    │",
-            "  └────────────────────────────────────┘",
-        },
-        TextColor      = ConsoleColor.Green,
-        ArtColor       = ConsoleColor.DarkGreen,
-        ContinuePrompt = "     [ PRESS ENTER TO START ]",
-    });
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  SINGLE ROUND

@@ -40,12 +40,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
     // ── Observable collections ────────────────────────────────────────────
     public ObservableCollection<SceneFileEntry> SceneFiles { get; } = new();
 
-    public static IReadOnlyList<string> AvailableColors { get; } = new[]
-    {
-        "Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta",
-        "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan",
-        "Red", "Magenta", "Yellow", "White",
-    };
+    public static IReadOnlyList<string> AvailableColors { get; } =
+        Enum.GetNames<ConsoleColor>().OrderBy(n => n).ToArray();
 
     // ── Properties ────────────────────────────────────────────────────────
     public string ProjectPath

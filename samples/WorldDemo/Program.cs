@@ -14,43 +14,11 @@ string gameDataRoot = Path.Combine(AppContext.BaseDirectory, "GameData");
 CL.Initialize(gameDataRoot, "en");
 
 // ── Build world ────────────────────────────────────────────────────────────────
-WorldMap   map   = TheWorld.Build();
+WorldMap   map   = TheWorld.Build(gameDataRoot);
 WorldState state = new() { CurrentLocationId = "crossroads", TimeOfDay = TimeOfDay.Morning, Day = 1 };
 
 // ── Intro scene ────────────────────────────────────────────────────────────────
-int w = Console.WindowWidth;
-ScenePlayer.Play(new SceneDefinition
-{
-    AsciiArt = new[]
-    {
-        new string(' ', Math.Max(0, w - 20)) + "  ▲▲  ▲  ",
-        new string(' ', Math.Max(0, w - 20)) + " ████ ██  ",
-        new string(' ', Math.Max(0, w - 20)) + " ████ ██  ",
-        new string(' ', Math.Max(0, w - 20)) + "──┼───────",
-        new string('═', w),
-        new string('▓', w),
-    },
-    Lines = new[]
-    {
-        "",
-        "  ┌──────────────────────────────────────┐",
-        "  │                                      │",
-        "  │   W O R L D   D E M O               │",
-        "  │   ConsoleEngine  v0.3.0              │",
-        "  │                                      │",
-        "  │   A five-room exploration demo.      │",
-        "  │                                      │",
-        "  │   Commands: north · south · east     │",
-        "  │             west · in · out · look   │",
-        "  │             exits · wait · help      │",
-        "  │             menu · quit              │",
-        "  │                                      │",
-        "  └──────────────────────────────────────┘",
-    },
-    TextColor      = ConsoleColor.Cyan,
-    ArtColor       = ConsoleColor.DarkGreen,
-    ContinuePrompt = "  [ PRESS ENTER TO EXPLORE ]",
-});
+ScenePlayer.Play(SceneLoader.Load(Path.Combine(gameDataRoot, "scenes", "intro.scene.json")));
 
 // ── Exploration options ────────────────────────────────────────────────────────
 var options = new ExplorationOptions
@@ -75,14 +43,13 @@ Console.Clear();
 AnimationEngine.ShowCursor();
 Console.ResetColor();
 
-ScenePlayer.Play(new SceneDefinition
-{
-    Lines = result == ExplorationResult.Quit
-        ? new[] { "", "  Goodbye.", "", $"  You reached Day {state.Day}, {state.TimeOfDay}." }
-        : new[] { "", "  Back to the menu.", "", $"  You reached Day {state.Day}, {state.TimeOfDay}." },
-    TextColor      = ConsoleColor.DarkGray,
-    ContinuePrompt = "  [ PRESS ENTER ]",
-});
+string[] outroLines = result == ExplorationResult.Quit
+    ? ["", "  Goodbye.", "", $"  You reached Day {state.Day}, {CL.Get(state.TimeOfDay.LocaleKey())}."]
+    : ["", "  Back to the menu.", "", $"  You reached Day {state.Day}, {CL.Get(state.TimeOfDay.LocaleKey())}."];
+
+ScenePlayer.Play(
+    SceneLoader.Load(Path.Combine(gameDataRoot, "scenes", "outro.scene.json"))
+    with { Lines = outroLines });
 
 // ── Custom action example ──────────────────────────────────────────────────────
 

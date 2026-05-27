@@ -7,7 +7,7 @@ namespace ConsoleEngine.World;
 /// ConsoleEngine.World normalises aliases (n→north, s→south, e→east, w→west, u→up, d→down)
 /// before matching, so a location only needs to list canonical names.
 /// </summary>
-public sealed class LocationDefinition
+public sealed record LocationDefinition
 {
     // ── Identity ──────────────────────────────────────────────────────────────
 

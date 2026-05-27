@@ -11,7 +11,7 @@ namespace ConsoleEngine.Scenes;
 ///   <item>Narration text flows from the top, over the art.</item>
 /// </list>
 /// </summary>
-public sealed class SceneDefinition
+public sealed record SceneDefinition
 {
     /// <summary>Scene heading shown above the narration text. <c>null</c> = no heading.</summary>
     public string?        Title          { get; init; }

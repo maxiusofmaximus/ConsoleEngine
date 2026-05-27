@@ -1,0 +1,103 @@
+{
+  "locations": [
+    {
+      "id": "crossroads",
+      "name": "The Crossroads",
+      "description": [
+        "A dirt road splits here in two directions.",
+        "A weathered signpost stands at the centre, its paint long faded.",
+        "The air smells of pine resin and distant rain."
+      ],
+      "asciiArt": [
+        "           |           ",
+        "   ────────┼────────   ",
+        "           |           "
+      ],
+      "artColor": "DarkYellow",
+      "textColor": "Gray",
+      "exits": {
+        "north": "forest",
+        "east": "ruins"
+      }
+    },
+    {
+      "id": "forest",
+      "name": "Dark Forest",
+      "description": [
+        "Tall pines crowd out most of the light.",
+        "The undergrowth rustles — something watches from the shadows.",
+        "A faint path continues north toward higher ground."
+      ],
+      "asciiArt": [
+        "  ▲  ▲▲  ▲  ▲▲ ▲  ",
+        " ███ ████ ██ ███   ",
+        " ███ ████ ██ ███   "
+      ],
+      "artColor": "DarkGreen",
+      "textColor": "Gray",
+      "exits": {
+        "north": "hilltop",
+        "south": "crossroads"
+      }
+    },
+    {
+      "id": "hilltop",
+      "name": "Windy Hilltop",
+      "description": [
+        "You emerge from the trees onto a windswept hilltop.",
+        "The view stretches for miles — forests, ruins, and a distant river.",
+        "Up here the sky feels enormous."
+      ],
+      "asciiArt": [
+        "          /\\          ",
+        "         /  \\         ",
+        "        / /\\ \\        ",
+        "───────/      \\───────"
+      ],
+      "artColor": "DarkGray",
+      "textColor": "Gray",
+      "exits": {
+        "south": "forest"
+      }
+    },
+    {
+      "id": "ruins",
+      "name": "Ancient Ruins",
+      "description": [
+        "Crumbling stone columns rise from the earth.",
+        "Carvings cover every surface — a language no one has spoken for centuries.",
+        "A dark opening in the hillside beckons. Type [in] to enter."
+      ],
+      "asciiArt": [
+        " | |  | |  | |  ",
+        " | |  | |  | |  ",
+        "─┴─┴──┴─┴──┴─┴─"
+      ],
+      "artColor": "DarkGray",
+      "textColor": "Gray",
+      "exits": {
+        "west": "crossroads",
+        "in": "cave"
+      }
+    },
+    {
+      "id": "cave",
+      "name": "The Cave",
+      "description": [
+        "Stone walls glisten with moisture.",
+        "Crude paintings cover the walls — hunters, beasts, and a spiral symbol.",
+        "At the far end lies a small altar. Whatever was placed here is long gone."
+      ],
+      "asciiArt": [
+        "    ╔════════╗    ",
+        "   ╔╝ ◉    ◉ ╚╗   ",
+        "   ╚══════════╝   "
+      ],
+      "artColor": "DarkMagenta",
+      "textColor": "DarkGray",
+      "exits": {
+        "out": "ruins"
+      }
+    }
+  ]
+}

@@ -209,7 +209,7 @@ public static class ExplorationPlayer
         string timeStr  = CL.Get(state.TimeOfDay.LocaleKey());
         string dayStr   = CL.Get(CK.Status.Day);
         string hudLeft  = $"  {location.Name} — {timeStr}    {dayStr} {state.Day}";
-        string hudRight = "  [look] [exits] [wait] [menu] [quit]  ";
+        string hudRight = $"  {options.HudHint}  ";
         int    hudGap   = Math.Max(1, winW - hudLeft.Length - hudRight.Length);
         string hud0     = hudLeft + new string(' ', hudGap) + hudRight;
         if (hud0.Length > winW) hud0 = hud0[..winW];
