@@ -186,40 +186,63 @@ Until the API is stable, use direct project references or a local NuGet feed.
 
 ---
 
-## 7. Roadmap
+## 7. Actual Module State (v1.0.0 — 2026-05-28)
 
-### Phase 0 — Plan (current)
-- [x] Define engine vs game boundaries
-- [x] Document architecture
-- [ ] Create `ENGINE_PLAN.md`, `EDITOR_PLAN.md`, `MIGRATION_PLAN.md`
+The repository structure differs slightly from the target in §2 because some
+planned modules have not been created yet. Here is what actually exists:
 
-### Phase 1 — Extract
-- [ ] Create `ConsoleEngine.sln` alongside `AkashicEnd.sln`
-- [ ] Move each subsystem to its `ConsoleEngine.*` project
-- [ ] Replace direct class references in AkashicEnd with interface references
-- [ ] Verify AkashicEnd builds and runs identically after extraction
-- [ ] All existing tests still pass
-
-### Phase 2 — Stabilise API
-- [ ] Define and freeze public interfaces for each module
-- [ ] Add XML doc comments to all public API surface
-- [ ] Write engine-level unit tests (independent of AkashicEnd content)
-- [ ] Semantic versioning policy documented
-
-### Phase 3 — Editor
-- [ ] Build `ConsoleEngine.Editor` (Avalonia) against engine interfaces
-- [ ] Editor opens AkashicEnd as its first target project
-- [ ] Hot-reload pipeline working end-to-end
-
-### Phase 4 — Publish
-- [ ] Pack as NuGet packages
-- [ ] README and getting-started guide
-- [ ] AkashicEnd updated to consume published packages
-- [ ] Optional: open-source the engine, keep AkashicEnd private
+| Module | Status | Notes |
+|---|---|---|
+| `ConsoleEngine.Core` | ✅ Shipped | `ILocalizationService`, `EngineVersion`, interfaces |
+| `ConsoleEngine.Rendering` | ✅ Shipped | `PixelArtRenderer` (PNG→▀), `AnimationEngine` |
+| `ConsoleEngine.Locale` | ✅ Shipped | `CL`, `CK`, `MarkdownLocalizationLoader`, `InMemoryLocalizationService` |
+| `ConsoleEngine.Scenes` | ✅ Shipped | `SceneDefinition`, `SceneLoader`, `ScenePlayer`, `DialoguePlayer`, `TransitionEngine` |
+| `ConsoleEngine.World` | ✅ Shipped | `WorldState`, `WorldMap`, `ExplorationPlayer`, `IExplorationAction` |
+| `ConsoleEngine.Config` | ✅ Shipped | `GameConfig`, `GameSettingsCatalog`, `GameSettingsCommands`, `ResolutionPreset` |
+| `ConsoleEngine.Persistence` | ✅ Shipped | `SaveRepository<T>`, `GameConfigRepository` |
+| `ConsoleEngine.SceneRunner` | ✅ Shipped | Standalone exe; takes `.scene.json`, calls `ScenePlayer.Play()` |
+| `ConsoleEngine.Editor` | 🔨 Phase A | Avalonia 12 editor — scene mgmt, text editor, play/stop/reload done |
+| `ConsoleEngine.Animation` | ❌ Not created | Planned: `AnimationTimeline`, `VfxEngine`, keyframe system |
+| `ConsoleEngine.Launcher` | ❌ Not created | Planned: `OpenLauncher`, CLI arg parsing |
 
 ---
 
-## 8. Context Files for AI Assistance
+## 8. Roadmap
+
+### Phase 0 — Plan
+- [x] Define engine vs game boundaries
+- [x] Document architecture
+- [x] Create `ENGINE_PLAN.md`, `EDITOR_PLAN.md`, `MIGRATION_PLAN.md`
+
+### Phase 1 — Extract
+- [x] Create `ConsoleEngine.sln`
+- [x] Move each subsystem to its `ConsoleEngine.*` project
+- [x] AkashicEnd verified to build and run after extraction
+
+### Phase 2 — Stabilise API
+- [x] Public interfaces defined for all shipped modules
+- [x] XML doc comments on all public API surface
+- [x] Semantic versioning: `EngineVersion` constant, NuGet tags `v*`
+- [ ] Engine-level unit tests (independent of AkashicEnd content)
+
+### Phase 3 — Editor
+- [x] `ConsoleEngine.Editor` Avalonia app scaffolded
+- [x] Scene management (create, list, duplicate, delete, save, reload)
+- [x] Text editor with live terminal preview
+- [x] Play / Stop modes via `ConsoleEngine.SceneRunner.exe`
+- [ ] Sprite import and ANSI preview (Phase A remaining)
+- [ ] Embedded AI terminal panel (Phase A remaining)
+- [ ] Full Phase B–D features — see `EDITOR_PLAN.md`
+
+### Phase 4 — Publish
+- [x] NuGet workflow (`nuget-publish.yml`) — triggers on `v*` tags
+- [x] README and getting-started guide
+- [ ] AkashicEnd updated to consume published packages (pending API freeze)
+- [ ] Open-source decision pending
+
+---
+
+## 9. Context Files for AI Assistance
 
 Two files are maintained by the engine project and consumed by any AI assistant:
 
@@ -228,13 +251,14 @@ Two files are maintained by the engine project and consumed by any AI assistant:
 | `GAME_CONTEXT.md` | Developer (manually) | GDD summary, conventions, data formats, engine API |
 | `EDITOR_STATE.json` | Editor (automatically) | Current open scene, assets in use, active errors |
 
-When launching an AI CLI from the embedded terminal:
+The `EDITOR_STATE.json` writer is a **planned feature** of the editor (Phase A / Module 9).
+Until it is implemented, load `GAME_CONTEXT.md` manually:
 ```
-claude --context GAME_CONTEXT.md --context EDITOR_STATE.json
+claude --context GAME_CONTEXT.md
 ```
 
 ---
 
 **Created**: 2026-05-26
 **Author**: AkashicEnd Development Team
-**Status**: Planning — Phase 0
+**Status**: v1.0.0 shipped — Editor Phase A in progress

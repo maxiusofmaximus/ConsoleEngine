@@ -315,6 +315,68 @@ Landing screen shown when the editor opens. Shows at a glance:
 
 ---
 
+## Implementation Notes
+
+### Phase A: What Is Done (v1.0.0)
+
+**Scene management** — `MainViewModel` + `MainWindow.axaml`
+- `LoadProject(folder)` scans `*.scene.json` recursively; filters `bin/` and `obj/` to avoid duplicates
+- `CreateNewScene(folder)` generates `scene001.scene.json`, `scene002.scene.json`, etc.
+- `TrySave(entry)` serializes `SceneDocument` → JSON with `JsonSerializer`
+- `DuplicateScene()` copies file as `stem_copy.scene.json` (or `_copy2`, `_copy3`...)
+- `DeleteScene(entry)` shows inline `ShowConfirmDialog` (programmatic Avalonia `Window`, no external package)
+- `ReloadProject()` rescans disk and reselects the previously active scene
+
+**Text editor** — right panel in `MainWindow.axaml`
+- Title, Text Color (`ConsoleColor` enum), Art Color, PromptContinue checkbox, narration lines, ASCII art
+- Every property change calls `SyncAndPreview()` → `RebuildPreview()` for live center-panel preview
+- Preview width: 54 chars, bottom-anchored layout mirrors `ScenePlayer`
+
+**Play / Stop / Reload** — `MainViewModel.PlayScene()` / `StopScene()` / `ReloadProject()`
+- Play auto-saves unsaved changes, then launches `ConsoleEngine.SceneRunner.exe` (or `dotnet run` fallback)
+- Prefers Windows Terminal (`wt.exe`) with a named tab; falls back to `cmd.exe /k`
+- Stop calls `Process.Kill(entireProcessTree: true)`
+- Process exit event updates `CanPlay` / `CanStop` via `Dispatcher.UIThread.Post`
+
+**SceneRunner** — `src/ConsoleEngine.SceneRunner/Program.cs`
+- `SceneLoader.Load(path)` → `ScenePlayer.Play(scene)`
+- Copied into Editor output by MSBuild `AfterBuild` target in `ConsoleEngine.Editor.csproj`
+
+### Phase A: What Remains
+
+**Sprite import and ANSI preview (Module 5)**
+- Add `SpritePath` field wiring in `MainViewModel` / `SceneDocument`
+- Add a file-picker button in the right panel for selecting a PNG
+- Show the ANSI half-block preview in the center panel using `PixelArtRenderer.RenderRgb()`
+  — but the center panel is a `TextBlock`, so this requires either switching to a custom
+  `Control` or rendering the sprite as Unicode text into the preview string.
+- Recommended approach: add a `Canvas` layer over the `TextBlock` in the center panel;
+  render the sprite as a `TextBlock` with pre-built ANSI escape sequences.
+
+**Embedded AI terminal panel (Module 9)**
+- Embed a real terminal using WebView2 + xterm.js or `ConPTY` / `WinPTY`
+- Panel opens/closes with a toolbar button or keyboard shortcut
+- Launches `claude` (or user-configurable command) with `--context GAME_CONTEXT.md`
+- Writes `EDITOR_STATE.json` before launch: `{ "activeScene": "...", "projectPath": "..." }`
+- This is the highest-complexity Phase A item — plan carefully before starting.
+
+**Drag & drop scene reorder (Module 1)**
+- Avalonia `ListBox` does not natively support drag-reorder
+- Use `DragDrop.DoDragDrop` and `DragDrop.Drop` events, or the `Avalonia.Xaml.Interactions` package
+- `SceneFiles` is `ObservableCollection<SceneFileEntry>` — move items in place
+
+### SOLID Watchpoints for Remaining Work
+
+- **PixelArtRenderer dependency in Editor**: the Editor must not call `PixelArtRenderer.RenderPng()`
+  directly (it writes to the real console). Instead, create a `PixelArtRenderer.ToAnsiString()`
+  overload that returns a string — this keeps the editor panel a simple `TextBlock`.
+- **WebView2 in Editor**: wrap it behind `ITerminalPanel` (ISP) so the editor ViewModel
+  never sees the WebView2 type directly. This makes it swappable with xterm.js or a mock.
+- **EDITOR_STATE.json writer**: belongs in `MainViewModel` (it knows the state) — emit it
+  via a simple `File.WriteAllText` call. No need for a separate class yet (KISS).
+
+---
+
 **Created**: 2026-05-26
 **Author**: AkashicEnd Development Team
 **Status**: Phase A — in progress (scene mgmt, text editor, play/stop/reload done)
