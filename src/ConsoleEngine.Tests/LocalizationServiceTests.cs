@@ -103,8 +103,66 @@ public sealed class LocalizationServiceTests
     [Fact]
     public void CL_Get_ReturnsKeyWhenNotInitialised()
     {
-        // CL starts uninitialised; should return the raw key.
         string result = CL.Get("some.key.no.locale");
         Assert.Equal("some.key.no.locale", result);
+    }
+
+    [Fact]
+    public void Resolve_WithMultipleArgs_FormatsAllPlaceholders()
+    {
+        var svc = MakeService(extra: new Dictionary<string, string>
+        {
+            ["multi"] = "{0} and {1}",
+        });
+        Assert.Equal("Alpha and Beta", svc.Resolve("multi", "Alpha", "Beta"));
+    }
+
+    [Fact]
+    public void AvailableLanguages_ContainsLoadedLanguages()
+    {
+        var svc = MakeService();
+        var esTable = new LocalizationTable("es", new Dictionary<string, string>
+        {
+            ["greeting"] = "Hola",
+        });
+        svc.LoadTable(esTable);
+
+        Assert.Contains("en", svc.AvailableLanguages);
+        Assert.Contains("es", svc.AvailableLanguages);
+    }
+
+    [Fact]
+    public void SetLanguage_ValidLanguage_ChangesCurrentLanguage()
+    {
+        var svc = MakeService();
+        svc.LoadTable(new LocalizationTable("fr", new Dictionary<string, string>
+        {
+            ["greeting"] = "Bonjour",
+        }));
+        svc.SetLanguage("fr");
+        Assert.Equal("fr", svc.CurrentLanguage);
+        Assert.Equal("Bonjour", svc.Resolve("greeting"));
+    }
+
+    [Fact]
+    public void LoadTable_OverridesExistingTable_WhenSameLanguage()
+    {
+        var svc = MakeService();
+        svc.LoadTable(new LocalizationTable("en", new Dictionary<string, string>
+        {
+            ["greeting"] = "Hey",
+        }));
+        Assert.Equal("Hey", svc.Resolve("greeting"));
+    }
+
+    [Fact]
+    public void Resolve_MissingKeyInBothLanguages_ReturnsBracketedKey()
+    {
+        var svc = MakeService();
+        svc.LoadTable(new LocalizationTable("es", new Dictionary<string, string>()));
+        svc.SetLanguage("es");
+
+        string result = svc.Resolve("totally.missing");
+        Assert.Equal("[totally.missing]", result);
     }
 }
