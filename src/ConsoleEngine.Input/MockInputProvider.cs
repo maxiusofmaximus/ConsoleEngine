@@ -20,6 +20,7 @@ namespace ConsoleEngine.Input;
 public sealed class MockInputProvider : IInputProvider
 {
     private readonly Queue<ConsoleKeyInfo> _keys = new();
+    private readonly Queue<string> _lines = new();
 
     /// <summary>
     /// Enqueues a key press with no modifier keys.
@@ -30,8 +31,17 @@ public sealed class MockInputProvider : IInputProvider
     /// <summary>Enqueues a fully specified <see cref="ConsoleKeyInfo"/>.</summary>
     public void Enqueue(ConsoleKeyInfo key) => _keys.Enqueue(key);
 
-    /// <summary>Clears all pending keys.</summary>
-    public void Clear() => _keys.Clear();
+    /// <summary>
+    /// Enqueues a line of text to be returned by <see cref="ReadLine"/>.
+    /// </summary>
+    public void EnqueueLine(string line) => _lines.Enqueue(line);
+
+    /// <summary>Clears all pending keys and lines.</summary>
+    public void Clear()
+    {
+        _keys.Clear();
+        _lines.Clear();
+    }
 
     /// <inheritdoc/>
     /// <exception cref="InvalidOperationException">
@@ -52,8 +62,11 @@ public sealed class MockInputProvider : IInputProvider
     public bool KeyAvailable => _keys.Count > 0;
 
     /// <inheritdoc/>
-    /// <remarks>In mock mode, returns an empty string (simulates pressing Enter with no text).</remarks>
-    public string? ReadLine() => string.Empty;
+    /// <remarks>
+    /// Returns the next line enqueued via <see cref="EnqueueLine"/>.
+    /// Returns <see langword="null"/> when the queue is empty (simulates end-of-stream).
+    /// </remarks>
+    public string? ReadLine() => _lines.Count > 0 ? _lines.Dequeue() : null;
 
     /// <summary>Number of keys remaining in the queue.</summary>
     public int Remaining => _keys.Count;

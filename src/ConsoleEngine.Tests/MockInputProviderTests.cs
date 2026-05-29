@@ -90,10 +90,37 @@ public sealed class MockInputProviderTests
     }
 
     [Fact]
-    public void ReadLine_ReturnsEmptyString()
+    public void ReadLine_EmptyQueue_ReturnsNull()
     {
         var mock = new MockInputProvider();
-        Assert.Equal(string.Empty, mock.ReadLine());
+        Assert.Null(mock.ReadLine());
+    }
+
+    [Fact]
+    public void EnqueueLine_And_ReadLine_Dequeues()
+    {
+        var mock = new MockInputProvider();
+        mock.EnqueueLine("quit");
+        Assert.Equal("quit", mock.ReadLine());
+    }
+
+    [Fact]
+    public void EnqueueLine_PreservesOrder()
+    {
+        var mock = new MockInputProvider();
+        mock.EnqueueLine("north");
+        mock.EnqueueLine("quit");
+        Assert.Equal("north", mock.ReadLine());
+        Assert.Equal("quit",  mock.ReadLine());
+    }
+
+    [Fact]
+    public void Clear_AlsoClearsLines()
+    {
+        var mock = new MockInputProvider();
+        mock.EnqueueLine("north");
+        mock.Clear();
+        Assert.Null(mock.ReadLine());
     }
 
     [Fact]
@@ -116,6 +143,6 @@ public sealed class MockInputProviderTests
         Assert.True(provider.KeyAvailable);
         _ = provider.ReadKey();
         Assert.False(provider.KeyAvailable);
-        Assert.Equal(string.Empty, provider.ReadLine());
+        Assert.Null(provider.ReadLine());
     }
 }

@@ -85,18 +85,18 @@ public static class ExplorationPlayer
             }
 
             // Render
-            Render(location, state, options, message);
+            try { Render(location, state, options, message); } catch { }
             message = null;
 
             // Prompt
             AnimationEngine.ShowCursor();
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            AnimationEngine.DrawAt(0, Console.WindowHeight - 1, "  > ");
-            Console.ForegroundColor = ConsoleColor.White;
+            try { Console.ForegroundColor = ConsoleColor.DarkGray; } catch { }
+            try { AnimationEngine.DrawAt(0, Console.WindowHeight - 1, "  > "); } catch { }
+            try { Console.ForegroundColor = ConsoleColor.White; } catch { }
             try { Console.SetCursorPosition(4, Console.WindowHeight - 1); } catch { }
 
             string? raw = inputProvider is not null ? inputProvider.ReadLine() : Console.ReadLine();
-            Console.CursorVisible = false;
+            try { Console.CursorVisible = false; } catch { }
 
             string input = raw?.Trim().ToLowerInvariant() ?? string.Empty;
             if (string.IsNullOrEmpty(input)) continue;
