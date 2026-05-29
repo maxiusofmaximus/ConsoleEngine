@@ -142,7 +142,8 @@ public sealed class SceneLoaderTests : IDisposable
 
         SceneDefinition scene = SceneLoader.Load(path);
 
-        Assert.Equal(3, scene.AsciiArt.Length);
+        Assert.NotNull(scene.AsciiArt);
+        Assert.Equal(3, scene.AsciiArt!.Length);
         Assert.Equal("  /\\  ", scene.AsciiArt[0]);
     }
 
