@@ -117,4 +117,75 @@ public sealed class SceneLoaderTests : IDisposable
         Assert.Equal(ConsoleColor.DarkGreen, scene.ArtColor);
         Assert.Equal(ConsoleColor.Cyan, scene.TextColor);
     }
+
+    [Fact]
+    public void TryLoad_InvalidJson_ReturnsFalse()
+    {
+        string path = Write("bad.scene.json", "{ this is not valid json }");
+
+        bool result = SceneLoader.TryLoad(path, out SceneDefinition? scene);
+
+        Assert.False(result);
+        Assert.Null(scene);
+    }
+
+    [Fact]
+    public void Load_WithAsciiArt_PreservesLines()
+    {
+        string path = Write("art.scene.json", """
+            {
+              "schemaVersion": 1,
+              "title": "Art Scene",
+              "asciiArt": ["  /\\  ", " /  \\ ", "/    \\"]
+            }
+            """);
+
+        SceneDefinition scene = SceneLoader.Load(path);
+
+        Assert.Equal(3, scene.AsciiArt.Length);
+        Assert.Equal("  /\\  ", scene.AsciiArt[0]);
+    }
+
+    [Fact]
+    public void Load_WithSpritePath_PreservesPath()
+    {
+        string path = Write("sprite.scene.json", """
+            {
+              "schemaVersion": 1,
+              "spritePath": "characters/hero.png",
+              "spriteWidth": 32,
+              "spriteRows": 16
+            }
+            """);
+
+        SceneDefinition scene = SceneLoader.Load(path);
+
+        Assert.Equal("characters/hero.png", scene.SpritePath);
+        Assert.Equal(32, scene.SpriteWidth);
+        Assert.Equal(16, scene.SpriteRows);
+    }
+
+    [Fact]
+    public void Load_NullSpritePath_IsNull()
+    {
+        string path = Write("nosprite.scene.json", """
+            { "schemaVersion": 1, "spritePath": null }
+            """);
+
+        SceneDefinition scene = SceneLoader.Load(path);
+        Assert.Null(scene.SpritePath);
+    }
+
+    [Fact]
+    public void Load_ContinuePrompt_IsPreserved()
+    {
+        string path = Write("customprompt.scene.json", """
+            { "schemaVersion": 1, "promptContinue": true, "continuePrompt": ">> GO >>" }
+            """);
+
+        SceneDefinition scene = SceneLoader.Load(path);
+
+        Assert.True(scene.PromptContinue);
+        Assert.Equal(">> GO >>", scene.ContinuePrompt);
+    }
 }
