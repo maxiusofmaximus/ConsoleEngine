@@ -4,7 +4,7 @@
 
 ConsoleEngine is a reusable .NET 8 framework for building terminal/CLI games.
 It was extracted from **AkashicEnd** (tactical auto-battle RPG) and is now an
-independent library publishable on NuGet. Current version: **1.0.0**.
+independent library publishable on NuGet. Current version: **0.6.0**.
 
 AkashicEnd is the primary consumer and validation target. The engine knows
 nothing about AkashicEnd — all game logic lives in the game project.

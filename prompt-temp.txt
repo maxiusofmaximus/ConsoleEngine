@@ -1,0 +1,179 @@
+Realiza una investigación técnica, arquitectónica y estratégica profunda sobre motores gráficos y game engines modernos utilizando:
+- Context7
+- Web research
+- Documentación oficial
+- Changelogs
+- Roadmaps
+- Benchmarks reales
+- Casos de producción
+- Arquitecturas internas
+- Opiniones técnicas de desarrolladores experimentados
+
+OBJETIVO PRINCIPAL:
+No quiero solamente un reporte teórico.
+
+Quiero que la investigación termine convirtiéndose en:
+1. Un análisis práctico aplicable al proyecto actual
+2. Una auditoría arquitectónica comparativa
+3. Un plan de implementación real
+4. Una lista de errores potenciales que debemos evitar
+5. Un mapa de decisiones técnicas y estratégicas
+
+META FINAL:
+ side-by-side)                                                                                                                    │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 0.10.0   │ Nueva versión — Editor Phase C completo (health dashboard, asset map, animation debugger, stress test multilingüe)               │
+│ 📋       │                                                                                                                                  │
+├──────────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1.0.0 📋 │ + dotnet new consoleengine template instalable; AkashicEnd en paquetes publicados                                                │
+└──────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Las adiciones más importantes que no estaban en el roadmapEngine.Audio, ConsoleEngine.Input, CI con tests, Roslyn
+n oficial
+- Changelogs
+- Roadmaps
+- Benchmarks reales
+- Casos de producción
+- Arquitecturas internas
+- Opiniones técnicas de desarrolladores experimentados
+
+OBJETIVO PRINCIPAL:
+
+Analizar qué ideas, sistemas, patrones, arquitecturas y workflows de estos motores gráficos pueden implementarse o adaptarse dentro del proyecto actual.
+
+Motores obligatorios:
+- Unity 6.4
+- Unity 6.5
+- Unity 6.6
+- Unreal Engine 5.x
+
+- GameMaker
+
+También investiga motores o frameworks relacionados si aparecen durante la investigación.
+
+──────────────────────────────
+FASE 1 — INVESTIGACIÓN PROFUNDA
+──────────────────────────────
+
+Investiga para cada motor:
+
+ARQUITECTURA:
+- ECS
+- Data-oriented design
+- Runtime
+- Memory management
+- Rendering architecture
+- Scene systems
+- Asset pipeline
+- Event systems
+- Serialization
+- Dependency injection
+- Plugin systems
+- Tooling architecture
+- Build systems
+- Compilation pipeline
+- Modularidad
+- Testing infrastructure
+support
+
+WORKFLOW:
+- Team workflows
+- CI/CD
+- CLI workflows
+- Hot reload
+- Live editing
+- Debugging
+- Profiling
+- Editor extensibility
+- Tool development
+
+RIESGOS:
+───────────────
+
+Después de investigar, identifica:
+
+1. Qué hace MUY bien cada motor
+2. Qué decisiones arquitectónicas son inteligentes
+3. Qué sistemas están diseñados correctamente
+4. Qué patrones modernos vale la pena replicar
+5. Qué errores históricos cometieron
+e separation
+- Asset dependency systems
+- Plugin ecosystems
+- Tool-first development
+- CLI-first workflows
+- Runtime decoupling
+- Data pipelines
+
+──────────────────────────────
+FASE 3 — APLICACIÓN AL PROYECTO
+──────────────────────────────
+
+Quiero que tomes TODO lo investigado y lo conviertas en recomendaciones aplicables al proyecto.
+
+Analiza:
+1. Qué sistemas deberíamos implementar
+2. Qué arquitectura deberíamos adoptar
+3. Qué errores deberíamos evitar
+4. Qué decisiones pueden destruir la escalabilidad futura
+5. Qué partes del proyecto actual son débiles
+usó deuda técnica”
+- “Esto escala mal”
+- “Esto rompe determinismo”
+- “Esto es peligroso para multiplayer”
+- “Esto complica tooling”
+- “Esto dificulta testing”
+- “Esto afecta mantenibilidad”
+
+──────────────────────────────
+más
+- Qué evitar completamente
+- Qué sistemas construir primero
+- Qué dependencias evitar
+- Qué tooling interno crear
+- Qué arquitectura usar
+- Qué pipeline seguir
+- Qué principios mantener
+
+Genera:
+1. Roadmap arquitectónico
+2. Riesgos técnicos
+3. Riesgos de mantenimiento
+ling
+
+──────────────────────────────
+REGLAS IMPORTANTES
+──────────────────────────────
+
+- NO asumir
+- NO inventar
+- NO usar marketing como evidencia
+- Verificar todo con documentación y fuentes reales
+- Diferenciar claramente hechos vs especulación
+- Priorizar arquitectura real sobre popularidad
+- Priorizar mantenibilidad a largo plazo
+- Priorizar escalabilidad real
+- Priorizar tooling y automatización
+- Priorizar modularidad
+- Priorizar sistemas desacoplados
+
+──────────────────────────────
+ENTREGABLE FINAL
+──────────────────────────────
+
+s
+- Plan estratégico
+- Análisis de riesgos
+- Guía de implementación
+- Referencia de arquitectura futura
+
+El objetivo NO es admirar motores gráficos.
+
+El objetivo es aprender de ellos para:
+- evitar errores,
+- adoptar buenas decisiones,
+- mejorar la arquitectura,
+- diseñar mejores sistemas,
+- crear tooling sólido,
+- escalar correctamente,
+- y construir una base técnica mantenible a largo plazo. En conclusión, quiero que complementes los documentos /docs y el plan de implementación para las siguientes versiones (0.5.0+)

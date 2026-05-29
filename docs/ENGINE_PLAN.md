@@ -186,27 +186,27 @@ Until the API is stable, use direct project references or a local NuGet feed.
 
 ---
 
-## 7. Actual Module State (v0.5.0 — 2026-05-28)
+## 7. Actual Module State (v0.6.0 — 2026-05-29)
 
 The repository structure differs slightly from the target in §2 because some
 planned modules have not been created yet. Here is what actually exists:
 
 | Module | Status | Notes |
 |---|---|---|
-| `ConsoleEngine.Core` | ✅ Shipped | `ILocalizationService`, `EngineVersion`, interfaces |
+| `ConsoleEngine.Core` | ✅ Shipped | `ILocalizationService`, `IInputProvider`, `IScenePlayer`, `IAudioPlayer`, `FlagStore`, `EngineVersion` |
 | `ConsoleEngine.Rendering` | ✅ Shipped | `PixelArtRenderer` (PNG→▀), `AnimationEngine` |
 | `ConsoleEngine.Locale` | ✅ Shipped | `CL`, `CK`, `MarkdownLocalizationLoader`, `InMemoryLocalizationService` |
-| `ConsoleEngine.Scenes` | ✅ Shipped | `SceneDefinition`, `SceneLoader`, `ScenePlayer`, `DialoguePlayer`, `TransitionEngine` |
+| `ConsoleEngine.Scenes` | ✅ Shipped | `SceneDefinition`, `SceneLoader`, `ScenePlayer`, `DialogueLoader`, `DialoguePlayer`, `SceneSequencer`, `TransitionEngine` |
 | `ConsoleEngine.World` | ✅ Shipped | `WorldState`, `WorldMap`, `ExplorationPlayer`, `IExplorationAction` |
 | `ConsoleEngine.Config` | ✅ Shipped | `GameConfig`, `GameSettingsCatalog`, `GameSettingsCommands`, `ResolutionPreset` |
 | `ConsoleEngine.Persistence` | ✅ Shipped | `SaveRepository<T>`, `GameConfigRepository` |
+| `ConsoleEngine.Input` | ✅ Shipped | `ConsoleInputProvider`, `MockInputProvider` (early — planned for v0.9.0) |
 | `ConsoleEngine.SceneRunner` | ✅ Shipped | Standalone exe; takes `.scene.json`, calls `ScenePlayer.Play()` |
-| `ConsoleEngine.Editor` | 🔨 Phase A | Avalonia 12 editor — scene mgmt, text editor, play/stop/reload done |
+| `ConsoleEngine.Tests` | ✅ Shipped | 139 xUnit tests — all modules covered (early — planned for v0.8.0) |
+| `ConsoleEngine.Editor` | 🔨 Phase A | Avalonia 12 editor — scene mgmt, text editor, play/stop/reload/duplicate/delete done |
 | `ConsoleEngine.Animation` | ❌ Not created | Planned v0.7.0: `AnimationTimeline`, `VfxEngine`, keyframe system |
 | `ConsoleEngine.Launcher` | ❌ Not created | Planned v0.8.0: `OpenLauncher`, CLI arg parsing |
-| `ConsoleEngine.Audio` | ❌ Not created | Planned v0.8.0: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer` |
-| `ConsoleEngine.Input` | ❌ Not created | Planned v0.9.0: `IInputProvider`, `ConsoleInputProvider`, `KeyBinding` |
-| `ConsoleEngine.Tests` | ❌ Not created | Planned v0.8.0: suite xUnit para todos los módulos |
+| `ConsoleEngine.Audio` | ❌ Not created | Planned v0.8.0: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer` (interfaces exist in Core) |
 
 ---
 
@@ -217,35 +217,38 @@ planned modules have not been created yet. Here is what actually exists:
 - [x] `SceneLoader`, `WorldLoader` — carga desde disco con `TryLoad/Load`
 - [x] GitHub Actions CI (build + pack dry-run) y publish pipeline (`v*` tags)
 
-### v0.6.0 🔨 — Editor Phase A completo + fundamentos pendientes
-- [ ] `PixelArtRenderer.ToAnsiString()` — overload que devuelve string (no escribe en consola)
+### v0.6.0 🔨 — Editor Phase A + fundamentos (en progreso)
+- [x] `DialogueLoader` — patrón idéntico a `SceneLoader`
+- [x] `SceneSequencer` — encadena escenas; implementa `IScenePlayer`
+- [x] `FlagStore` — diccionario serializable `string → object`
+- [x] `IInputProvider` / `ConsoleInputProvider` / `MockInputProvider`
+- [x] `IAudioPlayer` / `NullAudioPlayer` (interfaces + stubs)
+- [x] `ConsoleEngine.Tests` (139 tests xUnit — todos los módulos)
+- [x] `CL.Get(key, fallback)` — overload para contextos sin locale inicializado
+- [x] Editor: Play lanza WT desacoplado (fix crash al usar botón Play)
+- [ ] `PixelArtRenderer.ToAnsiString()` — overload que devuelve string
 - [ ] Sprite import y ANSI preview en el editor (Module 5)
 - [ ] Drag & drop reorden de escenas (Module 1)
 - [ ] Panel de terminal embebido con WebView2 + xterm.js (Module 9)
 - [ ] `EDITOR_STATE.json` writer en `MainViewModel`
-- [ ] `DialogueLoader` — patrón idéntico a `SceneLoader`
-- [ ] `SceneSequencer` — encadena escenas; implementa `IScenePlayer`
-- [ ] `GAME_CONTEXT.md` — contexto de proyecto para asistentes AI
 - [ ] Roslyn Analyzers activados en `Directory.Build.props`
 - [ ] Validador de integridad en `MainViewModel.TrySave()`
 
-### v0.7.0 📋 — ConsoleEngine.Animation + FlagStore
+### v0.7.0 📋 — ConsoleEngine.Animation
 - [ ] Nuevo módulo `ConsoleEngine.Animation`: `AnimationTimeline`, `Keyframe`, `VfxEngine`, `AnimationPlayer`
 - [ ] `IAnimationEngine` conectado con `AnimationPlayer` en Core
-- [ ] `FlagStore` — diccionario serializable `string → bool/int/string`
 - [ ] `IExplorationAction.IsAvailable` extendido con `FlagStore`
 - [ ] Sample: VFX de muerte en DinoGame
 
-### v0.8.0 📋 — ConsoleEngine.Launcher + ConsoleEngine.Audio + Tests + CI
+### v0.8.0 📋 — ConsoleEngine.Launcher + ConsoleEngine.Audio + CI
 - [ ] Nuevo módulo `ConsoleEngine.Launcher`: `OpenLauncher`, `OpenGameArguments`, `RunOptionsLoop`, `IntroSceneBase`
-- [ ] Nuevo módulo `ConsoleEngine.Audio`: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer`
-- [ ] `ConsoleEngine.Tests` (xUnit): SceneLoader, WorldLoader, InMemoryLocalizationService, GameSettingsCatalog, SaveRepository, MarkdownLocalizationLoader
+- [ ] Nuevo módulo `ConsoleEngine.Audio`: implementación real `NAudioPlayer`
 - [ ] CI: `dotnet test` + build de samples + verificación de EngineVersion vs Directory.Build.props
 
-### v0.9.0 📋 — ConsoleEngine.Input + Editor Phase B
-- [ ] Nuevo módulo `ConsoleEngine.Input`: `IInputProvider`, `ConsoleInputProvider`, `KeyBinding`
+### v0.9.0 📋 — Editor Phase B
 - [ ] Editor: timeline de animación, node graph, narrative flow graph, asset panel drag & drop
 - [ ] Editor: editor de diálogos visual, visualizador de mapa de mundo, locale side-by-side
+- [ ] `KeyBinding` — remapeo de teclas en runtime
 
 ### v0.10.0 📋 — Editor Phase C
 - [ ] Health dashboard, asset dependency map, localisation workflow (auto-draft + status)
@@ -253,7 +256,7 @@ planned modules have not been created yet. Here is what actually exists:
 - [ ] Multilingual layout stress test, notas y comentarios por escena
 
 ### v1.0.0 📋 — API estable — NuGet Release
-- [ ] API freeze: sin cambios breaking
+- [ ] API freeze: sin cambios breaking en ningún módulo público
 - [ ] Todos los módulos publicados en NuGet.org
 - [ ] `AkashicEnd` consume paquetes publicados (sin project references)
 - [ ] `dotnet new consoleengine` — template instalable

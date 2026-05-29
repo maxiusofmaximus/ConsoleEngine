@@ -75,7 +75,7 @@ public static class ScenePlayer
         // ── Continue prompt ───────────────────────────────────────────────────
         if (scene.PromptContinue)
         {
-            string prompt = scene.ContinuePrompt ?? CL.Get(CK.Prompt.Continue);
+            string prompt = scene.ContinuePrompt ?? CL.Get(CK.Prompt.Continue, "[ PRESS ENTER TO CONTINUE ]");
             AnimationEngine.DrawAt(0, winH - 1, prompt, ConsoleColor.DarkGray);
             AnimationEngine.ShowCursor();
             if (input is not null) input.ReadLine();

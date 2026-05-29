@@ -63,6 +63,12 @@ public static class CL
     /// <summary>Returns the translated string for <paramref name="key"/>.</summary>
     public static string Get(string key) => _service?.Resolve(key) ?? key;
 
+    /// <summary>
+    /// Returns the translated string for <paramref name="key"/>, or
+    /// <paramref name="fallback"/> when the service is not initialised.
+    /// </summary>
+    public static string Get(string key, string fallback) => _service?.Resolve(key) ?? fallback;
+
     /// <summary>Returns the translated, formatted string for <paramref name="key"/>.</summary>
     public static string Get(string key, params object[] args) => _service?.Resolve(key, args) ?? key;
 

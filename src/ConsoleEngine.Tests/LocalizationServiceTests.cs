@@ -108,6 +108,13 @@ public sealed class LocalizationServiceTests
     }
 
     [Fact]
+    public void CL_Get_WithFallback_ReturnsFallbackWhenNotInitialised()
+    {
+        string result = CL.Get("some.missing.key", "[ PRESS ENTER TO CONTINUE ]");
+        Assert.Equal("[ PRESS ENTER TO CONTINUE ]", result);
+    }
+
+    [Fact]
     public void Resolve_WithMultipleArgs_FormatsAllPlaceholders()
     {
         var svc = MakeService(extra: new Dictionary<string, string>
