@@ -25,8 +25,9 @@ renderer.Loaded += () =>
     string[] candidates =
     [
         Path.Combine(AppContext.BaseDirectory, "logo.png"),
-        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "samples", "DinoGame", "GameData", "dino.png"),
+        // Repo assets — always present
         Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "assets", "icon.png"),
+        Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "assets", "icon.png"),
     ];
 
     foreach (string path in candidates)
