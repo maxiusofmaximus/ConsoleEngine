@@ -70,10 +70,45 @@ public sealed class SaveRepositoryTests : IDisposable
     {
         var repo = new SaveRepository<TestSave>(_tempDir, s => s.SlotId);
         repo.Save(new TestSave { SlotId = "old",  Chapter = 1 });
-        System.Threading.Thread.Sleep(10); // ensure different write times
+        System.Threading.Thread.Sleep(10);
         repo.Save(new TestSave { SlotId = "new",  Chapter = 5 });
 
         TestSave recent = repo.LoadMostRecent();
         Assert.Equal(5, recent.Chapter);
+    }
+
+    [Fact]
+    public void LoadMostRecent_SingleSave_ReturnsThatSave()
+    {
+        var repo = new SaveRepository<TestSave>(_tempDir, s => s.SlotId);
+        repo.Save(new TestSave { SlotId = "only", Chapter = 7 });
+
+        TestSave recent = repo.LoadMostRecent();
+        Assert.Equal(7, recent.Chapter);
+    }
+
+    [Fact]
+    public void LoadMostRecent_NoSaves_ThrowsInvalidOperationException()
+    {
+        var repo = new SaveRepository<TestSave>(_tempDir, s => s.SlotId);
+        Assert.Throws<InvalidOperationException>(() => repo.LoadMostRecent());
+    }
+
+    [Fact]
+    public void Save_OverwritesExistingSlot()
+    {
+        var repo = new SaveRepository<TestSave>(_tempDir, s => s.SlotId);
+        repo.Save(new TestSave { SlotId = "s1", Chapter = 1 });
+        repo.Save(new TestSave { SlotId = "s1", Chapter = 99 });
+
+        TestSave loaded = repo.Load("s1");
+        Assert.Equal(99, loaded.Chapter);
+    }
+
+    [Fact]
+    public void ListSlotIds_WhenEmpty_ReturnsNoIds()
+    {
+        var repo = new SaveRepository<TestSave>(_tempDir, s => s.SlotId);
+        Assert.Empty(repo.ListSlotIds());
     }
 }
