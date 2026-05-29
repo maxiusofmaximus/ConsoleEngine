@@ -167,4 +167,62 @@ public sealed class WorldLoaderTests : IDisposable
         LocationDefinition loc = map.Get("island");
         Assert.Empty(loc.Exits);
     }
+
+    [Fact]
+    public void AllLocations_ContainsAllLoadedLocations()
+    {
+        string path = Write("multi.world.json", """
+            {
+              "schemaVersion": 1,
+              "locations": [
+                { "id": "a", "name": "Alpha" },
+                { "id": "b", "name": "Beta"  },
+                { "id": "c", "name": "Gamma" }
+              ]
+            }
+            """);
+
+        WorldMap map = WorldLoader.Load(path);
+        var ids = map.AllLocations.Select(l => l.Id).ToHashSet();
+
+        Assert.Contains("a", ids);
+        Assert.Contains("b", ids);
+        Assert.Contains("c", ids);
+        Assert.Equal(3, map.AllLocations.Count);
+    }
+
+    [Fact]
+    public void TryGet_ExistingLocation_ReturnsTrueAndDefinition()
+    {
+        string path = Write("tryget.world.json", """
+            {
+              "schemaVersion": 1,
+              "locations": [{ "id": "home", "name": "Home" }]
+            }
+            """);
+
+        WorldMap map = WorldLoader.Load(path);
+        bool found = map.TryGet("home", out LocationDefinition? loc);
+
+        Assert.True(found);
+        Assert.NotNull(loc);
+        Assert.Equal("Home", loc!.Name);
+    }
+
+    [Fact]
+    public void TryGet_MissingLocation_ReturnsFalse()
+    {
+        string path = Write("tryget2.world.json", """
+            {
+              "schemaVersion": 1,
+              "locations": [{ "id": "home", "name": "Home" }]
+            }
+            """);
+
+        WorldMap map = WorldLoader.Load(path);
+        bool found = map.TryGet("nowhere", out LocationDefinition? loc);
+
+        Assert.False(found);
+        Assert.Null(loc);
+    }
 }
