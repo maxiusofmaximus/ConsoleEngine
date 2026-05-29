@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Animation timeline, VFX, and keyframe playback for ConsoleEngine.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Rendering\ConsoleEngine.Rendering.csproj" />
+  </ItemGroup>
+
+</Project>

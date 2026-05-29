@@ -99,20 +99,76 @@ public static class PixelArtRenderer
         RenderCore(pixels, solid, col, row);
     }
 
+    // ── Public ANSI string API ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Loads a PNG and returns a multi-line ANSI truecolor string using ▀ half-block encoding.
+    /// The string can be stored, sent over the network, or written to any output stream.
+    /// Returns <see langword="null"/> if the file cannot be loaded.
+    /// </summary>
+    public static string? ToAnsiString(string path)
+    {
+        if (string.IsNullOrEmpty(path) || !File.Exists(path)) return null;
+        try
+        {
+            using var bmp = new System.Drawing.Bitmap(path);
+            int w = bmp.Width, h = bmp.Height;
+            var pix   = new Rgb[h, w];
+            var solid = new bool[h, w];
+            for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++)
+            {
+                var c = bmp.GetPixel(x, y);
+                pix[y, x]   = new Rgb(c.R, c.G, c.B);
+                solid[y, x] = c.A >= 128;
+            }
+            return BuildAnsiString(pix, solid);
+        }
+        catch { return null; }
+    }
+
+    /// <summary>
+    /// Converts a pre-built RGB pixel grid to a multi-line ANSI truecolor string.
+    /// Pixels equal to <paramref name="transparent"/> are rendered as spaces.
+    /// </summary>
+    public static string ToAnsiString(Rgb[,] pixels, Rgb transparent = default)
+    {
+        int h = pixels.GetLength(0), w = pixels.GetLength(1);
+        var solid = new bool[h, w];
+        for (int y = 0; y < h; y++)
+        for (int x = 0; x < w; x++)
+            solid[y, x] = pixels[y, x] != transparent;
+        return BuildAnsiString(pixels, solid);
+    }
+
     // ── Core ─────────────────────────────────────────────────────────────────
 
     private static void RenderCore(Rgb[,] pixels, bool[,] solid, int col, int row)
     {
+        string[] rows = BuildAnsiRows(pixels, solid);
+        for (int i = 0; i < rows.Length; i++)
+        {
+            int termRow = row + i;
+            if (termRow >= Console.WindowHeight) break;
+            Console.SetCursorPosition(Math.Max(0, col), termRow);
+            Console.Write(rows[i]);
+        }
+        Console.Write("\x1b[0m");
+    }
+
+    private static string BuildAnsiString(Rgb[,] pixels, bool[,] solid)
+        => string.Join(Environment.NewLine, BuildAnsiRows(pixels, solid));
+
+    private static string[] BuildAnsiRows(Rgb[,] pixels, bool[,] solid)
+    {
         int h = pixels.GetLength(0), w = pixels.GetLength(1);
-        var sb = new StringBuilder(w * 28);
+        int termRows = (h + 1) / 2;
+        var result   = new string[termRows];
+        var sb       = new StringBuilder(w * 28);
 
         for (int y = 0; y < h; y += 2)
         {
-            int termRow = row + y / 2;
-            if (termRow >= Console.WindowHeight) break;
-            Console.SetCursorPosition(Math.Max(0, col), termRow);
             sb.Clear();
-
             for (int x = 0; x < w; x++)
             {
                 bool topOk = solid[y, x];
@@ -127,12 +183,11 @@ public static class PixelArtRenderer
                 else if (topOk)          sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[49m▀"));
                 else                     sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{bot.R};{bot.G};{bot.B}m\x1b[49m▄"));
             }
-
             sb.Append("\x1b[0m");
-            Console.Write(sb.ToString());
+            result[y / 2] = sb.ToString();
         }
 
-        Console.Write("\x1b[0m");
+        return result;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

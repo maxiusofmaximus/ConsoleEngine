@@ -139,10 +139,10 @@ public sealed class MockInputProviderTests
         var mock = new MockInputProvider();
         mock.Enqueue(ConsoleKey.Enter);
 
-        IInputProvider provider = mock;
-        Assert.True(provider.KeyAvailable);
-        _ = provider.ReadKey();
-        Assert.False(provider.KeyAvailable);
-        Assert.Null(provider.ReadLine());
+        Assert.IsAssignableFrom<IInputProvider>(mock);
+        Assert.True(mock.KeyAvailable);
+        _ = mock.ReadKey();
+        Assert.False(mock.KeyAvailable);
+        Assert.Null(mock.ReadLine());
     }
 }

@@ -106,13 +106,13 @@ public sealed class NativeRenderer : IGameRenderer
     }
 
     public void DrawSprite(
-        TextureHandle handle,
+        TextureHandle texture,
         Vector2 position,
         Vector2 size,
         float   rotation = 0f,
         Vector4 tint     = default)
     {
-        if (!handle.IsValid || !_textures.TryGetValue(handle.Id, out var tex)) return;
+        if (!texture.IsValid || !_textures.TryGetValue(texture.Id, out var tex)) return;
         _batch!.DrawSprite(tex, _projection, position, size, rotation, tint);
     }
 

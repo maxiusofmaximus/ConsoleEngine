@@ -204,7 +204,7 @@ planned modules have not been created yet. Here is what actually exists:
 | `ConsoleEngine.SceneRunner` | ✅ Shipped | Standalone exe; takes `.scene.json`, calls `ScenePlayer.Play()` |
 | `ConsoleEngine.Tests` | ✅ Shipped | 139 xUnit tests — all modules covered (early — planned for v0.8.0) |
 | `ConsoleEngine.Editor` | 🔨 Phase A | Avalonia 12 editor — scene mgmt, text editor, play/stop/reload/duplicate/delete done |
-| `ConsoleEngine.Animation` | ❌ Not created | Planned v0.7.0: `AnimationTimeline`, `VfxEngine`, keyframe system |
+| `ConsoleEngine.Animation` | ✅ Shipped | `Keyframe`, `AnimationTimeline`, `AnimationTimelineLoader`, `AnimationPlayer`, `VfxEngine`, `TerminalAnimationEngine` |
 | `ConsoleEngine.Launcher` | ❌ Not created | Planned v0.8.0: `OpenLauncher`, CLI arg parsing |
 | `ConsoleEngine.Audio` | ❌ Not created | Planned v0.8.0: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer` (interfaces exist in Core) |
 
@@ -234,11 +234,13 @@ planned modules have not been created yet. Here is what actually exists:
 - [ ] Roslyn Analyzers activados en `Directory.Build.props`
 - [ ] Validador de integridad en `MainViewModel.TrySave()`
 
-### v0.7.0 📋 — ConsoleEngine.Animation
-- [ ] Nuevo módulo `ConsoleEngine.Animation`: `AnimationTimeline`, `Keyframe`, `VfxEngine`, `AnimationPlayer`
-- [ ] `IAnimationEngine` conectado con `AnimationPlayer` en Core
+### v0.7.0 🔨 — ConsoleEngine.Animation (en progreso)
+- [x] Nuevo módulo `ConsoleEngine.Animation`: `AnimationTimeline`, `Keyframe`, `AnimationTimelineLoader`, `AnimationPlayer`, `VfxEngine`
+- [x] `IAnimationEngine` en Core — implementado por `TerminalAnimationEngine`
+- [x] `PixelArtRenderer.ToAnsiString()` — ADR-003 completado (devuelve ANSI string sin escribir a consola)
 - [ ] `IExplorationAction.IsAvailable` extendido con `FlagStore`
 - [ ] Sample: VFX de muerte en DinoGame
+- [ ] Tests para `ConsoleEngine.Animation` (AnimationPlayer, VfxEngine, TerminalAnimationEngine)
 
 ### v0.8.0 📋 — ConsoleEngine.Launcher + ConsoleEngine.Audio + CI
 - [ ] Nuevo módulo `ConsoleEngine.Launcher`: `OpenLauncher`, `OpenGameArguments`, `RunOptionsLoop`, `IntroSceneBase`
