@@ -125,7 +125,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
             ? $"\"{SceneRunnerExe}\" \"{scene}\""
             : $"dotnet run --project \"{SceneRunnerProject}\" -- \"{scene}\"";
 
-        // Try Windows Terminal first, fall back to cmd.exe
+        // Detect Windows Terminal (AppExecutionAlias stub — must NOT be launched directly
+        // from inside a WT session, as that can close the host tab and kill the editor).
+        // We route through "cmd.exe /c start" so the new process is fully detached.
         string wtExe = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Microsoft", "WindowsApps", "wt.exe");
@@ -133,16 +135,17 @@ public sealed class MainViewModel : INotifyPropertyChanged
         ProcessStartInfo psi;
         if (File.Exists(wtExe))
         {
-            // Windows Terminal: new tab titled "Scene Preview"
-            psi = new ProcessStartInfo(wtExe,
-                $"new-tab --title \"Scene Preview\" -- cmd.exe /k {runnerCmd}")
+            // cmd.exe /c start launches wt.exe detached — no parent-process link to the editor.
+            psi = new ProcessStartInfo("cmd.exe",
+                $"/c start \"\" \"{wtExe}\" new-tab --title \"Scene Preview\" -- cmd.exe /k {runnerCmd}")
             {
-                UseShellExecute = true,
+                UseShellExecute = false,
+                CreateNoWindow  = true,
             };
         }
         else
         {
-            // cmd.exe fallback — /k keeps the window open after runner exits
+            // /k keeps the window open after the runner exits so the user can read output.
             psi = new ProcessStartInfo("cmd.exe", $"/k {runnerCmd}")
             {
                 UseShellExecute = true,
@@ -151,12 +154,23 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         try
         {
-            _playProcess = Process.Start(psi);
+            Process? launched = Process.Start(psi);
 
-            if (_playProcess != null)
+            if (File.Exists(wtExe))
             {
-                _playProcess.EnableRaisingEvents = true;
-                _playProcess.Exited += OnPlayProcessExited;
+                // WT stub exits in milliseconds — don't track it; Stop is not available.
+                launched?.Dispose();
+                _playProcess = null;
+            }
+            else
+            {
+                // Real cmd.exe process — track it so Stop works.
+                _playProcess = launched;
+                if (_playProcess != null)
+                {
+                    _playProcess.EnableRaisingEvents = true;
+                    _playProcess.Exited += OnPlayProcessExited;
+                }
             }
 
             NotifyPlayState();
