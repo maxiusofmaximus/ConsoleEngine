@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>ConsoleEngine.Rendering.Native</PackageId>
+    <Description>Native window renderer for ConsoleEngine — OpenGL via Silk.NET, GPU-accelerated 2D sprites.</Description>
+    <PackageTags>$(PackageTags);opengl;silk.net;2d;renderer;native;window</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Silk.NET: windowing, OpenGL, input — all via the meta-package for consistency -->
+    <PackageReference Include="Silk.NET"      Version="2.*" />
+    <!-- StbImageSharp: pure-C# PNG/JPEG loader, no native GDI+ dependency -->
+    <PackageReference Include="StbImageSharp" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+  </ItemGroup>
+
+</Project>
