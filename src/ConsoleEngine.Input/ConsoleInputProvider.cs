@@ -4,7 +4,7 @@ namespace ConsoleEngine.Input;
 
 /// <summary>
 /// Production implementation of <see cref="IInputProvider"/> that wraps
-/// <see cref="Console.ReadKey"/> directly.
+/// <see cref="Console.ReadKey()"/> directly.
 /// </summary>
 public sealed class ConsoleInputProvider : IInputProvider
 {

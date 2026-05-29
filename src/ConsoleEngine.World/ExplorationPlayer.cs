@@ -56,7 +56,7 @@ public static class ExplorationPlayer
     /// <param name="map">The world graph.</param>
     /// <param name="state">Current world state (mutated in-place as the player moves).</param>
     /// <param name="options">Display and behaviour options. <c>null</c> uses all defaults.</param>
-    /// <param name="input">
+    /// <param name="inputProvider">
     /// Input provider for reading player commands.
     /// <see langword="null"/> falls back to <see cref="Console.ReadLine"/>.
     /// </param>

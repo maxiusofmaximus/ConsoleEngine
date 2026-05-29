@@ -101,4 +101,54 @@ public sealed class ScenePlayerTests
         string result = ScenePlayer.RenderToString(scene);
         Assert.Contains("hero.png", result);
     }
+
+    [Fact]
+    public void RenderToString_EmptyTitle_DoesNotCrash()
+    {
+        var scene = new SceneDefinition
+        {
+            Title = string.Empty,
+            Lines = ["Some line."],
+        };
+        string result = ScenePlayer.RenderToString(scene);
+        Assert.Contains("Some line.", result);
+    }
+
+    [Fact]
+    public void RenderToString_EmptyAsciiArt_DoesNotCrash()
+    {
+        var scene = new SceneDefinition
+        {
+            Lines    = ["text"],
+            AsciiArt = [],
+        };
+        string result = ScenePlayer.RenderToString(scene);
+        Assert.Contains("text", result);
+    }
+
+    [Fact]
+    public void RenderToString_ContinuePromptNull_DoesNotIncludeNull()
+    {
+        var scene = new SceneDefinition
+        {
+            Lines          = [],
+            PromptContinue = true,
+            ContinuePrompt = null,
+        };
+        string result = ScenePlayer.RenderToString(scene);
+        Assert.DoesNotContain("null", result, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void RenderToString_MultipleLines_AllPresent()
+    {
+        var scene = new SceneDefinition
+        {
+            Lines = ["Alpha", "Beta", "Gamma"],
+        };
+        string result = ScenePlayer.RenderToString(scene);
+        Assert.Contains("Alpha", result);
+        Assert.Contains("Beta",  result);
+        Assert.Contains("Gamma", result);
+    }
 }

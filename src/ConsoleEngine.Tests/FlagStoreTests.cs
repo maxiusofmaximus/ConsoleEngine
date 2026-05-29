@@ -109,4 +109,62 @@ public sealed class FlagStoreTests
         Assert.False(found);
         Assert.Equal(0, val);
     }
+
+    [Fact]
+    public void Set_OverwritesExistingKey()
+    {
+        var store = new FlagStore();
+        store.Set("score", 10);
+        store.Set("score", 99);
+        Assert.Equal(99, store.Get<int>("score"));
+    }
+
+    [Fact]
+    public void Keys_ContainsAllSetKeys()
+    {
+        var store = new FlagStore();
+        store.Set("a", 1);
+        store.Set("b", 2);
+        store.Set("c", 3);
+        Assert.Contains("a", store.Keys);
+        Assert.Contains("b", store.Keys);
+        Assert.Contains("c", store.Keys);
+        Assert.Equal(3, store.Keys.Count);
+    }
+
+    [Fact]
+    public void Remove_MissingKey_ReturnsFalse()
+    {
+        var store = new FlagStore();
+        Assert.False(store.Remove("nonexistent"));
+    }
+
+    [Fact]
+    public void Get_WrongType_ReturnsDefault()
+    {
+        var store = new FlagStore();
+        store.Set("name", "Ari");
+        int result = store.Get<int>("name");
+        Assert.Equal(0, result);
+    }
+
+    [Fact]
+    public void Count_TracksEntries()
+    {
+        var store = new FlagStore();
+        Assert.Equal(0, store.Count);
+        store.Set("x", 1);
+        Assert.Equal(1, store.Count);
+        store.Set("y", 2);
+        Assert.Equal(2, store.Count);
+        store.Remove("x");
+        Assert.Equal(1, store.Count);
+    }
+
+    [Fact]
+    public void FromJson_EmptyObject_ReturnsEmptyStore()
+    {
+        FlagStore store = FlagStore.FromJson("{}");
+        Assert.Equal(0, store.Count);
+    }
 }
