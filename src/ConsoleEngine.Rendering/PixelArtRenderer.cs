@@ -123,9 +123,9 @@ public static class PixelArtRenderer
                 Rgb top = topOk ? pixels[y,     x] : default;
                 Rgb bot = botOk ? pixels[y + 1, x] : default;
 
-                if      (topOk && botOk) sb.Append($"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[48;2;{bot.R};{bot.G};{bot.B}m▀");
-                else if (topOk)          sb.Append($"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[49m▀");
-                else                     sb.Append($"\x1b[38;2;{bot.R};{bot.G};{bot.B}m\x1b[49m▄");
+                if      (topOk && botOk) sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[48;2;{bot.R};{bot.G};{bot.B}m▀"));
+                else if (topOk)          sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[49m▀"));
+                else                     sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{bot.R};{bot.G};{bot.B}m\x1b[49m▄"));
             }
 
             sb.Append("\x1b[0m");

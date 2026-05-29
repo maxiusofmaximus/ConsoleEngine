@@ -1,5 +1,6 @@
 namespace ConsoleEngine.Scenes;
 
+using ConsoleEngine.Core;
 using ConsoleEngine.Locale;
 using ConsoleEngine.Rendering;
 
@@ -26,7 +27,12 @@ public static class DialoguePlayer
     /// Renders <paramref name="dialogue"/> and blocks until the player presses Enter
     /// (or returns immediately if <see cref="DialogueDefinition.PromptContinue"/> is <c>false</c>).
     /// </summary>
-    public static void Play(DialogueDefinition dialogue)
+    /// <param name="dialogue">Dialogue to render.</param>
+    /// <param name="input">
+    /// Input provider used for the continue prompt.
+    /// <see langword="null"/> falls back to <see cref="Console.ReadLine"/>.
+    /// </param>
+    public static void Play(DialogueDefinition dialogue, IInputProvider? input = null)
     {
         Console.Clear();
         AnimationEngine.HideCursor();
@@ -84,7 +90,8 @@ public static class DialoguePlayer
             string prompt = CL.Get(CK.Prompt.Continue);
             AnimationEngine.DrawAt(0, winH - 1, prompt, ConsoleColor.DarkGray);
             AnimationEngine.ShowCursor();
-            Console.ReadLine();
+            if (input is not null) input.ReadLine();
+            else Console.ReadLine();
         }
         else
         {

@@ -57,6 +57,12 @@ public static class WorldLoader
         WorldDto? dto = JsonSerializer.Deserialize<WorldDto>(json, Options)
                         ?? throw new InvalidDataException($"World file parsed as null: '{jsonPath}'.");
 
+        int version = dto.SchemaVersion ?? 0; // 0 = pre-schemaVersion legacy files
+        if (version > CurrentSchemaVersion)
+            throw new InvalidDataException(
+                $"World file '{jsonPath}' uses schema version {version}, but this engine only supports up to {CurrentSchemaVersion}. " +
+                "Update ConsoleEngine to load this file.");
+
         if (dto.Locations is not { Length: > 0 })
             throw new InvalidDataException($"World file contains no locations: '{jsonPath}'.");
 
@@ -72,10 +78,16 @@ public static class WorldLoader
         catch { map = null;           return false; }
     }
 
+    /// <summary>Current schema version written to new files.</summary>
+    public const int CurrentSchemaVersion = 1;
+
     // ── Internal DTOs ─────────────────────────────────────────────────────
 
     private sealed class WorldDto
     {
+        [JsonPropertyName("schemaVersion")]
+        public int? SchemaVersion { get; init; }
+
         [JsonPropertyName("locations")]
         public LocationDto[]? Locations { get; init; }
     }

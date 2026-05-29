@@ -103,7 +103,7 @@ public static class CK
 
     // ── Errors ───────────────────────────────────────────────────────────────
 
-    public static class Error
+    public static class Errors
     {
         public const string GameDataNotFound = "cli.error.gamedata_not_found"; // {0} = path
         public const string ContinueFailed   = "cli.error.continue_failed";   // {0} = message

@@ -23,7 +23,7 @@ namespace ConsoleEngine.Locale;
 /// <remarks>Named <c>CL</c> for brevity at call sites.</remarks>
 public static class CL
 {
-    private static ILocalizationService? _service;
+    private static InMemoryLocalizationService? _service;
 
     /// <summary>
     /// Loads locale tables from <c>{gameDataRoot}/locale/</c> and activates the
@@ -61,10 +61,10 @@ public static class CL
     }
 
     /// <summary>Returns the translated string for <paramref name="key"/>.</summary>
-    public static string Get(string key) => _service?.Get(key) ?? key;
+    public static string Get(string key) => _service?.Resolve(key) ?? key;
 
     /// <summary>Returns the translated, formatted string for <paramref name="key"/>.</summary>
-    public static string Get(string key, params object[] args) => _service?.Get(key, args) ?? key;
+    public static string Get(string key, params object[] args) => _service?.Resolve(key, args) ?? key;
 
     /// <summary>Current active language code, or <c>"en"</c> if not initialised.</summary>
     public static string CurrentLanguage => _service?.CurrentLanguage ?? "en";

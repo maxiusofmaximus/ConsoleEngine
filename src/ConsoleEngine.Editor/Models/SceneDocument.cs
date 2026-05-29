@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using ConsoleEngine.Scenes;
 
 namespace ConsoleEngine.Editor.Models;
 
@@ -9,6 +10,9 @@ namespace ConsoleEngine.Editor.Models;
 /// </summary>
 public sealed class SceneDocument
 {
+    [JsonPropertyName("schemaVersion")]
+    public int SchemaVersion { get; set; } = 1;
+
     [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
 
@@ -30,6 +34,19 @@ public sealed class SceneDocument
     [JsonPropertyName("promptContinue")]
     public bool PromptContinue { get; set; } = true;
 
+    // ── Conversion ───────────────────────────────────────────────────────
+    /// <summary>Converts this document to a <see cref="SceneDefinition"/> for runtime rendering.</summary>
+    public SceneDefinition ToDefinition() => new()
+    {
+        Title          = Title,
+        Lines          = Lines,
+        AsciiArt       = AsciiArt,
+        ArtColor       = ParseColor(ArtColor,  ConsoleColor.DarkGray),
+        TextColor      = ParseColor(TextColor, ConsoleColor.Gray),
+        SpritePath     = SpritePath,
+        PromptContinue = PromptContinue,
+    };
+
     // ── Factory ──────────────────────────────────────────────────────────
     public static SceneDocument Empty() => new()
     {
@@ -40,4 +57,7 @@ public sealed class SceneDocument
         TextColor = "Gray",
         PromptContinue = true,
     };
+
+    private static ConsoleColor ParseColor(string? name, ConsoleColor fallback) =>
+        name is not null && Enum.TryParse(name, ignoreCase: true, out ConsoleColor c) ? c : fallback;
 }

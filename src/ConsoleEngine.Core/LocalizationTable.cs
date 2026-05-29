@@ -11,6 +11,8 @@ public sealed class LocalizationTable
 {
     private readonly Dictionary<string, string> _entries;
 
+    /// <param name="languageCode">ISO language code (e.g. <c>"en"</c>, <c>"es"</c>).</param>
+    /// <param name="entries">Key-value pairs for this language. Null values are stored as empty strings.</param>
     public LocalizationTable(string languageCode, IReadOnlyDictionary<string, string> entries)
     {
         if (string.IsNullOrWhiteSpace(languageCode))

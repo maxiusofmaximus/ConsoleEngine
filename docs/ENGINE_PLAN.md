@@ -171,22 +171,22 @@ Target: publish `ConsoleEngine.*` packages to NuGet or a private feed.
 
 ```xml
 <!-- AkashicEnd.Launcher.csproj -->
-<PackageReference Include="ConsoleEngine.Core"       Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Rendering"  Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Locale"     Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Scenes"     Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Animation"  Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.World"      Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Config"     Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Persistence" Version="1.0.*" />
-<PackageReference Include="ConsoleEngine.Launcher"   Version="1.0.*" />
+<PackageReference Include="ConsoleEngine.Core"       Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Rendering"  Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Locale"     Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Scenes"     Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Animation"  Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.World"      Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Config"     Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Persistence" Version="0.5.*" />
+<PackageReference Include="ConsoleEngine.Launcher"   Version="0.5.*" />
 ```
 
 Until the API is stable, use direct project references or a local NuGet feed.
 
 ---
 
-## 7. Actual Module State (v1.0.0 — 2026-05-28)
+## 7. Actual Module State (v0.5.0 — 2026-05-28)
 
 The repository structure differs slightly from the target in §2 because some
 planned modules have not been created yet. Here is what actually exists:
@@ -202,43 +202,82 @@ planned modules have not been created yet. Here is what actually exists:
 | `ConsoleEngine.Persistence` | ✅ Shipped | `SaveRepository<T>`, `GameConfigRepository` |
 | `ConsoleEngine.SceneRunner` | ✅ Shipped | Standalone exe; takes `.scene.json`, calls `ScenePlayer.Play()` |
 | `ConsoleEngine.Editor` | 🔨 Phase A | Avalonia 12 editor — scene mgmt, text editor, play/stop/reload done |
-| `ConsoleEngine.Animation` | ❌ Not created | Planned: `AnimationTimeline`, `VfxEngine`, keyframe system |
-| `ConsoleEngine.Launcher` | ❌ Not created | Planned: `OpenLauncher`, CLI arg parsing |
+| `ConsoleEngine.Animation` | ❌ Not created | Planned v0.7.0: `AnimationTimeline`, `VfxEngine`, keyframe system |
+| `ConsoleEngine.Launcher` | ❌ Not created | Planned v0.8.0: `OpenLauncher`, CLI arg parsing |
+| `ConsoleEngine.Audio` | ❌ Not created | Planned v0.8.0: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer` |
+| `ConsoleEngine.Input` | ❌ Not created | Planned v0.9.0: `IInputProvider`, `ConsoleInputProvider`, `KeyBinding` |
+| `ConsoleEngine.Tests` | ❌ Not created | Planned v0.8.0: suite xUnit para todos los módulos |
 
 ---
 
 ## 8. Roadmap
 
-### Phase 0 — Plan
-- [x] Define engine vs game boundaries
-- [x] Document architecture
-- [x] Create `ENGINE_PLAN.md`, `EDITOR_PLAN.md`, `MIGRATION_PLAN.md`
+### v0.5.0 ✅ — NuGet + loaders (shipped)
+- [x] NuGet packaging centralizado (`Directory.Build.props`)
+- [x] `SceneLoader`, `WorldLoader` — carga desde disco con `TryLoad/Load`
+- [x] GitHub Actions CI (build + pack dry-run) y publish pipeline (`v*` tags)
 
-### Phase 1 — Extract
-- [x] Create `ConsoleEngine.sln`
-- [x] Move each subsystem to its `ConsoleEngine.*` project
-- [x] AkashicEnd verified to build and run after extraction
+### v0.6.0 🔨 — Editor Phase A completo + fundamentos pendientes
+- [ ] `PixelArtRenderer.ToAnsiString()` — overload que devuelve string (no escribe en consola)
+- [ ] Sprite import y ANSI preview en el editor (Module 5)
+- [ ] Drag & drop reorden de escenas (Module 1)
+- [ ] Panel de terminal embebido con WebView2 + xterm.js (Module 9)
+- [ ] `EDITOR_STATE.json` writer en `MainViewModel`
+- [ ] `DialogueLoader` — patrón idéntico a `SceneLoader`
+- [ ] `SceneSequencer` — encadena escenas; implementa `IScenePlayer`
+- [ ] `GAME_CONTEXT.md` — contexto de proyecto para asistentes AI
+- [ ] Roslyn Analyzers activados en `Directory.Build.props`
+- [ ] Validador de integridad en `MainViewModel.TrySave()`
 
-### Phase 2 — Stabilise API
-- [x] Public interfaces defined for all shipped modules
-- [x] XML doc comments on all public API surface
-- [x] Semantic versioning: `EngineVersion` constant, NuGet tags `v*`
-- [ ] Engine-level unit tests (independent of AkashicEnd content)
+### v0.7.0 📋 — ConsoleEngine.Animation + FlagStore
+- [ ] Nuevo módulo `ConsoleEngine.Animation`: `AnimationTimeline`, `Keyframe`, `VfxEngine`, `AnimationPlayer`
+- [ ] `IAnimationEngine` conectado con `AnimationPlayer` en Core
+- [ ] `FlagStore` — diccionario serializable `string → bool/int/string`
+- [ ] `IExplorationAction.IsAvailable` extendido con `FlagStore`
+- [ ] Sample: VFX de muerte en DinoGame
 
-### Phase 3 — Editor
-- [x] `ConsoleEngine.Editor` Avalonia app scaffolded
-- [x] Scene management (create, list, duplicate, delete, save, reload)
-- [x] Text editor with live terminal preview
-- [x] Play / Stop modes via `ConsoleEngine.SceneRunner.exe`
-- [ ] Sprite import and ANSI preview (Phase A remaining)
-- [ ] Embedded AI terminal panel (Phase A remaining)
-- [ ] Full Phase B–D features — see `EDITOR_PLAN.md`
+### v0.8.0 📋 — ConsoleEngine.Launcher + ConsoleEngine.Audio + Tests + CI
+- [ ] Nuevo módulo `ConsoleEngine.Launcher`: `OpenLauncher`, `OpenGameArguments`, `RunOptionsLoop`, `IntroSceneBase`
+- [ ] Nuevo módulo `ConsoleEngine.Audio`: `IAudioPlayer`, `NullAudioPlayer`, `NAudioPlayer`
+- [ ] `ConsoleEngine.Tests` (xUnit): SceneLoader, WorldLoader, InMemoryLocalizationService, GameSettingsCatalog, SaveRepository, MarkdownLocalizationLoader
+- [ ] CI: `dotnet test` + build de samples + verificación de EngineVersion vs Directory.Build.props
 
-### Phase 4 — Publish
-- [x] NuGet workflow (`nuget-publish.yml`) — triggers on `v*` tags
-- [x] README and getting-started guide
-- [ ] AkashicEnd updated to consume published packages (pending API freeze)
-- [ ] Open-source decision pending
+### v0.9.0 📋 — ConsoleEngine.Input + Editor Phase B
+- [ ] Nuevo módulo `ConsoleEngine.Input`: `IInputProvider`, `ConsoleInputProvider`, `KeyBinding`
+- [ ] Editor: timeline de animación, node graph, narrative flow graph, asset panel drag & drop
+- [ ] Editor: editor de diálogos visual, visualizador de mapa de mundo, locale side-by-side
+
+### v0.10.0 📋 — Editor Phase C
+- [ ] Health dashboard, asset dependency map, localisation workflow (auto-draft + status)
+- [ ] Animation debugger (breakpoints + step-frame)
+- [ ] Multilingual layout stress test, notas y comentarios por escena
+
+### v1.0.0 📋 — API estable — NuGet Release
+- [ ] API freeze: sin cambios breaking
+- [ ] Todos los módulos publicados en NuGet.org
+- [ ] `AkashicEnd` consume paquetes publicados (sin project references)
+- [ ] `dotnet new consoleengine` — template instalable
+- [ ] Decisión de open-source resuelta
+
+---
+
+## 10. Architectural Decision Log
+
+Decisiones de arquitectura tomadas con justificación, basadas en investigación de engines modernos.  
+Ver `docs/ARCHITECTURE_RESEARCH.md` para el análisis completo.
+
+| ID | Decisión | Alternativa rechazada | Razón | Versión |
+|---|---|---|---|---|
+| ADR-001 | `sealed record` para `SceneDefinition`, `LocationDefinition`, `DialogueDefinition` | `sealed class` con constructor copia | `with` expressions para variantes; igualdad estructural; patrón ScriptableObject | 0.2.0 |
+| ADR-002 | JSON + `"schemaVersion"` en todos los schemas de disco | Binary, YAML sin versión | Migrable, legible, versionable; lección de Unity binary saves | 0.6.0 |
+| ADR-003 | `PixelArtRenderer.ToAnsiString()` + `ScenePlayer.RenderToString()` | Reimplementar layout en editor | Editor usa mismo código que runtime; lección de Godot (editor = engine) | 0.6.0 |
+| ADR-004 | `ILocalizationService.LanguageChanged` event C# nativo | MediatR, custom EventBus | Single-threaded; `event Action` es suficiente; MediatR es overkill | 0.7.0 |
+| ADR-005 | Node-tree para `SceneSequencer` (lista de `SceneNode` con condiciones) | ECS puro | Godot demuestra que node-tree es más apropiado para narrativa que ECS | 0.6.0 |
+| ADR-006 | `IInputProvider` abstraction; `Console.ReadKey()` solo en implementación | Hardcode `Console.ReadKey()` | Testeable, rebindable, mockeable; lección de Unity TestRunner | 0.9.0 |
+| ADR-007 | `ChunkedWorldMap` (lazy-loading por región) | Carga total en constructor | UE5 World Partition / Godot tile loading: streaming por chunks escala mejor | 0.9.0 |
+| ADR-008 | `IGamePlugin` ≠ `IEditorPlugin` (separación runtime/editor plugins) | Un solo tipo de plugin | Flax Engine: game plugins van con runtime; editor plugins son herramientas | 0.10.0+ |
+| ADR-009 | Sin ECS como modelo principal | Arch-ECS global | ECS óptimo para miles de NPCs homogéneos, no para narrativa compleja | — |
+| ADR-010 | Sin `Activator.CreateInstance` en game loop | Reflection para dispatch | UE5 Blueprint VM overhead: ~0.2μs/actor/frame; dispatch estático = cero overhead | — |
 
 ---
 
@@ -261,4 +300,4 @@ claude --context GAME_CONTEXT.md
 
 **Created**: 2026-05-26
 **Author**: AkashicEnd Development Team
-**Status**: v1.0.0 shipped — Editor Phase A in progress
+**Status**: v0.5.0 shipped — Editor Phase A in progress; roadmap continues to v1.0.0

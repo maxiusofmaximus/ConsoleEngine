@@ -5,8 +5,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)](CHANGELOG.md)
-[![NuGet](https://img.shields.io/badge/NuGet-1.0.0-blue)](https://www.nuget.org/profiles/maxiusofmaximus)
+[![Version](https://img.shields.io/badge/version-0.5.0-brightgreen)](CHANGELOG.md)
+[![NuGet](https://img.shields.io/badge/NuGet-0.5.0-blue)](https://www.nuget.org/profiles/maxiusofmaximus)
 [![CI](https://img.shields.io/badge/CI-passing-brightgreen)](.github/workflows/ci.yml)
 
 ---
@@ -364,7 +364,13 @@ ConsoleEngine/
 | **0.2.0** ✅ | Scene system, dialogue player, transition engine, DinoGame sample |
 | **0.3.0** ✅ | World movement framework, exploration HUD, WorldDemo sample |
 | **0.4.0** ✅ | ConsoleEngine.Editor (Avalonia) — visual scene editor for `.scene.json` files |
-| **1.0.0** ✅ | Stable API, NuGet packages, full documentation, CI/CD pipeline |
+| **0.5.0** ✅ | NuGet packaging, SceneLoader, WorldLoader, CI/CD pipeline |
+| **0.6.0** 🔨 | Editor Phase A completo + DialogueLoader + SceneSequencer + Roslyn analyzers |
+| **0.7.0** 📋 | `ConsoleEngine.Animation` (AnimationTimeline, VfxEngine) + `FlagStore` |
+| **0.8.0** 📋 | `ConsoleEngine.Launcher` + `ConsoleEngine.Audio` + suite de tests xUnit + CI tests |
+| **0.9.0** 📋 | `ConsoleEngine.Input` (key binding) + Editor Phase B (node graph, timeline, mapa de mundo) |
+| **0.10.0** 📋 | Editor Phase C (health dashboard, asset map, animation debugger) |
+| **1.0.0** 📋 | API freeze, NuGet release, `dotnet new consoleengine`, AkashicEnd consuming packages |
 
 ---
 

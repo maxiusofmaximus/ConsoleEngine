@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ConsoleEngine.Input</PackageId>
+    <Description>ConsoleEngine — keyboard input abstraction. Provides ConsoleInputProvider and MockInputProvider.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleEngine.Core\ConsoleEngine.Core.csproj" />
+  </ItemGroup>
+
+</Project>

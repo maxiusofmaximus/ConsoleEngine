@@ -17,13 +17,13 @@ public interface ILocalizationService
     /// language, falls back to English. If missing in English too, returns the key
     /// wrapped in [brackets] so missing translations are visible during QA.
     /// </summary>
-    string Get(string key);
+    string Resolve(string key);
 
     /// <summary>Resolves a key and applies positional formatting (string.Format semantics).</summary>
-    string Get(string key, params object[] args);
+    string Resolve(string key, params object[] args);
 
     /// <summary>
-    /// Switches the active language. Subsequent <see cref="Get(string)"/> calls reflect the new language.
+    /// Switches the active language. Subsequent <see cref="Resolve(string)"/> calls reflect the new language.
     /// Falls back to English silently if the requested language is not loaded.
     /// </summary>
     void SetLanguage(string languageCode);
@@ -33,4 +33,11 @@ public interface ILocalizationService
     /// (e.g. confirm every key has a Spanish translation).
     /// </summary>
     IReadOnlyCollection<string> AvailableLanguages { get; }
+
+    /// <summary>
+    /// Raised after the active language changes.
+    /// The argument is the new language code (e.g. <c>"es"</c>).
+    /// Subscribe to re-render any live UI when the player switches language.
+    /// </summary>
+    event Action<string>? LanguageChanged;
 }

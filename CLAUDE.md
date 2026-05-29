@@ -23,8 +23,10 @@ ConsoleEngine/
     ConsoleEngine.World/        ← WorldState, WorldMap, ExplorationPlayer, IExplorationAction
     ConsoleEngine.Config/       ← GameConfig, GameSettingsCatalog, GameSettingsCommands
     ConsoleEngine.Persistence/  ← SaveRepository<T>, GameConfigRepository
+    ConsoleEngine.Input/        ← ConsoleInputProvider, MockInputProvider (IInputProvider)
     ConsoleEngine.SceneRunner/  ← standalone exe: takes .scene.json path, calls ScenePlayer.Play()
     ConsoleEngine.Editor/       ← Avalonia 12 desktop editor (Windows-first)
+    ConsoleEngine.Tests/        ← xUnit test project (56 tests)
   docs/
     ENGINE_PLAN.md              ← module architecture and roadmap
     EDITOR_PLAN.md              ← 20-module editor plan with Phase A status

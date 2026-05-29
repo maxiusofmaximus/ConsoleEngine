@@ -68,10 +68,14 @@ public static class SceneLoader
         catch { scene = null;           return false; }
     }
 
+    /// <summary>Current schema version written to new files.</summary>
+    public const int CurrentSchemaVersion = 1;
+
     // ── Internal DTO ──────────────────────────────────────────────────────
 
     private sealed class SceneDto
     {
+        [JsonPropertyName("schemaVersion")]  public int?      SchemaVersion  { get; init; }
         [JsonPropertyName("title")]          public string?   Title          { get; init; }
         [JsonPropertyName("lines")]          public string[]? Lines          { get; init; }
         [JsonPropertyName("asciiArt")]       public string[]? AsciiArt       { get; init; }
@@ -83,19 +87,28 @@ public static class SceneLoader
         [JsonPropertyName("promptContinue")] public bool?     PromptContinue { get; init; }
         [JsonPropertyName("continuePrompt")] public string?   ContinuePrompt { get; init; }
 
-        public SceneDefinition ToDefinition() => new()
+        public SceneDefinition ToDefinition()
         {
-            Title          = Title,
-            Lines          = Lines          ?? [],
-            AsciiArt       = AsciiArt       ?? [],
-            ArtColor       = ParseColor(ArtColor,   ConsoleColor.DarkGray),
-            TextColor      = ParseColor(TextColor,  ConsoleColor.Gray),
-            SpritePath     = SpritePath,
-            SpriteWidth    = SpriteWidth    ?? 32,
-            SpriteRows     = SpriteRows     ?? 16,
-            PromptContinue = PromptContinue ?? true,
-            ContinuePrompt = ContinuePrompt,
-        };
+            int version = SchemaVersion ?? 0; // 0 = pre-schemaVersion legacy files
+            if (version > CurrentSchemaVersion)
+                throw new InvalidDataException(
+                    $"Scene file uses schema version {version}, but this engine only supports up to {CurrentSchemaVersion}. " +
+                    "Update ConsoleEngine to load this file.");
+
+            return new SceneDefinition
+            {
+                Title          = Title,
+                Lines          = Lines          ?? [],
+                AsciiArt       = AsciiArt       ?? [],
+                ArtColor       = ParseColor(ArtColor,   ConsoleColor.DarkGray),
+                TextColor      = ParseColor(TextColor,  ConsoleColor.Gray),
+                SpritePath     = SpritePath,
+                SpriteWidth    = SpriteWidth    ?? 32,
+                SpriteRows     = SpriteRows     ?? 16,
+                PromptContinue = PromptContinue ?? true,
+                ContinuePrompt = ContinuePrompt,
+            };
+        }
 
         private static ConsoleColor ParseColor(string? name, ConsoleColor fallback) =>
             name is not null && Enum.TryParse(name, ignoreCase: true, out ConsoleColor c)

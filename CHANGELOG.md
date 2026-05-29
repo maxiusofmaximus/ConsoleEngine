@@ -5,7 +5,45 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [1.0.0] — 2026-05-27
+## [1.0.0] — 2026-05-28
+
+### Added
+
+- **`schemaVersion` field** in all JSON schemas (`.scene.json`, `.world.json`, `.dialogue.json`, `.sequence.json`)
+  - `SceneLoader`, `WorldLoader`, `DialogueLoader`, `SceneSequencer.Load()` reject future unknown versions with `InvalidDataException`
+  - Legacy files without the field are treated as version 0 (no-op migration)
+- **`ScenePlayer.RenderToString()`** — dry-run mode that returns a string instead of writing to the terminal; editor preview and tests now call the same rendering code as the runtime
+- **`DialogueLoader`** (`ConsoleEngine.Scenes`) — loads `.dialogue.json` files from disk; same `Load` / `TryLoad` pattern as `SceneLoader`
+- **`SceneSequencer`** (`ConsoleEngine.Scenes`) — plays an ordered list of `SceneNode` records; each node has an optional `Condition` and `SceneOverrides`; also loads from `.sequence.json`
+- **`IScenePlayer`** (`ConsoleEngine.Core`) — narrow interface (`Play()`) implemented by both `ScenePlayer` and `SceneSequencer`
+- **`ILocalizationService.LanguageChanged`** event — fires when `SetLanguage()` changes the active language; lets live UIs re-render without restarting
+- **`FlagStore`** (`ConsoleEngine.Core`) — typed, JSON-serialisable key-value store (`Set<T>` / `Get<T>` / `TryGet<T>`) for game progress and flags
+- **`IAudioPlayer`** + **`NullAudioPlayer`** (`ConsoleEngine.Core`) — audio abstraction; `NullAudioPlayer.Instance` is the silent default
+- **`IInputProvider`** (`ConsoleEngine.Core`) — keyboard/line input abstraction (`ReadKey`, `ReadLine`, `KeyAvailable`)
+- **`ConsoleEngine.Input`** — new module containing `ConsoleInputProvider` (wraps `Console`) and `MockInputProvider` (queued keys for tests)
+- **`ConsoleEngine.Tests`** — new xUnit test project (56 tests); covers `SceneLoader`, `WorldLoader`, `InMemoryLocalizationService`, `FlagStore`, `ScenePlayer.RenderToString`, `SceneSequencer`, `DialogueLoader`, `SaveRepository`
+- **Roslyn analyzers** — `AnalysisLevel=latest-recommended` in `Directory.Build.props`; 0 warnings enforced
+
+### Changed
+
+- **`ScenePlayer.Play()`** and **`DialoguePlayer.Play()`** accept an optional `IInputProvider?` parameter (default = `Console.ReadLine`)
+- **`ExplorationPlayer.Run()`** accepts an optional `IInputProvider?` parameter (`inputProvider`)
+- **`MainViewModel`** (editor) uses `DispatcherTimer` to throttle preview rebuilds to 100 ms — prevents full rebuild on every keystroke
+- **`MainViewModel.RebuildPreview()`** calls `ScenePlayer.RenderToString()` — editor preview now uses the same layout code as the runtime
+- **`GameConfig`** public instance fields converted to properties (CA1051)
+- **`ILocalizationService.Get()`** renamed to `Resolve()` (CA1716 — avoids keyword conflict in VB.NET); `InMemoryLocalizationService` keeps `Get()` as a convenience alias
+- **`CK.Error`** renamed to `CK.Errors` (CA1716)
+- **`IAudioPlayer.Stop()`** renamed to `StopPlayback()` (CA1716)
+- **`SceneDocument`** gains `SchemaVersion = 1` field and `ToDefinition()` conversion method
+- `ConsoleEngine.Input` and `ConsoleEngine.Tests` added to `ConsoleEngine.sln`
+
+### Fixed
+
+- Various Roslyn analyzer warnings (CA1051, CA1305, CA1716, CA1859, CA1865, CA1869, CS8600)
+
+---
+
+## [0.5.0] — 2026-05-27
 
 ### Added
 
@@ -28,12 +66,139 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`GameConfigRepository`** migrated from `Newtonsoft.Json` to `System.Text.Json`
 - **`samples/DinoGame`** — intro scene extracted from compiled code to `GameData/scenes/intro.scene.json`
 - **`samples/WorldDemo`** — intro and outro scenes extracted to JSON; world definition extracted to `GameData/world/world.world.json`; `TheWorld.Build()` reduced from 155 lines to a single `WorldLoader.Load()` call
-- **`EngineVersion`** updated to `1.0.0`
+- **`EngineVersion`** updated to `0.5.0`
 
 ### Fixed
 
 - `CS0419` ambiguous cref warnings in `ILocalizationService` and `CL` XML docs
 - `CS1734` invalid `<paramref>` in `SaveRepository<T>` class-level doc
+
+---
+
+## [Unreleased] — 0.6.0 · Editor Phase A complete + fundamentos pendientes
+
+### Planned
+
+**Editor — Phase A restante**
+- **Sprite import y ANSI preview** (Module 5) — botón file-picker en el panel derecho; nuevo overload `PixelArtRenderer.ToAnsiString()` (devuelve string, no escribe en consola); center panel muestra el sprite como half-block text
+- **Drag & drop reorden de escenas** (Module 1) — `DragDrop.DoDragDrop` / `DragDrop.Drop` en el `ListBox`; mueve items en `ObservableCollection<SceneFileEntry>`
+- **Panel de terminal embebido** (Module 9) — WebView2 + xterm.js; interface `ITerminalPanel` (ISP); abre con botón en toolbar; lanza `claude --context GAME_CONTEXT.md --context EDITOR_STATE.json`
+- **`EDITOR_STATE.json` writer** — `MainViewModel` escribe el JSON antes de lanzar el terminal; campos: `activeScene`, `projectPath`, `validationErrors`
+
+**Engine — piezas del diseño aún sin código**
+- **`DialogueLoader`** (`ConsoleEngine.Scenes`) — carga `.dialogue.json` desde disco; patrón idéntico a `SceneLoader` (`Load()` / `TryLoad()`)
+- **`SceneSequencer`** (`ConsoleEngine.Scenes`) — encadena escenas en orden; implementa `IScenePlayer` (Core); permite branching básico (índice de escena siguiente)
+- **`GAME_CONTEXT.md`** — archivo de contexto de proyecto generado manualmente; documenta convenciones, formatos de datos y API del engine para asistentes AI
+
+**Calidad**
+- **Roslyn Analyzers** — `<AnalysisLevel>latest-recommended</AnalysisLevel>` en `Directory.Build.props`; todos los warnings corregidos en origen (sin supresiones masivas)
+- **Validador de integridad al guardar** — `MainViewModel.TrySave()` verifica antes de escribir: `spritePath` existente en disco, `artColor`/`textColor` valores válidos de `ConsoleColor`, líneas no vacías si `promptContinue: true`
+
+---
+
+## [Unreleased] — 0.7.0 · ConsoleEngine.Animation + FlagStore
+
+### Planned
+
+**ConsoleEngine.Animation** (nuevo módulo)
+- `AnimationTimeline` — lista ordenada de keyframes con timing en ms
+- `Keyframe` — posición, sprite, color, visibilidad, función de easing
+- `VfxEngine` — partículas ASCII (sangre, chispas, explosiones de texto), screen shake, flash effects
+- `AttackAnimationBase` — template reutilizable de secuencia de ataque
+- `AnimationPlayer` — ejecuta una timeline contra el estado actual del terminal
+- Conectar `AnimationPlayer` con `IAnimationEngine` en `ConsoleEngine.Core`
+- Sample: extender `DinoGame` con VFX de muerte en game-over
+
+**FlagStore** (nuevo mini-módulo en `ConsoleEngine.World`)
+- `FlagStore` — diccionario `string → bool/int/string` serializable con `System.Text.Json`
+- Integración con `IExplorationAction.IsAvailable(WorldState, FlagStore)` — amplía la firma existente
+- Integración con `SaveRepository<T>` — flags se guardan en el slot de partida
+- Locale key `CK.Flags.*` para mensajes relacionados con flags
+
+---
+
+## [Unreleased] — 0.8.0 · ConsoleEngine.Launcher + ConsoleEngine.Audio + Tests + CI
+
+### Planned
+
+**ConsoleEngine.Launcher** (nuevo módulo)
+- `OpenLauncher` — entry point CLI base: new / continue / options / exit
+- `OpenGameArguments` — parsea args CLI (`--ui`, `--scene`, `--lang`, etc.)
+- `RunOptionsLoop` — shell de opciones compartido con soporte de shorthand de idioma
+- `IntroSceneBase` — skeleton de intro: escenas locale-driven → entrega control al juego
+
+**ConsoleEngine.Audio** (nuevo módulo)
+- `IAudioPlayer` — interface en Core: `Play(clip)`, `Stop()`, `SetVolume(channel, 0-100)`
+- `NullAudioPlayer` — implementación vacía (terminal puro no tiene audio nativo)
+- `NAudioPlayer` — implementación real con NAudio (para juegos con ventana WinForms/WPF)
+- Locale key `CK.Audio.*` para mensajes de error de audio
+- Conecta con los 5 canales de volumen ya definidos en `GameConfig`
+
+**ConsoleEngine.Tests** (xUnit — nuevo proyecto)
+- `SceneLoader` — round-trip serialize/deserialize; `artColor` inválido → fallback `Gray`
+- `WorldLoader` — location sin ID → `InvalidDataException`; exits vacíos → OK
+- `InMemoryLocalizationService` — clave ausente → `[key]` literal; fallback a `en` cuando lang falta
+- `GameSettingsCatalog` — volumen fuera de rango → normalización; alias `"en"` == `"English"`
+- `SaveRepository<T>` — crear slot → cargar → borrar; `LoadMostRecent` con múltiples slots
+- `MarkdownLocalizationLoader` — archivo vacío; clave duplicada; formato incorrecto
+
+**CI — pasos faltantes**
+- `dotnet test ConsoleEngine.Tests` antes del pack
+- `dotnet build` de los 3 samples como smoke test
+- Verificación de que `EngineVersion.Full` coincide con `<Version>` en `Directory.Build.props`
+- (Opcional) Coverlet + informe de cobertura como artefacto de CI
+
+---
+
+## [Unreleased] — 0.9.0 · ConsoleEngine.Input + Editor Phase B
+
+### Planned
+
+**ConsoleEngine.Input** (nuevo módulo)
+- `IInputProvider` — interface en Core: `ReadKey()`, `KeyAvailable`
+- `ConsoleInputProvider` — implementación con `Console.ReadKey(intercept: true)`
+- `KeyBinding` — mapeo nombre-lógico → tecla física; cargable desde `config.json`
+- Conecta con `GameSettingsCommands`: nuevo comando `bind jump Space`
+- Permite mocking del input en tests unitarios
+
+**Editor — Phase B**
+- **Panel de assets drag & drop** (Module 3) — catálogo de sprites, backgrounds y VFX con thumbnails
+- **Background editor** (Module 6) — editor de cuadrícula ASCII + importar PNG→ANSI mosaic
+- **Timeline de animación por keyframe** (Module 7) — por escena; copy/paste de frames; loop preview
+- **Inspector de propiedades no-code** (Module 3) — al seleccionar un elemento sus parámetros aparecen en sidebar
+- **Node graph básico** (Module 4) — nodos `ShowSprite`, `ShowText`, `Delay`, `Transition` conectados con wires
+- **Narrative flow graph** (Module 10) — canvas macro donde cada nodo es una escena; flechas = transiciones
+- **Editor de diálogos visual** — árbol de conversación con nodos de elección; edita `.dialogue.json` visualmente
+- **Visualizador de mapa de mundo** — grafo de `LocationDefinition` y sus exits; click en nodo abre la location
+- **Editor de locale side-by-side** — `en.md` a la izquierda, idioma destino a la derecha; diff de claves faltantes resaltado en rojo
+
+---
+
+## [Unreleased] — 0.10.0 · Editor Phase C
+
+### Planned
+
+- **Health dashboard** (Module 14) — pantalla de inicio del editor; lista escenas con claves locale faltantes, sprites no encontrados, assets huérfanos
+- **Asset dependency map** (Module 12) — grafo bidireccional asset → escenas; rename/delete con aviso de referencias
+- **Localisation workflow** (Module 13) — auto-draft de traducciones; estado por clave: `draft / reviewed / approved`; exportar claves no traducidas como lista plana
+- **Animation debugger** (Module 15) — breakpoints por frame; step-frame con `F10`; inspector de estado al pausar
+- **Multilingual layout stress test** (Module 18) — muestra las 11 traducciones en miniatura; resalta en rojo strings que desbordan su área
+- **Editor de notas y comentarios** (Module 19) — sticky notes por escena: `TODO`, `DECISION`, `QUESTION`, `AUDIO`; visibles en el health dashboard
+
+---
+
+## [Unreleased] — 1.0.0 · API Estable — NuGet Release
+
+### Planned
+
+- **API freeze** — sin cambios breaking después de este tag
+- Todos los módulos publicados en NuGet.org via workflow `v*`
+- `AkashicEnd` actualizado para consumir paquetes NuGet publicados (sin project references)
+- Documentación XML completa en toda la superficie pública de la API
+- CI verde en cada push a `main`; workflow de publish probado end-to-end
+- **`dotnet new consoleengine`** — template instalable; genera `Program.cs`, `GameData/locale/en.md`, `.csproj` con referencias correctas
+- Editor Phase A completo (todos los items restantes entregados en 0.6.0)
+- Decisión de open-source resuelta
 
 ---
 

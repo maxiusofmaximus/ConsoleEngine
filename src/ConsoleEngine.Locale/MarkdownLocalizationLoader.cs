@@ -45,10 +45,10 @@ public static class MarkdownLocalizationLoader
         while ((line = reader.ReadLine()) != null)
         {
             string trimmed = line.Trim();
-            if (trimmed.Length == 0 || trimmed.StartsWith(">", StringComparison.Ordinal))
+            if (trimmed.Length == 0 || trimmed[0] == '>')
                 continue;
 
-            if (!trimmed.StartsWith("|", StringComparison.Ordinal))
+            if (trimmed[0] != '|')
             {
                 inTable = false;
                 continue;
@@ -90,8 +90,8 @@ public static class MarkdownLocalizationLoader
 
     private static string[] SplitPipeRow(string trimmedRow)
     {
-        int start = trimmedRow.StartsWith("|", StringComparison.Ordinal) ? 1 : 0;
-        int end   = trimmedRow.EndsWith("|",   StringComparison.Ordinal) ? trimmedRow.Length - 1 : trimmedRow.Length;
+        int start = trimmedRow[0]                    == '|' ? 1 : 0;
+        int end   = trimmedRow[trimmedRow.Length - 1] == '|' ? trimmedRow.Length - 1 : trimmedRow.Length;
         if (end <= start) return Array.Empty<string>();
         return trimmedRow.Substring(start, end - start).Split('|');
     }

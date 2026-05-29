@@ -13,7 +13,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!-- XML doc warnings are informational, not build-breaking, during active development. -->
+    <!-- Roslyn analysis: catch common correctness issues at build time. -->
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <!-- CS1591 = missing XML doc on public member. Enabled for API freeze at v1.0.0. -->
+    <!-- Remove this suppression to detect undocumented public surface. -->
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 

@@ -2,11 +2,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
 using Avalonia.Threading;
 using ConsoleEngine.Core;
 using ConsoleEngine.Editor.Models;
+using ConsoleEngine.Scenes;
 
 namespace ConsoleEngine.Editor.ViewModels;
 
@@ -37,8 +37,15 @@ public sealed class MainViewModel : INotifyPropertyChanged
                      "ConsoleEngine.SceneRunner",
                      "ConsoleEngine.SceneRunner.csproj"));
 
+    // ── Cached JSON options ───────────────────────────────────────────────
+    private static readonly JsonSerializerOptions IndentedJson = new() { WriteIndented = true };
+
     // ── Play process ──────────────────────────────────────────────────────
     private Process? _playProcess;
+
+    // ── Preview throttle ──────────────────────────────────────────────────
+    private bool _previewDirty;
+    private readonly DispatcherTimer _previewTimer;
 
     // ── State ─────────────────────────────────────────────────────────────
     private string _projectPath   = string.Empty;
@@ -54,6 +61,16 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private bool   _promptContinue = true;
     private string _previewText   = string.Empty;
     private string _statusText    = "Open a project folder to begin.";
+
+    // ── Constructor ───────────────────────────────────────────────────────
+    public MainViewModel()
+    {
+        _previewTimer = new DispatcherTimer(
+            TimeSpan.FromMilliseconds(100),
+            DispatcherPriority.Background,
+            (_, _) => FlushPreviewIfDirty());
+        _previewTimer.Start();
+    }
 
     // ── Static metadata ───────────────────────────────────────────────────
     public static string WindowTitle { get; } = $"ConsoleEngine Editor — v{EngineVersion.Full}";
@@ -187,7 +204,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public void ReloadProject()
     {
         if (string.IsNullOrEmpty(_projectPath)) return;
-        string current = _selectedFile?.FilePath;
+        string? current = _selectedFile?.FilePath;
         LoadProject(_projectPath);
 
         // Re-select the previously active scene if it still exists
@@ -373,7 +390,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
         try
         {
-            string json = JsonSerializer.Serialize(_doc, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(_doc, IndentedJson);
             File.WriteAllText(entry.FilePath, json);
             IsDirty = false;
             StatusText = $"Saved: {Path.GetFileName(entry.FilePath)}";
@@ -458,51 +475,26 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private void SyncAndPreview()
     {
         if (_doc is null) return;
-        _doc.Title         = _sceneTitle;
-        _doc.Lines         = SplitLines(_linesText);
-        _doc.AsciiArt      = SplitLines(_asciiArtText);
-        _doc.TextColor     = _textColor;
-        _doc.ArtColor      = _artColor;
+        _doc.Title          = _sceneTitle;
+        _doc.Lines          = SplitLines(_linesText);
+        _doc.AsciiArt       = SplitLines(_asciiArtText);
+        _doc.TextColor      = _textColor;
+        _doc.ArtColor       = _artColor;
         _doc.PromptContinue = _promptContinue;
+        _previewDirty = true;
+    }
+
+    private void FlushPreviewIfDirty()
+    {
+        if (!_previewDirty) return;
+        _previewDirty = false;
         RebuildPreview();
     }
 
     private void RebuildPreview()
     {
         if (_doc is null) { PreviewText = string.Empty; return; }
-
-        const int W = 54;
-        var sb = new StringBuilder();
-
-        sb.AppendLine(new string('═', W));
-
-        if (!string.IsNullOrWhiteSpace(_doc.Title))
-        {
-            sb.AppendLine($"  {_doc.Title}");
-            sb.AppendLine(new string('─', W));
-        }
-
-        sb.AppendLine();
-
-        foreach (string line in _doc.Lines)
-            sb.AppendLine("  " + line);
-
-        sb.AppendLine();
-        sb.AppendLine(new string('─', W));
-
-        if (_doc.AsciiArt.Length > 0)
-        {
-            sb.AppendLine($"  [Art · color: {_doc.ArtColor}]");
-            foreach (string row in _doc.AsciiArt)
-                sb.AppendLine("  " + row);
-        }
-
-        sb.AppendLine(new string('═', W));
-
-        if (_doc.PromptContinue)
-            sb.AppendLine("  [ PRESS ENTER TO CONTINUE ]");
-
-        PreviewText = sb.ToString();
+        PreviewText = ScenePlayer.RenderToString(_doc.ToDefinition(), previewWidth: 54);
     }
 
     private static string[] SplitLines(string text) =>

@@ -40,27 +40,27 @@ public class GameConfig
     public static readonly string[] SupportedAspectRatios   = { "4:3", "16:9", "16:10" };
     public static readonly string[] SupportedDisplayModes   = { "windowed", "borderless", "fullscreen" };
 
-    // ── Instance fields (persisted) ───────────────────────────────────────────
+    // ── Instance properties (persisted) ───────────────────────────────────────
 
-    public string Language         = EnglishLanguage;
+    public string Language           { get; set; } = EnglishLanguage;
 
     // Audio
-    public int  MasterVolume       = 100;
-    public int  MusicVolume        = 80;
-    public int  SfxVolume          = 90;
-    public int  AmbienceVolume     = 70;
-    public int  UiVolume           = 85;
-    public bool MuteAudioOnFocusLoss = true;
+    public int  MasterVolume         { get; set; } = 100;
+    public int  MusicVolume          { get; set; } = 80;
+    public int  SfxVolume            { get; set; } = 90;
+    public int  AmbienceVolume       { get; set; } = 70;
+    public int  UiVolume             { get; set; } = 85;
+    public bool MuteAudioOnFocusLoss { get; set; } = true;
 
     // Display
-    public string DisplayMode      = "borderless";
-    public string AspectRatio      = "16:9";
-    public int    ResolutionWidth  = 1600;
-    public int    ResolutionHeight = 900;
+    public string DisplayMode        { get; set; } = "borderless";
+    public string AspectRatio        { get; set; } = "16:9";
+    public int    ResolutionWidth    { get; set; } = 1600;
+    public int    ResolutionHeight   { get; set; } = 900;
 
     // Optional AI provider (used by games that integrate an AI assistant)
-    public string AiProvider       = "disabled";
-    public string BaseUrl          = string.Empty;
-    public string ApiKey           = string.Empty;
-    public string Model            = string.Empty;
+    public string AiProvider         { get; set; } = "disabled";
+    public string BaseUrl            { get; set; } = string.Empty;
+    public string ApiKey             { get; set; } = string.Empty;
+    public string Model              { get; set; } = string.Empty;
 }

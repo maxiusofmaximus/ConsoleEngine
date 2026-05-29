@@ -317,7 +317,7 @@ Landing screen shown when the editor opens. Shows at a glance:
 
 ## Implementation Notes
 
-### Phase A: What Is Done (v1.0.0)
+### Phase A: What Is Done (v0.5.0)
 
 **Scene management** — `MainViewModel` + `MainWindow.axaml`
 - `LoadProject(folder)` scans `*.scene.json` recursively; filters `bin/` and `obj/` to avoid duplicates

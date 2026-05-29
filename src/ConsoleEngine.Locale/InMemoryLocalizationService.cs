@@ -44,6 +44,9 @@ public sealed class InMemoryLocalizationService : ILocalizationService
     public string CurrentLanguage  => _currentLanguage;
     public IReadOnlyCollection<string> AvailableLanguages => _tables.Keys;
 
+    /// <inheritdoc/>
+    public event Action<string>? LanguageChanged;
+
     /// <summary>Adds or replaces the table for a language. Enables hot-reload.</summary>
     public void LoadTable(LocalizationTable table)
     {
@@ -57,10 +60,14 @@ public sealed class InMemoryLocalizationService : ILocalizationService
             throw new ArgumentException("A valid language code is required.", nameof(languageCode));
 
         string normalized = languageCode.Trim().ToLowerInvariant();
-        _currentLanguage = _tables.ContainsKey(normalized) ? normalized : CanonicalLanguage;
+        string previous   = _currentLanguage;
+        _currentLanguage  = _tables.ContainsKey(normalized) ? normalized : CanonicalLanguage;
+
+        if (_currentLanguage != previous)
+            LanguageChanged?.Invoke(_currentLanguage);
     }
 
-    public string Get(string key)
+    public string Resolve(string key)
     {
         if (string.IsNullOrEmpty(key)) return "[]";
 
@@ -79,11 +86,18 @@ public sealed class InMemoryLocalizationService : ILocalizationService
         return $"[{key}]"; // Deliberately ugly so QA spots it.
     }
 
-    public string Get(string key, params object[] args)
+    public string Resolve(string key, params object[] args)
     {
-        string raw = Get(key);
+        string raw = Resolve(key);
         if (args is null || args.Length == 0) return raw;
         try { return string.Format(CultureInfo.InvariantCulture, raw, args); }
         catch (FormatException) { return $"[fmt:{key}]"; }
     }
+
+    // Keep Get() as a convenience alias for callers who use it directly (not via interface).
+    /// <inheritdoc cref="Resolve(string)"/>
+    public string Get(string key)                  => Resolve(key);
+
+    /// <inheritdoc cref="Resolve(string, object[])"/>
+    public string Get(string key, params object[] args) => Resolve(key, args);
 }

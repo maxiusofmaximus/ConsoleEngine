@@ -1,3 +1,4 @@
+using ConsoleEngine.Core;
 using ConsoleEngine.Locale;
 using ConsoleEngine.Rendering;
 using ConsoleEngine.Scenes;
@@ -55,7 +56,15 @@ public static class ExplorationPlayer
     /// <param name="map">The world graph.</param>
     /// <param name="state">Current world state (mutated in-place as the player moves).</param>
     /// <param name="options">Display and behaviour options. <c>null</c> uses all defaults.</param>
-    public static ExplorationResult Run(WorldMap map, WorldState state, ExplorationOptions? options = null)
+    /// <param name="input">
+    /// Input provider for reading player commands.
+    /// <see langword="null"/> falls back to <see cref="Console.ReadLine"/>.
+    /// </param>
+    public static ExplorationResult Run(
+        WorldMap map,
+        WorldState state,
+        ExplorationOptions? options = null,
+        IInputProvider? inputProvider = null)
     {
         options ??= new ExplorationOptions();
         string? message   = null;
@@ -86,7 +95,7 @@ public static class ExplorationPlayer
             Console.ForegroundColor = ConsoleColor.White;
             try { Console.SetCursorPosition(4, Console.WindowHeight - 1); } catch { }
 
-            string? raw = Console.ReadLine();
+            string? raw = inputProvider is not null ? inputProvider.ReadLine() : Console.ReadLine();
             Console.CursorVisible = false;
 
             string input = raw?.Trim().ToLowerInvariant() ?? string.Empty;
