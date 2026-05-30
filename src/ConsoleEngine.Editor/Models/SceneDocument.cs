@@ -31,6 +31,12 @@ public sealed class SceneDocument
     [JsonPropertyName("spritePath")]
     public string? SpritePath { get; set; }
 
+    [JsonPropertyName("spriteWidth")]
+    public int SpriteWidth { get; set; } = 32;
+
+    [JsonPropertyName("spriteRows")]
+    public int SpriteRows { get; set; } = 16;
+
     [JsonPropertyName("promptContinue")]
     public bool PromptContinue { get; set; } = true;
 
@@ -44,6 +50,8 @@ public sealed class SceneDocument
         ArtColor       = ParseColor(ArtColor,  ConsoleColor.DarkGray),
         TextColor      = ParseColor(TextColor, ConsoleColor.Gray),
         SpritePath     = SpritePath,
+        SpriteWidth    = SpriteWidth,
+        SpriteRows     = SpriteRows,
         PromptContinue = PromptContinue,
     };
 

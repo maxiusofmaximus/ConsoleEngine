@@ -83,7 +83,7 @@
 
 ## Module 5 — 2D Pixel Art Sprites
 
-- [ ] Import PNG and preview as ANSI half-block (`▀`) exactly as `PixelArtRenderer` renders it
+- [x] Import PNG and preview as ANSI half-block (`▀`) exactly as `PixelArtRenderer` renders it — sprite shown as pixel overlay in terminal chrome + thumbnail in right panel; dims auto-detected from PNG
 - [ ] Project sprite catalog
 - [ ] Position sprite with drag & drop or numeric col/row fields
 - [ ] Render size adjustment (height in terminal rows)
@@ -283,7 +283,7 @@ Landing screen shown when the editor opens. Shows at a glance:
 - [x] Text editor with live preview
 - [x] Play / Stop / Reload modes (`ConsoleEngine.SceneRunner.exe` launched in real terminal)
 - [x] Terminal simulator panel (80×24, embedded in editor — terminal chrome with traffic-light dots, size preset picker 80×24 / 120×30 / 160×40)
-- [ ] Sprite import and preview
+- [x] Sprite import and preview
 - [ ] Embedded terminal panel (AI CLI, WebView2 + xterm.js)
 
 ### Phase B — Visual authoring

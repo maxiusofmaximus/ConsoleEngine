@@ -79,6 +79,27 @@ public partial class MainWindow : Window
             _vm.DeleteScene(entry);
     }
 
+    // ── Sprite ────────────────────────────────────────────────────────────
+
+    private async void OnBrowseSprite(object? sender, RoutedEventArgs e)
+    {
+        var results = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title         = "Select Sprite PNG",
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("PNG Image") { Patterns = ["*.png"] },
+                new FilePickerFileType("All Files") { Patterns = ["*"]     },
+            ],
+        });
+
+        if (results.Count > 0)
+            _vm.SpritePath = results[0].Path.LocalPath;
+    }
+
+    private void OnClearSprite(object? sender, RoutedEventArgs e) => _vm.ClearSprite();
+
     // ── Left panel: scene selected ────────────────────────────────────────
 
     private void OnSceneSelected(object? sender, SelectionChangedEventArgs e)

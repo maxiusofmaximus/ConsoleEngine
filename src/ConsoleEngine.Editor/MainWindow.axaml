@@ -163,15 +163,26 @@
                                     </Grid>
                                 </Border>
 
-                                <!-- Terminal content -->
-                                <TextBlock x:Name="PreviewBlock"
-                                           Text="{Binding PreviewText}"
-                                           FontFamily="Cascadia Mono,Consolas,Courier New,monospace"
-                                           FontSize="13"
-                                           Foreground="#C8C8C8"
-                                           Background="#0C0C0C"
-                                           TextWrapping="NoWrap"
-                                           Padding="10,8"/>
+                                <!-- Terminal content: text preview + sprite overlay -->
+                                <Panel>
+                                    <TextBlock x:Name="PreviewBlock"
+                                               Text="{Binding PreviewText}"
+                                               FontFamily="Cascadia Mono,Consolas,Courier New,monospace"
+                                               FontSize="13"
+                                               Foreground="#C8C8C8"
+                                               Background="#0C0C0C"
+                                               TextWrapping="NoWrap"
+                                               Padding="10,8"/>
+                                    <!-- Sprite overlay: bottom-right, nearest-neighbour for pixel art crispness -->
+                                    <Image Source="{Binding SpriteBitmap}"
+                                           IsVisible="{Binding HasSprite}"
+                                           HorizontalAlignment="Right"
+                                           VerticalAlignment="Bottom"
+                                           Stretch="None"
+                                           RenderOptions.BitmapInterpolationMode="None"
+                                           Margin="0,0,10,28"
+                                           ToolTip.Tip="Sprite preview (actual PNG pixels — terminal renders as ▀ half-blocks)"/>
+                                </Panel>
                             </DockPanel>
                         </Border>
                     </ScrollViewer>
@@ -253,6 +264,61 @@
                                          FontSize="12"
                                          TextWrapping="NoWrap"
                                          PlaceholderText="Draw your scene art here…"/>
+                            </StackPanel>
+
+                            <Rectangle Height="1" Fill="#3C3C3C"/>
+
+                            <!-- Sprite (PNG) -->
+                            <StackPanel Spacing="6">
+                                <TextBlock Text="SPRITE  (PNG)" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="Bottom-anchored, right-aligned in the terminal." FontSize="10" Foreground="#555"/>
+
+                                <!-- Path display + picker + clear -->
+                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding SpritePath}"
+                                               FontSize="11" Foreground="#999"
+                                               TextTrimming="LeadingEllipsis"
+                                               VerticalAlignment="Center"
+                                               ToolTip.Tip="{Binding SpritePath}"/>
+                                    <Button Grid.Column="1" Content="📂" Padding="6,3" Margin="4,0,0,0"
+                                            Click="OnBrowseSprite"
+                                            IsEnabled="{Binding HasDocument}"
+                                            ToolTip.Tip="Select a PNG file"/>
+                                    <Button Grid.Column="2" Content="✕" Padding="6,3" Margin="4,0,0,0"
+                                            Click="OnClearSprite"
+                                            IsEnabled="{Binding HasSprite}"
+                                            ToolTip.Tip="Remove sprite from this scene"/>
+                                </Grid>
+
+                                <!-- Computed dims — auto-detected from PNG, editable for override -->
+                                <Grid ColumnDefinitions="*,8,*" IsEnabled="{Binding HasSprite}">
+                                    <StackPanel Grid.Column="0" Spacing="2">
+                                        <TextBlock Text="WIDTH (cols)" FontSize="9" Foreground="#666"/>
+                                        <TextBox Text="{Binding SpriteWidth, Mode=TwoWay}"
+                                                 FontSize="12"
+                                                 ToolTip.Tip="Terminal columns (= PNG pixel width)"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Spacing="2">
+                                        <TextBlock Text="ROWS (term. rows)" FontSize="9" Foreground="#666"/>
+                                        <TextBox Text="{Binding SpriteRows, Mode=TwoWay}"
+                                                 FontSize="12"
+                                                 ToolTip.Tip="Terminal rows (= PNG pixel height / 2)"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Thumbnail: pixel-art scaling (nearest-neighbour) -->
+                                <Border IsVisible="{Binding HasSprite}"
+                                        Background="#0C0C0C"
+                                        CornerRadius="3"
+                                        BorderBrush="#3C3C3C"
+                                        BorderThickness="1"
+                                        MaxHeight="128"
+                                        Padding="6">
+                                    <Image Source="{Binding SpriteBitmap}"
+                                           Stretch="Uniform"
+                                           RenderOptions.BitmapInterpolationMode="None"/>
+                                </Border>
                             </StackPanel>
 
                         </StackPanel>

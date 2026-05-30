@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ConsoleEngine.Core;
 using ConsoleEngine.Editor.Models;
@@ -56,14 +57,20 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private SceneDocument?  _doc;
     private bool  _isDirty;
 
-    private string _sceneTitle    = string.Empty;
-    private string _linesText     = string.Empty;
-    private string _asciiArtText  = string.Empty;
-    private string _textColor     = "Gray";
-    private string _artColor      = "DarkGreen";
-    private bool   _promptContinue = true;
-    private string _previewText   = string.Empty;
-    private string _statusText    = "Open a project folder to begin.";
+    private string  _sceneTitle    = string.Empty;
+    private string  _linesText     = string.Empty;
+    private string  _asciiArtText  = string.Empty;
+    private string  _textColor     = "Gray";
+    private string  _artColor      = "DarkGreen";
+    private bool    _promptContinue = true;
+    private string  _previewText   = string.Empty;
+    private string  _statusText    = "Open a project folder to begin.";
+
+    // ── Sprite ────────────────────────────────────────────────────────────
+    private string?  _spritePath;
+    private int      _spriteWidth = 32;
+    private int      _spriteRows  = 16;
+    private Bitmap?  _spriteBitmap;
 
     // ── Constructor ───────────────────────────────────────────────────────
     public MainViewModel()
@@ -387,12 +394,21 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _artColor      = doc.ArtColor;
         _promptContinue = doc.PromptContinue;
 
+        // Sprite — load bitmap first so Width/Rows auto-update from PNG dims
+        _spritePath  = doc.SpritePath;
+        LoadSpriteBitmap(doc.SpritePath);
+        // If JSON had explicit dims, keep them (only auto-compute on first load when not set)
+        if (doc.SpriteWidth > 0) { _spriteWidth = doc.SpriteWidth; Notify(nameof(SpriteWidth)); }
+        if (doc.SpriteRows  > 0) { _spriteRows  = doc.SpriteRows;  Notify(nameof(SpriteRows));  }
+
         Notify(nameof(SceneTitle));
         Notify(nameof(LinesText));
         Notify(nameof(AsciiArtText));
         Notify(nameof(TextColor));
         Notify(nameof(ArtColor));
         Notify(nameof(PromptContinue));
+        Notify(nameof(SpritePath));
+        Notify(nameof(HasSprite));
         Notify(nameof(HasDocument));
         Notify(nameof(IsDirty));
         Notify(nameof(CanSave));
@@ -503,6 +519,80 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     public bool CanSave => _doc is not null && _isDirty;
 
+    // ── Sprite properties ─────────────────────────────────────────────────
+
+    /// <summary>Absolute path to the selected PNG sprite. <see langword="null"/> = no sprite.</summary>
+    public string? SpritePath
+    {
+        get => _spritePath;
+        set
+        {
+            Set(ref _spritePath, value);
+            LoadSpriteBitmap(value);
+            SyncAndPreview();
+            MarkDirty();
+        }
+    }
+
+    /// <summary>Sprite width in terminal columns (= pixel width of PNG).</summary>
+    public int SpriteWidth
+    {
+        get => _spriteWidth;
+        set { Set(ref _spriteWidth, value); SyncAndPreview(); MarkDirty(); }
+    }
+
+    /// <summary>Sprite height in terminal rows (= pixel height ÷ 2).</summary>
+    public int SpriteRows
+    {
+        get => _spriteRows;
+        set { Set(ref _spriteRows, value); SyncAndPreview(); MarkDirty(); }
+    }
+
+    /// <summary>Loaded bitmap for the preview thumbnail and centre-panel overlay. <see langword="null"/> when no sprite is selected.</summary>
+    public Bitmap? SpriteBitmap
+    {
+        get => _spriteBitmap;
+        private set { Set(ref _spriteBitmap, value); Notify(nameof(HasSprite)); }
+    }
+
+    public bool HasSprite => _spriteBitmap is not null;
+
+    /// <summary>Clears the current sprite selection.</summary>
+    public void ClearSprite()
+    {
+        SpritePath = null;
+    }
+
+    private void LoadSpriteBitmap(string? path)
+    {
+        _spriteBitmap?.Dispose();
+        _spriteBitmap = null;
+
+        if (!string.IsNullOrEmpty(path) && File.Exists(path))
+        {
+            try
+            {
+                var bmp = new Bitmap(path);
+                // Auto-compute terminal dimensions from PNG pixel size:
+                //   SpriteWidth = pixel width  (1 terminal col = 1 pixel wide)
+                //   SpriteRows  = pixel height / 2  (1 terminal row = 2 pixels tall)
+                _spriteWidth = bmp.PixelSize.Width;
+                _spriteRows  = Math.Max(1, bmp.PixelSize.Height / 2);
+                SpriteBitmap = bmp;
+                Notify(nameof(SpriteWidth));
+                Notify(nameof(SpriteRows));
+            }
+            catch
+            {
+                SpriteBitmap = null;
+            }
+        }
+        else
+        {
+            SpriteBitmap = null;
+        }
+    }
+
     // ── Internal helpers ──────────────────────────────────────────────────
     private void MarkDirty()
     {
@@ -519,6 +609,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
         _doc.TextColor      = _textColor;
         _doc.ArtColor       = _artColor;
         _doc.PromptContinue = _promptContinue;
+        _doc.SpritePath     = _spritePath;
+        _doc.SpriteWidth    = _spriteWidth;
+        _doc.SpriteRows     = _spriteRows;
         _previewDirty = true;
     }
 
