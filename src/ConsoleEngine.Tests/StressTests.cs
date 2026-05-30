@@ -371,11 +371,9 @@ public sealed class StressTests : IDisposable
     }
 
     [Fact]
-    public void WorldMap_NullLocations_ThrowsNullReferenceOrArgument()
+    public void WorldMap_NullLocations_ThrowsArgumentNullException()
     {
-        // NullReferenceException from foreach — document the current behavior.
-        // A future fix should throw ArgumentNullException.ThrowIfNull().
-        Assert.ThrowsAny<Exception>(() => new WorldMap(null!));
+        Assert.Throws<ArgumentNullException>(() => new WorldMap(null!));
     }
 
     // ── Concurrency — TerminalAnimationEngine ─────────────────────────────────
