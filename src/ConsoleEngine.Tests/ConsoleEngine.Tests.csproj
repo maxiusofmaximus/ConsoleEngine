@@ -28,6 +28,7 @@
     <ProjectReference Include="..\ConsoleEngine.World\ConsoleEngine.World.csproj" />
     <ProjectReference Include="..\ConsoleEngine.Persistence\ConsoleEngine.Persistence.csproj" />
     <ProjectReference Include="..\ConsoleEngine.Input\ConsoleEngine.Input.csproj" />
+    <ProjectReference Include="..\ConsoleEngine.Animation\ConsoleEngine.Animation.csproj" />
   </ItemGroup>
 
 </Project>
