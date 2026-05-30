@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ConsoleEngine.Core;
 using ConsoleEngine.Editor.Models;
+using ConsoleEngine.Editor.Terminal;
 using ConsoleEngine.Scenes;
 
 namespace ConsoleEngine.Editor.ViewModels;
@@ -71,6 +72,13 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private int      _spriteWidth = 32;
     private int      _spriteRows  = 16;
     private Bitmap?  _spriteBitmap;
+
+    // ── AI Terminal panel ─────────────────────────────────────────────────
+    private bool              _isTerminalOpen;
+    private string            _terminalOutput = string.Empty;
+    private string            _terminalInput  = string.Empty;
+    private string            _aiCommand      = "claude";
+    private AiTerminalSession? _aiSession;
 
     // ── Constructor ───────────────────────────────────────────────────────
     public MainViewModel()
@@ -364,6 +372,8 @@ public sealed class MainViewModel : INotifyPropertyChanged
         StatusText = SceneFiles.Count == 0
             ? $"Opened: {folderPath}  (no .scene.json files found — create one with ➕)"
             : $"Opened: {folderPath}  —  {SceneFiles.Count} scene(s) found.";
+
+        WriteEditorState();
     }
 
     // ── Document load ─────────────────────────────────────────────────────
@@ -375,6 +385,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             var doc = JsonSerializer.Deserialize<SceneDocument>(json) ?? SceneDocument.Empty();
             SetDocument(doc);
             StatusText = $"Loaded: {Path.GetFileName(entry.FilePath)}";
+            WriteEditorState();
         }
         catch (Exception ex)
         {
@@ -448,6 +459,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
             File.WriteAllText(entry.FilePath, json);
             IsDirty = false;
             StatusText = $"Saved: {Path.GetFileName(entry.FilePath)}";
+            WriteEditorState();
 
             int idx = SceneFiles.IndexOf(entry);
             if (idx >= 0)
@@ -561,6 +573,121 @@ public sealed class MainViewModel : INotifyPropertyChanged
     public void ClearSprite()
     {
         SpritePath = null;
+    }
+
+    // ── Terminal panel properties ─────────────────────────────────────────
+
+    public bool IsTerminalOpen
+    {
+        get => _isTerminalOpen;
+        set => Set(ref _isTerminalOpen, value);
+    }
+
+    public string TerminalOutput
+    {
+        get => _terminalOutput;
+        private set => Set(ref _terminalOutput, value);
+    }
+
+    public string TerminalInput
+    {
+        get => _terminalInput;
+        set => Set(ref _terminalInput, value);
+    }
+
+    public string AiCommand
+    {
+        get => _aiCommand;
+        set => Set(ref _aiCommand, value);
+    }
+
+    public bool IsAiRunning => _aiSession?.IsRunning ?? false;
+
+    // ── Terminal panel commands ───────────────────────────────────────────
+
+    public void ToggleTerminalPanel()
+    {
+        IsTerminalOpen = !_isTerminalOpen;
+        if (_isTerminalOpen && HasProject) WriteEditorState();
+    }
+
+    public void LaunchAi()
+    {
+        if (!HasProject) return;
+        WriteEditorState();
+
+        // Dispose previous session without blocking the UI thread
+        var old = _aiSession;
+        _aiSession = null;
+        old?.DisposeAsync().AsTask().ContinueWith(_ => { });
+
+        TerminalOutput = string.Empty;
+
+        string gameContext  = Path.Combine(_projectPath, "GAME_CONTEXT.md");
+        string editorState  = Path.Combine(_projectPath, "EDITOR_STATE.json");
+
+        string cmd = _aiCommand;
+        if (File.Exists(gameContext))
+            cmd += $" --context \"{gameContext}\"";
+        cmd += $" --context \"{editorState}\"";
+
+        try
+        {
+            _aiSession = AiTerminalSession.Spawn(cmd, _projectPath);
+            _aiSession.OutputReceived += OnAiOutput;
+            Notify(nameof(IsAiRunning));
+            AppendTerminalLine($"▶ {cmd}");
+        }
+        catch (Exception ex)
+        {
+            AppendTerminalLine($"⚠ Could not start AI: {ex.Message}");
+        }
+    }
+
+    public void SendAiInput()
+    {
+        if (_aiSession is null || !_aiSession.IsRunning) return;
+        string line = _terminalInput;
+        _aiSession.SendLine(line);
+        AppendTerminalLine($"> {line}");
+        TerminalInput = string.Empty;
+    }
+
+    public void KillAi()
+    {
+        var session = _aiSession;
+        _aiSession  = null;
+        Notify(nameof(IsAiRunning));
+        session?.DisposeAsync().AsTask().ContinueWith(_ => { });
+        AppendTerminalLine("[Session terminated]");
+    }
+
+    private void OnAiOutput(string raw)
+    {
+        string clean = AnsiStripper.Strip(raw);
+        if (string.IsNullOrEmpty(clean)) return;
+        Dispatcher.UIThread.Post(() => AppendTerminalOutput(clean));
+    }
+
+    private void AppendTerminalLine(string line)
+    {
+        Dispatcher.UIThread.Post(() => AppendTerminalOutput(line + Environment.NewLine));
+    }
+
+    private void AppendTerminalOutput(string text)
+    {
+        string combined = _terminalOutput + text;
+        // Keep last 20 000 chars to avoid unbounded growth
+        if (combined.Length > 20_000)
+            combined = combined[^20_000..];
+        TerminalOutput = combined;
+    }
+
+    private void WriteEditorState()
+    {
+        if (string.IsNullOrEmpty(_projectPath)) return;
+        try { EditorStateWriter.Write(_projectPath, _selectedFile?.FilePath); }
+        catch { /* non-fatal */ }
     }
 
     private void LoadSpriteBitmap(string? path)

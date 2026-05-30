@@ -131,15 +131,12 @@
 
 ## Module 9 — Embedded CLI Terminal (AI Integration)
 
-- [ ] Terminal panel embedded in the editor (open/close with Tab or tilde — like ARK / CS2)
-- [ ] Runs a real terminal (WebView2 + xterm.js / ConPTY on Windows)
-- [ ] Wrapper script `editor-ai.cmd` automatically injects context on launch:
-  ```
-  claude --context GAME_CONTEXT.md --context EDITOR_STATE.json
-  ```
-- [ ] `EDITOR_STATE.json` written by the editor in real time: active scene, assets in use, current validator errors
-- [ ] `GAME_CONTEXT.md` maintained manually: GDD summary, conventions, data formats
-- [ ] Support for any CLI AI: `claude`, `opencode`, `agy`, Gemini CLI, or any future tool
+- [x] Terminal panel embedded in the editor (open/close with Ctrl+` or ⬛ AI Terminal button)
+- [ ] Runs a real terminal (WebView2 + xterm.js / ConPTY on Windows) — Phase B
+- [x] Context injection on launch: `--context GAME_CONTEXT.md --context EDITOR_STATE.json`
+- [x] `EDITOR_STATE.json` written by the editor in real time (on project open, scene select, save)
+- [x] `GAME_CONTEXT.md` template auto-generated if missing; maintained manually by developer
+- [x] Support for any CLI AI: `claude`, `opencode`, `agy`, Gemini CLI, configurable command field
 - [ ] Custom slash commands pre-defined (`.claude/commands/`): `/add-scene`, `/move-sprite`, `/translate-key`, `/create-vfx`, `/generate-animation`
 - [ ] Validator error log automatically visible in the terminal — no copy-paste needed
 - [ ] Persistent conversation history per editing session (not per scene — one continuous session)
@@ -284,7 +281,7 @@ Landing screen shown when the editor opens. Shows at a glance:
 - [x] Play / Stop / Reload modes (`ConsoleEngine.SceneRunner.exe` launched in real terminal)
 - [x] Terminal simulator panel (80×24, embedded in editor — terminal chrome with traffic-light dots, size preset picker 80×24 / 120×30 / 160×40)
 - [x] Sprite import and preview
-- [ ] Embedded terminal panel (AI CLI, WebView2 + xterm.js)
+- [x] Embedded terminal panel (AI CLI — process-based with ANSI stripping; WebView2/xterm.js is Phase B)
 
 ### Phase B — Visual authoring
 

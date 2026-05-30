@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -18,6 +19,23 @@ public partial class MainWindow : Window
         InitializeComponent();
         _vm = new MainViewModel();
         DataContext = _vm;
+
+        // Ctrl+` toggles the AI terminal panel (same shortcut as VS Code)
+        KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.OemTilde && e.KeyModifiers == KeyModifiers.Control)
+            {
+                _vm.ToggleTerminalPanel();
+                e.Handled = true;
+            }
+        };
+
+        // Auto-scroll terminal output when new text arrives
+        _vm.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.TerminalOutput))
+                TerminalScroll.ScrollToEnd();
+        };
     }
 
     // ── Group 1: Project ──────────────────────────────────────────────────
@@ -77,6 +95,35 @@ public partial class MainWindow : Window
 
         if (confirmed)
             _vm.DeleteScene(entry);
+    }
+
+    // ── AI Terminal ───────────────────────────────────────────────────────
+
+    private void OnToggleTerminal(object? sender, RoutedEventArgs e)
+        => _vm.ToggleTerminalPanel();
+
+    private void OnLaunchAi(object? sender, RoutedEventArgs e)
+        => _vm.LaunchAi();
+
+    private void OnKillAi(object? sender, RoutedEventArgs e)
+        => _vm.KillAi();
+
+    private void OnCloseTerminal(object? sender, RoutedEventArgs e)
+        => _vm.IsTerminalOpen = false;
+
+    private void OnSendAiInput(object? sender, RoutedEventArgs e)
+    {
+        _vm.SendAiInput();
+        TerminalInputBox.Focus();
+    }
+
+    private void OnTerminalInputKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            _vm.SendAiInput();
+            e.Handled = true;
+        }
     }
 
     // ── Sprite ────────────────────────────────────────────────────────────
