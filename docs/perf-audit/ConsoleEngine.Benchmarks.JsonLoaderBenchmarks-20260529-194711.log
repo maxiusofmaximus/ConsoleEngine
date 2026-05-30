@@ -1,0 +1,907 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 8 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\obj\Release\net8.0/" /p:OutDir="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0/" /p:OutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0/" in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514
+// command took 1.6 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\obj\Release\net8.0/" /p:OutDir="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0/" /p:OutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0/" --output "C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0/" in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514
+// command took 25.32 sec and exited with 0
+// ***** Done, took 00:00:27 (27.03 sec)   *****
+// Found 8 benchmarks:
+//   JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+//   JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+//   JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+//   JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+//   JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+//   JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+//   JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+//   JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1224 1228 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll(Count: 1)" --job ".NET 8.0" --benchmarkId 0 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 125900.00 ns, 125.9000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.Text.Json.JsonException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. Path: $.asciiArt[0] | LineNumber: 3 | BytePositionInLine: 20.
+ ---> System.Text.Json.JsonReaderException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. LineNumber: 3 | BytePositionInLine: 20.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeStringAndValidate(ReadOnlySpan`1 data, Int32 idx)
+   at System.Text.Json.Utf8JsonReader.ConsumeString()
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, TCollection& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at ConsoleEngine.Scenes.SceneLoader.Load(String jsonPath) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Scenes\SceneLoader.cs:line 52
+   at ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll() in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\JsonLoaderBenchmarks.cs:line 55
+   at BenchmarkDotNet.Autogenerated.Runnable_0.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 311
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_0.Run(IHost host, String benchmarkName) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 176
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 14244 has exited with code -1.
+
+// ** Remained 7 (87,5 %) benchmark(s) to run. Estimated finish 2026-05-29 19:47 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1856 1616 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse(Count: 1)" --job ".NET 8.0" --benchmarkId 1 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 115000.00 ns, 115.0000 us/op
+WorkloadJitting  1: 1 op, 2303700.00 ns, 2.3037 ms/op
+
+OverheadJitting  2: 16 op, 126300.00 ns, 7.8938 us/op
+WorkloadJitting  2: 16 op, 167300.00 ns, 10.4563 us/op
+
+WorkloadPilot    1: 16 op, 28900.00 ns, 1.8063 us/op
+WorkloadPilot    2: 32 op, 57000.00 ns, 1.7813 us/op
+WorkloadPilot    3: 64 op, 88900.00 ns, 1.3891 us/op
+WorkloadPilot    4: 128 op, 187500.00 ns, 1.4648 us/op
+WorkloadPilot    5: 256 op, 241700.00 ns, 944.1406 ns/op
+WorkloadPilot    6: 512 op, 528100.00 ns, 1.0314 us/op
+WorkloadPilot    7: 1024 op, 1020600.00 ns, 996.6797 ns/op
+WorkloadPilot    8: 2048 op, 2039800.00 ns, 995.9961 ns/op
+WorkloadPilot    9: 4096 op, 3890100.00 ns, 949.7314 ns/op
+WorkloadPilot   10: 8192 op, 8585800.00 ns, 1.0481 us/op
+WorkloadPilot   11: 16384 op, 12089300.00 ns, 737.8723 ns/op
+WorkloadPilot   12: 32768 op, 19201300.00 ns, 585.9772 ns/op
+WorkloadPilot   13: 65536 op, 37980400.00 ns, 579.5349 ns/op
+WorkloadPilot   14: 131072 op, 77053800.00 ns, 587.8738 ns/op
+WorkloadPilot   15: 262144 op, 76742400.00 ns, 292.7490 ns/op
+WorkloadPilot   16: 524288 op, 151012900.00 ns, 288.0342 ns/op
+WorkloadPilot   17: 1048576 op, 308299100.00 ns, 294.0169 ns/op
+WorkloadPilot   18: 2097152 op, 591424400.00 ns, 282.0131 ns/op
+
+OverheadWarmup   1: 2097152 op, 2742300.00 ns, 1.3076 ns/op
+OverheadWarmup   2: 2097152 op, 2698200.00 ns, 1.2866 ns/op
+OverheadWarmup   3: 2097152 op, 2775600.00 ns, 1.3235 ns/op
+OverheadWarmup   4: 2097152 op, 3562800.00 ns, 1.6989 ns/op
+OverheadWarmup   5: 2097152 op, 2840900.00 ns, 1.3546 ns/op
+OverheadWarmup   6: 2097152 op, 2791900.00 ns, 1.3313 ns/op
+OverheadWarmup   7: 2097152 op, 2725300.00 ns, 1.2995 ns/op
+OverheadWarmup   8: 2097152 op, 2815900.00 ns, 1.3427 ns/op
+OverheadWarmup   9: 2097152 op, 2702800.00 ns, 1.2888 ns/op
+
+OverheadActual   1: 2097152 op, 2720800.00 ns, 1.2974 ns/op
+OverheadActual   2: 2097152 op, 2784300.00 ns, 1.3277 ns/op
+OverheadActual   3: 2097152 op, 2678000.00 ns, 1.2770 ns/op
+OverheadActual   4: 2097152 op, 2789100.00 ns, 1.3299 ns/op
+OverheadActual   5: 2097152 op, 2782000.00 ns, 1.3266 ns/op
+OverheadActual   6: 2097152 op, 2832300.00 ns, 1.3505 ns/op
+OverheadActual   7: 2097152 op, 2777300.00 ns, 1.3243 ns/op
+OverheadActual   8: 2097152 op, 2663600.00 ns, 1.2701 ns/op
+OverheadActual   9: 2097152 op, 2736400.00 ns, 1.3048 ns/op
+OverheadActual  10: 2097152 op, 2842400.00 ns, 1.3554 ns/op
+OverheadActual  11: 2097152 op, 2719100.00 ns, 1.2966 ns/op
+OverheadActual  12: 2097152 op, 2776700.00 ns, 1.3240 ns/op
+OverheadActual  13: 2097152 op, 2689100.00 ns, 1.2823 ns/op
+OverheadActual  14: 2097152 op, 2677800.00 ns, 1.2769 ns/op
+OverheadActual  15: 2097152 op, 2761900.00 ns, 1.3170 ns/op
+
+WorkloadWarmup   1: 2097152 op, 618290200.00 ns, 294.8237 ns/op
+WorkloadWarmup   2: 2097152 op, 624599500.00 ns, 297.8323 ns/op
+WorkloadWarmup   3: 2097152 op, 644590000.00 ns, 307.3645 ns/op
+WorkloadWarmup   4: 2097152 op, 749138100.00 ns, 357.2169 ns/op
+WorkloadWarmup   5: 2097152 op, 734916600.00 ns, 350.4355 ns/op
+WorkloadWarmup   6: 2097152 op, 733442000.00 ns, 349.7324 ns/op
+WorkloadWarmup   7: 2097152 op, 714334000.00 ns, 340.6210 ns/op
+WorkloadWarmup   8: 2097152 op, 713038000.00 ns, 340.0030 ns/op
+WorkloadWarmup   9: 2097152 op, 703380500.00 ns, 335.3980 ns/op
+WorkloadWarmup  10: 2097152 op, 709551400.00 ns, 338.3405 ns/op
+WorkloadWarmup  11: 2097152 op, 718167600.00 ns, 342.4490 ns/op
+WorkloadWarmup  12: 2097152 op, 727192400.00 ns, 346.7524 ns/op
+WorkloadWarmup  13: 2097152 op, 707669000.00 ns, 337.4429 ns/op
+
+// BeforeActualRun
+WorkloadActual   1: 2097152 op, 705392400.00 ns, 336.3573 ns/op
+WorkloadActual   2: 2097152 op, 704981100.00 ns, 336.1612 ns/op
+WorkloadActual   3: 2097152 op, 718718500.00 ns, 342.7117 ns/op
+WorkloadActual   4: 2097152 op, 708114900.00 ns, 337.6555 ns/op
+WorkloadActual   5: 2097152 op, 705790500.00 ns, 336.5471 ns/op
+WorkloadActual   6: 2097152 op, 708620400.00 ns, 337.8965 ns/op
+WorkloadActual   7: 2097152 op, 706885700.00 ns, 337.0694 ns/op
+WorkloadActual   8: 2097152 op, 706996800.00 ns, 337.1223 ns/op
+WorkloadActual   9: 2097152 op, 708612400.00 ns, 337.8927 ns/op
+WorkloadActual  10: 2097152 op, 705966500.00 ns, 336.6311 ns/op
+WorkloadActual  11: 2097152 op, 646448400.00 ns, 308.2506 ns/op
+WorkloadActual  12: 2097152 op, 646891800.00 ns, 308.4620 ns/op
+WorkloadActual  13: 2097152 op, 654275500.00 ns, 311.9829 ns/op
+WorkloadActual  14: 2097152 op, 698972000.00 ns, 333.2958 ns/op
+WorkloadActual  15: 2097152 op, 714125700.00 ns, 340.5217 ns/op
+WorkloadActual  16: 2097152 op, 710910000.00 ns, 338.9883 ns/op
+WorkloadActual  17: 2097152 op, 714997900.00 ns, 340.9376 ns/op
+WorkloadActual  18: 2097152 op, 711729700.00 ns, 339.3792 ns/op
+WorkloadActual  19: 2097152 op, 712773500.00 ns, 339.8769 ns/op
+WorkloadActual  20: 2097152 op, 712131900.00 ns, 339.5710 ns/op
+WorkloadActual  21: 2097152 op, 707856400.00 ns, 337.5322 ns/op
+WorkloadActual  22: 2097152 op, 710428000.00 ns, 338.7585 ns/op
+WorkloadActual  23: 2097152 op, 712715200.00 ns, 339.8491 ns/op
+WorkloadActual  24: 2097152 op, 725006200.00 ns, 345.7099 ns/op
+WorkloadActual  25: 2097152 op, 708104200.00 ns, 337.6504 ns/op
+WorkloadActual  26: 2097152 op, 724879100.00 ns, 345.6493 ns/op
+WorkloadActual  27: 2097152 op, 705964700.00 ns, 336.6302 ns/op
+WorkloadActual  28: 2097152 op, 726717300.00 ns, 346.5258 ns/op
+WorkloadActual  29: 2097152 op, 717468500.00 ns, 342.1156 ns/op
+WorkloadActual  30: 2097152 op, 727806900.00 ns, 347.0454 ns/op
+WorkloadActual  31: 2097152 op, 757126300.00 ns, 361.0260 ns/op
+
+// AfterActualRun
+WorkloadResult   1: 2097152 op, 702630500.00 ns, 335.0403 ns/op
+WorkloadResult   2: 2097152 op, 702219200.00 ns, 334.8442 ns/op
+WorkloadResult   3: 2097152 op, 715956600.00 ns, 341.3947 ns/op
+WorkloadResult   4: 2097152 op, 705353000.00 ns, 336.3385 ns/op
+WorkloadResult   5: 2097152 op, 703028600.00 ns, 335.2302 ns/op
+WorkloadResult   6: 2097152 op, 705858500.00 ns, 336.5796 ns/op
+WorkloadResult   7: 2097152 op, 704123800.00 ns, 335.7524 ns/op
+WorkloadResult   8: 2097152 op, 704234900.00 ns, 335.8054 ns/op
+WorkloadResult   9: 2097152 op, 705850500.00 ns, 336.5757 ns/op
+WorkloadResult  10: 2097152 op, 703204600.00 ns, 335.3141 ns/op
+WorkloadResult  11: 2097152 op, 643686500.00 ns, 306.9336 ns/op
+WorkloadResult  12: 2097152 op, 644129900.00 ns, 307.1451 ns/op
+WorkloadResult  13: 2097152 op, 651513600.00 ns, 310.6659 ns/op
+WorkloadResult  14: 2097152 op, 696210100.00 ns, 331.9788 ns/op
+WorkloadResult  15: 2097152 op, 711363800.00 ns, 339.2047 ns/op
+WorkloadResult  16: 2097152 op, 708148100.00 ns, 337.6713 ns/op
+WorkloadResult  17: 2097152 op, 712236000.00 ns, 339.6206 ns/op
+WorkloadResult  18: 2097152 op, 708967800.00 ns, 338.0622 ns/op
+WorkloadResult  19: 2097152 op, 710011600.00 ns, 338.5599 ns/op
+WorkloadResult  20: 2097152 op, 709370000.00 ns, 338.2540 ns/op
+WorkloadResult  21: 2097152 op, 705094500.00 ns, 336.2153 ns/op
+WorkloadResult  22: 2097152 op, 707666100.00 ns, 337.4415 ns/op
+WorkloadResult  23: 2097152 op, 709953300.00 ns, 338.5321 ns/op
+WorkloadResult  24: 2097152 op, 722244300.00 ns, 344.3929 ns/op
+WorkloadResult  25: 2097152 op, 705342300.00 ns, 336.3334 ns/op
+WorkloadResult  26: 2097152 op, 722117200.00 ns, 344.3323 ns/op
+WorkloadResult  27: 2097152 op, 703202800.00 ns, 335.3132 ns/op
+WorkloadResult  28: 2097152 op, 723955400.00 ns, 345.2088 ns/op
+WorkloadResult  29: 2097152 op, 714706600.00 ns, 340.7987 ns/op
+// GC:  222 0 0 3489661664 2097152
+// Threading:  0 0 2097152
+
+// AfterAll
+// Benchmark Process 47472 has exited with code 0.
+
+Mean = 334.812 ns, StdErr = 1.799 ns (0.54%), N = 29, StdDev = 9.686 ns
+Min = 306.934 ns, Q1 = 335.313 ns, Median = 336.576 ns, Q3 = 338.560 ns, Max = 345.209 ns
+IQR = 3.247 ns, LowerFence = 330.443 ns, UpperFence = 343.430 ns
+ConfidenceInterval = [328.204 ns; 341.419 ns] (CI 99.9%), Margin = 6.608 ns (1.97% of Mean)
+Skewness = -2.02, Kurtosis = 6.12, MValue = 2
+
+// ** Remained 6 (75,0 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 1m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1836 1352 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll(Count: 10)" --job ".NET 8.0" --benchmarkId 2 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 175700.00 ns, 175.7000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.Text.Json.JsonException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. Path: $.asciiArt[0] | LineNumber: 3 | BytePositionInLine: 20.
+ ---> System.Text.Json.JsonReaderException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. LineNumber: 3 | BytePositionInLine: 20.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeStringAndValidate(ReadOnlySpan`1 data, Int32 idx)
+   at System.Text.Json.Utf8JsonReader.ConsumeString()
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, TCollection& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at ConsoleEngine.Scenes.SceneLoader.Load(String jsonPath) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Scenes\SceneLoader.cs:line 52
+   at ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll() in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\JsonLoaderBenchmarks.cs:line 55
+   at BenchmarkDotNet.Autogenerated.Runnable_2.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 695
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_2.Run(IHost host, String benchmarkName) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 560
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 17380 has exited with code -1.
+
+// ** Remained 5 (62,5 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1720 1280 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse(Count: 10)" --job ".NET 8.0" --benchmarkId 3 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 114300.00 ns, 114.3000 us/op
+WorkloadJitting  1: 1 op, 1964700.00 ns, 1.9647 ms/op
+
+OverheadJitting  2: 16 op, 110400.00 ns, 6.9000 us/op
+WorkloadJitting  2: 16 op, 205900.00 ns, 12.8688 us/op
+
+WorkloadPilot    1: 16 op, 102300.00 ns, 6.3938 us/op
+WorkloadPilot    2: 32 op, 163000.00 ns, 5.0938 us/op
+WorkloadPilot    3: 64 op, 234800.00 ns, 3.6688 us/op
+WorkloadPilot    4: 128 op, 639100.00 ns, 4.9930 us/op
+WorkloadPilot    5: 256 op, 1051300.00 ns, 4.1066 us/op
+WorkloadPilot    6: 512 op, 2527700.00 ns, 4.9369 us/op
+WorkloadPilot    7: 1024 op, 4713500.00 ns, 4.6030 us/op
+WorkloadPilot    8: 2048 op, 9384800.00 ns, 4.5824 us/op
+WorkloadPilot    9: 4096 op, 10869400.00 ns, 2.6537 us/op
+WorkloadPilot   10: 8192 op, 21272900.00 ns, 2.5968 us/op
+WorkloadPilot   11: 16384 op, 43355000.00 ns, 2.6462 us/op
+WorkloadPilot   12: 32768 op, 94196600.00 ns, 2.8747 us/op
+WorkloadPilot   13: 65536 op, 154611000.00 ns, 2.3592 us/op
+WorkloadPilot   14: 131072 op, 220581800.00 ns, 1.6829 us/op
+WorkloadPilot   15: 262144 op, 444157400.00 ns, 1.6943 us/op
+WorkloadPilot   16: 524288 op, 849969200.00 ns, 1.6212 us/op
+
+OverheadWarmup   1: 524288 op, 658400.00 ns, 1.2558 ns/op
+OverheadWarmup   2: 524288 op, 674400.00 ns, 1.2863 ns/op
+OverheadWarmup   3: 524288 op, 655000.00 ns, 1.2493 ns/op
+OverheadWarmup   4: 524288 op, 723500.00 ns, 1.3800 ns/op
+OverheadWarmup   5: 524288 op, 693600.00 ns, 1.3229 ns/op
+
+OverheadActual   1: 524288 op, 706800.00 ns, 1.3481 ns/op
+OverheadActual   2: 524288 op, 674100.00 ns, 1.2857 ns/op
+OverheadActual   3: 524288 op, 671200.00 ns, 1.2802 ns/op
+OverheadActual   4: 524288 op, 682000.00 ns, 1.3008 ns/op
+OverheadActual   5: 524288 op, 685200.00 ns, 1.3069 ns/op
+OverheadActual   6: 524288 op, 687000.00 ns, 1.3103 ns/op
+OverheadActual   7: 524288 op, 695400.00 ns, 1.3264 ns/op
+OverheadActual   8: 524288 op, 742500.00 ns, 1.4162 ns/op
+OverheadActual   9: 524288 op, 710600.00 ns, 1.3554 ns/op
+OverheadActual  10: 524288 op, 842500.00 ns, 1.6069 ns/op
+OverheadActual  11: 524288 op, 740700.00 ns, 1.4128 ns/op
+OverheadActual  12: 524288 op, 696700.00 ns, 1.3288 ns/op
+OverheadActual  13: 524288 op, 715000.00 ns, 1.3638 ns/op
+OverheadActual  14: 524288 op, 687300.00 ns, 1.3109 ns/op
+OverheadActual  15: 524288 op, 698400.00 ns, 1.3321 ns/op
+
+WorkloadWarmup   1: 524288 op, 864427500.00 ns, 1.6488 us/op
+WorkloadWarmup   2: 524288 op, 927950700.00 ns, 1.7699 us/op
+WorkloadWarmup   3: 524288 op, 941453100.00 ns, 1.7957 us/op
+WorkloadWarmup   4: 524288 op, 945812600.00 ns, 1.8040 us/op
+WorkloadWarmup   5: 524288 op, 944603900.00 ns, 1.8017 us/op
+WorkloadWarmup   6: 524288 op, 934041800.00 ns, 1.7815 us/op
+WorkloadWarmup   7: 524288 op, 948940700.00 ns, 1.8100 us/op
+WorkloadWarmup   8: 524288 op, 962707300.00 ns, 1.8362 us/op
+WorkloadWarmup   9: 524288 op, 949592500.00 ns, 1.8112 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 524288 op, 954706100.00 ns, 1.8210 us/op
+WorkloadActual   2: 524288 op, 931108800.00 ns, 1.7759 us/op
+WorkloadActual   3: 524288 op, 938180600.00 ns, 1.7894 us/op
+WorkloadActual   4: 524288 op, 941516100.00 ns, 1.7958 us/op
+WorkloadActual   5: 524288 op, 935622300.00 ns, 1.7846 us/op
+WorkloadActual   6: 524288 op, 950598900.00 ns, 1.8131 us/op
+WorkloadActual   7: 524288 op, 963703000.00 ns, 1.8381 us/op
+WorkloadActual   8: 524288 op, 935679100.00 ns, 1.7847 us/op
+WorkloadActual   9: 524288 op, 951183800.00 ns, 1.8142 us/op
+WorkloadActual  10: 524288 op, 949311600.00 ns, 1.8107 us/op
+WorkloadActual  11: 524288 op, 930739600.00 ns, 1.7752 us/op
+WorkloadActual  12: 524288 op, 946885600.00 ns, 1.8060 us/op
+WorkloadActual  13: 524288 op, 936680600.00 ns, 1.7866 us/op
+WorkloadActual  14: 524288 op, 926643300.00 ns, 1.7674 us/op
+WorkloadActual  15: 524288 op, 956863800.00 ns, 1.8251 us/op
+
+// AfterActualRun
+WorkloadResult   1: 524288 op, 954009400.00 ns, 1.8196 us/op
+WorkloadResult   2: 524288 op, 930412100.00 ns, 1.7746 us/op
+WorkloadResult   3: 524288 op, 937483900.00 ns, 1.7881 us/op
+WorkloadResult   4: 524288 op, 940819400.00 ns, 1.7945 us/op
+WorkloadResult   5: 524288 op, 934925600.00 ns, 1.7832 us/op
+WorkloadResult   6: 524288 op, 949902200.00 ns, 1.8118 us/op
+WorkloadResult   7: 524288 op, 963006300.00 ns, 1.8368 us/op
+WorkloadResult   8: 524288 op, 934982400.00 ns, 1.7833 us/op
+WorkloadResult   9: 524288 op, 950487100.00 ns, 1.8129 us/op
+WorkloadResult  10: 524288 op, 948614900.00 ns, 1.8093 us/op
+WorkloadResult  11: 524288 op, 930042900.00 ns, 1.7739 us/op
+WorkloadResult  12: 524288 op, 946188900.00 ns, 1.8047 us/op
+WorkloadResult  13: 524288 op, 935983900.00 ns, 1.7852 us/op
+WorkloadResult  14: 524288 op, 925946600.00 ns, 1.7661 us/op
+WorkloadResult  15: 524288 op, 956167100.00 ns, 1.8237 us/op
+// GC:  274 1 0 4303356640 524288
+// Threading:  0 0 524288
+
+// AfterAll
+// Benchmark Process 41944 has exited with code 0.
+
+Mean = 1.798 μs, StdErr = 0.005 μs (0.30%), N = 15, StdDev = 0.021 μs
+Min = 1.766 μs, Q1 = 1.783 μs, Median = 1.794 μs, Q3 = 1.812 μs, Max = 1.837 μs
+IQR = 0.029 μs, LowerFence = 1.740 μs, UpperFence = 1.856 μs
+ConfidenceInterval = [1.776 μs; 1.820 μs] (CI 99.9%), Margin = 0.022 μs (1.24% of Mean)
+Skewness = 0.2, Kurtosis = 1.72, MValue = 2
+
+// ** Remained 4 (50,0 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1816 1940 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll(Count: 100)" --job ".NET 8.0" --benchmarkId 4 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 112900.00 ns, 112.9000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.Text.Json.JsonException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. Path: $.asciiArt[0] | LineNumber: 3 | BytePositionInLine: 20.
+ ---> System.Text.Json.JsonReaderException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. LineNumber: 3 | BytePositionInLine: 20.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeStringAndValidate(ReadOnlySpan`1 data, Int32 idx)
+   at System.Text.Json.Utf8JsonReader.ConsumeString()
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, TCollection& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at ConsoleEngine.Scenes.SceneLoader.Load(String jsonPath) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Scenes\SceneLoader.cs:line 52
+   at ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll() in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\JsonLoaderBenchmarks.cs:line 55
+   at BenchmarkDotNet.Autogenerated.Runnable_4.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 1079
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_4.Run(IHost host, String benchmarkName) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 944
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 13008 has exited with code -1.
+
+// ** Remained 3 (37,5 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1448 1816 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse(Count: 100)" --job ".NET 8.0" --benchmarkId 5 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 150400.00 ns, 150.4000 us/op
+WorkloadJitting  1: 1 op, 1690400.00 ns, 1.6904 ms/op
+
+OverheadJitting  2: 16 op, 97000.00 ns, 6.0625 us/op
+WorkloadJitting  2: 16 op, 836100.00 ns, 52.2563 us/op
+
+WorkloadPilot    1: 16 op, 631000.00 ns, 39.4375 us/op
+WorkloadPilot    2: 32 op, 986600.00 ns, 30.8313 us/op
+WorkloadPilot    3: 64 op, 2374100.00 ns, 37.0953 us/op
+WorkloadPilot    4: 128 op, 4714900.00 ns, 36.8352 us/op
+WorkloadPilot    5: 256 op, 8005000.00 ns, 31.2695 us/op
+WorkloadPilot    6: 512 op, 9987100.00 ns, 19.5061 us/op
+WorkloadPilot    7: 1024 op, 21045900.00 ns, 20.5526 us/op
+WorkloadPilot    8: 2048 op, 39840600.00 ns, 19.4534 us/op
+WorkloadPilot    9: 4096 op, 77972100.00 ns, 19.0362 us/op
+WorkloadPilot   10: 8192 op, 186972300.00 ns, 22.8238 us/op
+WorkloadPilot   11: 16384 op, 238704000.00 ns, 14.5693 us/op
+WorkloadPilot   12: 32768 op, 464491800.00 ns, 14.1752 us/op
+WorkloadPilot   13: 65536 op, 942382600.00 ns, 14.3796 us/op
+
+OverheadWarmup   1: 65536 op, 82800.00 ns, 1.2634 ns/op
+OverheadWarmup   2: 65536 op, 82200.00 ns, 1.2543 ns/op
+OverheadWarmup   3: 65536 op, 84600.00 ns, 1.2909 ns/op
+OverheadWarmup   4: 65536 op, 111900.00 ns, 1.7075 ns/op
+OverheadWarmup   5: 65536 op, 82500.00 ns, 1.2589 ns/op
+OverheadWarmup   6: 65536 op, 99400.00 ns, 1.5167 ns/op
+OverheadWarmup   7: 65536 op, 82000.00 ns, 1.2512 ns/op
+
+OverheadActual   1: 65536 op, 111500.00 ns, 1.7014 ns/op
+OverheadActual   2: 65536 op, 110000.00 ns, 1.6785 ns/op
+OverheadActual   3: 65536 op, 90600.00 ns, 1.3824 ns/op
+OverheadActual   4: 65536 op, 100300.00 ns, 1.5305 ns/op
+OverheadActual   5: 65536 op, 76300.00 ns, 1.1642 ns/op
+OverheadActual   6: 65536 op, 88200.00 ns, 1.3458 ns/op
+OverheadActual   7: 65536 op, 87000.00 ns, 1.3275 ns/op
+OverheadActual   8: 65536 op, 80300.00 ns, 1.2253 ns/op
+OverheadActual   9: 65536 op, 112900.00 ns, 1.7227 ns/op
+OverheadActual  10: 65536 op, 112700.00 ns, 1.7197 ns/op
+OverheadActual  11: 65536 op, 87400.00 ns, 1.3336 ns/op
+OverheadActual  12: 65536 op, 84800.00 ns, 1.2939 ns/op
+OverheadActual  13: 65536 op, 86600.00 ns, 1.3214 ns/op
+OverheadActual  14: 65536 op, 77800.00 ns, 1.1871 ns/op
+OverheadActual  15: 65536 op, 92200.00 ns, 1.4069 ns/op
+OverheadActual  16: 65536 op, 79700.00 ns, 1.2161 ns/op
+OverheadActual  17: 65536 op, 80100.00 ns, 1.2222 ns/op
+OverheadActual  18: 65536 op, 88400.00 ns, 1.3489 ns/op
+OverheadActual  19: 65536 op, 86000.00 ns, 1.3123 ns/op
+OverheadActual  20: 65536 op, 80000.00 ns, 1.2207 ns/op
+
+WorkloadWarmup   1: 65536 op, 985354200.00 ns, 15.0353 us/op
+WorkloadWarmup   2: 65536 op, 1065384900.00 ns, 16.2565 us/op
+WorkloadWarmup   3: 65536 op, 1041782800.00 ns, 15.8963 us/op
+WorkloadWarmup   4: 65536 op, 1051277700.00 ns, 16.0412 us/op
+WorkloadWarmup   5: 65536 op, 1051375500.00 ns, 16.0427 us/op
+WorkloadWarmup   6: 65536 op, 1032347300.00 ns, 15.7524 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 65536 op, 1030732600.00 ns, 15.7277 us/op
+WorkloadActual   2: 65536 op, 1031821000.00 ns, 15.7443 us/op
+WorkloadActual   3: 65536 op, 1032695800.00 ns, 15.7577 us/op
+WorkloadActual   4: 65536 op, 1036999100.00 ns, 15.8234 us/op
+WorkloadActual   5: 65536 op, 1073446900.00 ns, 16.3795 us/op
+WorkloadActual   6: 65536 op, 1061720800.00 ns, 16.2006 us/op
+WorkloadActual   7: 65536 op, 1038810100.00 ns, 15.8510 us/op
+WorkloadActual   8: 65536 op, 1038886700.00 ns, 15.8522 us/op
+WorkloadActual   9: 65536 op, 1038572100.00 ns, 15.8474 us/op
+WorkloadActual  10: 65536 op, 1032698100.00 ns, 15.7577 us/op
+WorkloadActual  11: 65536 op, 1028812400.00 ns, 15.6984 us/op
+WorkloadActual  12: 65536 op, 964426200.00 ns, 14.7160 us/op
+WorkloadActual  13: 65536 op, 973376000.00 ns, 14.8525 us/op
+WorkloadActual  14: 65536 op, 1040483500.00 ns, 15.8765 us/op
+WorkloadActual  15: 65536 op, 1043005400.00 ns, 15.9150 us/op
+WorkloadActual  16: 65536 op, 1026911200.00 ns, 15.6694 us/op
+WorkloadActual  17: 65536 op, 1041326200.00 ns, 15.8894 us/op
+WorkloadActual  18: 65536 op, 1037349300.00 ns, 15.8287 us/op
+WorkloadActual  19: 65536 op, 1029859100.00 ns, 15.7144 us/op
+WorkloadActual  20: 65536 op, 1032218300.00 ns, 15.7504 us/op
+
+// AfterActualRun
+WorkloadResult   1: 65536 op, 1030645400.00 ns, 15.7264 us/op
+WorkloadResult   2: 65536 op, 1031733800.00 ns, 15.7430 us/op
+WorkloadResult   3: 65536 op, 1032608600.00 ns, 15.7564 us/op
+WorkloadResult   4: 65536 op, 1036911900.00 ns, 15.8220 us/op
+WorkloadResult   5: 65536 op, 1038722900.00 ns, 15.8497 us/op
+WorkloadResult   6: 65536 op, 1038799500.00 ns, 15.8508 us/op
+WorkloadResult   7: 65536 op, 1038484900.00 ns, 15.8460 us/op
+WorkloadResult   8: 65536 op, 1032610900.00 ns, 15.7564 us/op
+WorkloadResult   9: 65536 op, 1028725200.00 ns, 15.6971 us/op
+WorkloadResult  10: 65536 op, 964339000.00 ns, 14.7146 us/op
+WorkloadResult  11: 65536 op, 973288800.00 ns, 14.8512 us/op
+WorkloadResult  12: 65536 op, 1040396300.00 ns, 15.8752 us/op
+WorkloadResult  13: 65536 op, 1042918200.00 ns, 15.9137 us/op
+WorkloadResult  14: 65536 op, 1026824000.00 ns, 15.6681 us/op
+WorkloadResult  15: 65536 op, 1041239000.00 ns, 15.8880 us/op
+WorkloadResult  16: 65536 op, 1037262100.00 ns, 15.8274 us/op
+WorkloadResult  17: 65536 op, 1029771900.00 ns, 15.7131 us/op
+WorkloadResult  18: 65536 op, 1032131100.00 ns, 15.7491 us/op
+// GC:  327 21 0 5139071712 65536
+// Threading:  0 0 65536
+
+// AfterAll
+// Benchmark Process 38152 has exited with code 0.
+
+Mean = 15.680 μs, StdErr = 0.079 μs (0.50%), N = 18, StdDev = 0.335 μs
+Min = 14.715 μs, Q1 = 15.716 μs, Median = 15.756 μs, Q3 = 15.849 μs, Max = 15.914 μs
+IQR = 0.132 μs, LowerFence = 15.518 μs, UpperFence = 16.047 μs
+ConfidenceInterval = [15.367 μs; 15.993 μs] (CI 99.9%), Margin = 0.313 μs (2.00% of Mean)
+Skewness = -2.1, Kurtosis = 5.98, MValue = 2
+
+// ** Remained 2 (25,0 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1728 1444 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll(Count: 1000)" --job ".NET 8.0" --benchmarkId 6 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 125700.00 ns, 125.7000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> System.Text.Json.JsonException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. Path: $.asciiArt[0] | LineNumber: 3 | BytePositionInLine: 20.
+ ---> System.Text.Json.JsonReaderException: ' ' is an invalid escapable character within a JSON string. The string should be correctly escaped. LineNumber: 3 | BytePositionInLine: 20.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeStringAndValidate(ReadOnlySpan`1 data, Int32 idx)
+   at System.Text.Json.Utf8JsonReader.ConsumeString()
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Utf8JsonReader.Read()
+   at System.Text.Json.Serialization.JsonCollectionConverter`2.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, TCollection& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.Metadata.JsonPropertyInfo`1.ReadJsonAndSetMember(Object obj, ReadStack& state, Utf8JsonReader& reader)
+   at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value)
+   at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader& reader, Type typeToConvert, JsonSerializerOptions options, ReadStack& state, T& value, Boolean& isPopulatedValue)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo`1 jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at ConsoleEngine.Scenes.SceneLoader.Load(String jsonPath) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Scenes\SceneLoader.cs:line 52
+   at ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.SceneLoader_LoadAll() in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\JsonLoaderBenchmarks.cs:line 55
+   at BenchmarkDotNet.Autogenerated.Runnable_6.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 1463
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_6.Run(IHost host, String benchmarkName) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 1328
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\5059883d-ff8b-4980-aa87-3abe09177514.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 25552 has exited with code -1.
+
+// ** Remained 1 (12,5 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 5059883d-ff8b-4980-aa87-3abe09177514.dll --anonymousPipes 1176 1220 --benchmarkName "ConsoleEngine.Benchmarks.JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse(Count: 1000)" --job ".NET 8.0" --benchmarkId 7 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\5059883d-ff8b-4980-aa87-3abe09177514\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 122700.00 ns, 122.7000 us/op
+WorkloadJitting  1: 1 op, 2430900.00 ns, 2.4309 ms/op
+
+OverheadJitting  2: 16 op, 122000.00 ns, 7.6250 us/op
+WorkloadJitting  2: 16 op, 11870400.00 ns, 741.9000 us/op
+
+WorkloadPilot    1: 16 op, 5693900.00 ns, 355.8688 us/op
+WorkloadPilot    2: 32 op, 7790300.00 ns, 243.4469 us/op
+WorkloadPilot    3: 64 op, 13060000.00 ns, 204.0625 us/op
+WorkloadPilot    4: 128 op, 25470900.00 ns, 198.9914 us/op
+WorkloadPilot    5: 256 op, 54119300.00 ns, 211.4035 us/op
+WorkloadPilot    6: 512 op, 106146200.00 ns, 207.3168 us/op
+WorkloadPilot    7: 1024 op, 194724200.00 ns, 190.1604 us/op
+WorkloadPilot    8: 2048 op, 309583500.00 ns, 151.1638 us/op
+WorkloadPilot    9: 4096 op, 663244800.00 ns, 161.9250 us/op
+
+OverheadWarmup   1: 4096 op, 6500.00 ns, 1.5869 ns/op
+OverheadWarmup   2: 4096 op, 5400.00 ns, 1.3184 ns/op
+OverheadWarmup   3: 4096 op, 5100.00 ns, 1.2451 ns/op
+OverheadWarmup   4: 4096 op, 5400.00 ns, 1.3184 ns/op
+OverheadWarmup   5: 4096 op, 5300.00 ns, 1.2939 ns/op
+OverheadWarmup   6: 4096 op, 6600.00 ns, 1.6113 ns/op
+OverheadWarmup   7: 4096 op, 5700.00 ns, 1.3916 ns/op
+
+OverheadActual   1: 4096 op, 6200.00 ns, 1.5137 ns/op
+OverheadActual   2: 4096 op, 6300.00 ns, 1.5381 ns/op
+OverheadActual   3: 4096 op, 9100.00 ns, 2.2217 ns/op
+OverheadActual   4: 4096 op, 6000.00 ns, 1.4648 ns/op
+OverheadActual   5: 4096 op, 5800.00 ns, 1.4160 ns/op
+OverheadActual   6: 4096 op, 5200.00 ns, 1.2695 ns/op
+OverheadActual   7: 4096 op, 5300.00 ns, 1.2939 ns/op
+OverheadActual   8: 4096 op, 5400.00 ns, 1.3184 ns/op
+OverheadActual   9: 4096 op, 5400.00 ns, 1.3184 ns/op
+OverheadActual  10: 4096 op, 6300.00 ns, 1.5381 ns/op
+OverheadActual  11: 4096 op, 5100.00 ns, 1.2451 ns/op
+OverheadActual  12: 4096 op, 6400.00 ns, 1.5625 ns/op
+OverheadActual  13: 4096 op, 6000.00 ns, 1.4648 ns/op
+OverheadActual  14: 4096 op, 5900.00 ns, 1.4404 ns/op
+OverheadActual  15: 4096 op, 5500.00 ns, 1.3428 ns/op
+OverheadActual  16: 4096 op, 6100.00 ns, 1.4893 ns/op
+OverheadActual  17: 4096 op, 5400.00 ns, 1.3184 ns/op
+OverheadActual  18: 4096 op, 6000.00 ns, 1.4648 ns/op
+OverheadActual  19: 4096 op, 6600.00 ns, 1.6113 ns/op
+OverheadActual  20: 4096 op, 6000.00 ns, 1.4648 ns/op
+
+WorkloadWarmup   1: 4096 op, 640367900.00 ns, 156.3398 us/op
+WorkloadWarmup   2: 4096 op, 637987500.00 ns, 155.7587 us/op
+WorkloadWarmup   3: 4096 op, 675629100.00 ns, 164.9485 us/op
+WorkloadWarmup   4: 4096 op, 675182100.00 ns, 164.8394 us/op
+WorkloadWarmup   5: 4096 op, 665268400.00 ns, 162.4190 us/op
+WorkloadWarmup   6: 4096 op, 672371300.00 ns, 164.1531 us/op
+WorkloadWarmup   7: 4096 op, 657947100.00 ns, 160.6316 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 4096 op, 656833600.00 ns, 160.3598 us/op
+WorkloadActual   2: 4096 op, 659529000.00 ns, 161.0178 us/op
+WorkloadActual   3: 4096 op, 661313900.00 ns, 161.4536 us/op
+WorkloadActual   4: 4096 op, 664895000.00 ns, 162.3279 us/op
+WorkloadActual   5: 4096 op, 657656200.00 ns, 160.5606 us/op
+WorkloadActual   6: 4096 op, 672218900.00 ns, 164.1159 us/op
+WorkloadActual   7: 4096 op, 658099100.00 ns, 160.6687 us/op
+WorkloadActual   8: 4096 op, 664742400.00 ns, 162.2906 us/op
+WorkloadActual   9: 4096 op, 663811100.00 ns, 162.0633 us/op
+WorkloadActual  10: 4096 op, 674360900.00 ns, 164.6389 us/op
+WorkloadActual  11: 4096 op, 662809900.00 ns, 161.8188 us/op
+WorkloadActual  12: 4096 op, 658536500.00 ns, 160.7755 us/op
+WorkloadActual  13: 4096 op, 679281900.00 ns, 165.8403 us/op
+WorkloadActual  14: 4096 op, 697486400.00 ns, 170.2848 us/op
+WorkloadActual  15: 4096 op, 685758700.00 ns, 167.4216 us/op
+
+// AfterActualRun
+WorkloadResult   1: 4096 op, 656827600.00 ns, 160.3583 us/op
+WorkloadResult   2: 4096 op, 659523000.00 ns, 161.0164 us/op
+WorkloadResult   3: 4096 op, 661307900.00 ns, 161.4521 us/op
+WorkloadResult   4: 4096 op, 664889000.00 ns, 162.3264 us/op
+WorkloadResult   5: 4096 op, 657650200.00 ns, 160.5591 us/op
+WorkloadResult   6: 4096 op, 672212900.00 ns, 164.1145 us/op
+WorkloadResult   7: 4096 op, 658093100.00 ns, 160.6673 us/op
+WorkloadResult   8: 4096 op, 664736400.00 ns, 162.2892 us/op
+WorkloadResult   9: 4096 op, 663805100.00 ns, 162.0618 us/op
+WorkloadResult  10: 4096 op, 674354900.00 ns, 164.6374 us/op
+WorkloadResult  11: 4096 op, 662803900.00 ns, 161.8174 us/op
+WorkloadResult  12: 4096 op, 658530500.00 ns, 160.7740 us/op
+WorkloadResult  13: 4096 op, 679275900.00 ns, 165.8388 us/op
+WorkloadResult  14: 4096 op, 685752700.00 ns, 167.4201 us/op
+// GC:  209 83 0 3289612352 4096
+// Threading:  0 0 4096
+
+// AfterAll
+// Benchmark Process 27756 has exited with code 0.
+
+Mean = 162.524 μs, StdErr = 0.580 μs (0.36%), N = 14, StdDev = 2.171 μs
+Min = 160.358 μs, Q1 = 160.835 μs, Median = 161.940 μs, Q3 = 163.667 μs, Max = 167.420 μs
+IQR = 2.833 μs, LowerFence = 156.585 μs, UpperFence = 167.917 μs
+ConfidenceInterval = [160.075 μs; 164.972 μs] (CI 99.9%), Margin = 2.449 μs (1.51% of Mean)
+Skewness = 0.93, Kurtosis = 2.53, MValue = 2
+
+// ** Remained 0 (0,0 %) benchmark(s) to run. Estimated finish 2026-05-29 19:49 (0h 0m from now) **
+Successfully reverted power plan (GUID: a1841308-3541-4fab-bc81-f71556f20b4a FriendlyName: Economizador)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  docs\perf-audit\results\ConsoleEngine.Benchmarks.JsonLoaderBenchmarks-report.csv
+  docs\perf-audit\results\ConsoleEngine.Benchmarks.JsonLoaderBenchmarks-report-github.md
+  docs\perf-audit\results\ConsoleEngine.Benchmarks.JsonLoaderBenchmarks-report.html
+  docs\perf-audit\results\ConsoleEngine.Benchmarks.JsonLoaderBenchmarks-report-full-compressed.json
+
+// * Detailed results *
+JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 334.812 ns, StdErr = 1.799 ns (0.54%), N = 29, StdDev = 9.686 ns
+Min = 306.934 ns, Q1 = 335.313 ns, Median = 336.576 ns, Q3 = 338.560 ns, Max = 345.209 ns
+IQR = 3.247 ns, LowerFence = 330.443 ns, UpperFence = 343.430 ns
+ConfidenceInterval = [328.204 ns; 341.419 ns] (CI 99.9%), Margin = 6.608 ns (1.97% of Mean)
+Skewness = -2.02, Kurtosis = 6.12, MValue = 2
+-------------------- Histogram --------------------
+[304.662 ns ; 312.937 ns) | @@@
+[312.937 ns ; 321.213 ns) | 
+[321.213 ns ; 333.982 ns) | @
+[333.982 ns ; 342.257 ns) | @@@@@@@@@@@@@@@@@@@@@@
+[342.257 ns ; 349.347 ns) | @@@
+---------------------------------------------------
+
+JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 1.798 μs, StdErr = 0.005 μs (0.30%), N = 15, StdDev = 0.021 μs
+Min = 1.766 μs, Q1 = 1.783 μs, Median = 1.794 μs, Q3 = 1.812 μs, Max = 1.837 μs
+IQR = 0.029 μs, LowerFence = 1.740 μs, UpperFence = 1.856 μs
+ConfidenceInterval = [1.776 μs; 1.820 μs] (CI 99.9%), Margin = 0.022 μs (1.24% of Mean)
+Skewness = 0.2, Kurtosis = 1.72, MValue = 2
+-------------------- Histogram --------------------
+[1.755 μs ; 1.802 μs) | @@@@@@@@
+[1.802 μs ; 1.848 μs) | @@@@@@@
+---------------------------------------------------
+
+JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 15.680 μs, StdErr = 0.079 μs (0.50%), N = 18, StdDev = 0.335 μs
+Min = 14.715 μs, Q1 = 15.716 μs, Median = 15.756 μs, Q3 = 15.849 μs, Max = 15.914 μs
+IQR = 0.132 μs, LowerFence = 15.518 μs, UpperFence = 16.047 μs
+ConfidenceInterval = [15.367 μs; 15.993 μs] (CI 99.9%), Margin = 0.313 μs (2.00% of Mean)
+Skewness = -2.1, Kurtosis = 5.98, MValue = 2
+-------------------- Histogram --------------------
+[14.615 μs ; 14.951 μs) | @@
+[14.951 μs ; 15.286 μs) | 
+[15.286 μs ; 15.623 μs) | 
+[15.623 μs ; 15.959 μs) | @@@@@@@@@@@@@@@@
+---------------------------------------------------
+
+JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+There are not any results runs
+
+JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+Runtime = .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2; GC = Concurrent Workstation
+Mean = 162.524 μs, StdErr = 0.580 μs (0.36%), N = 14, StdDev = 2.171 μs
+Min = 160.358 μs, Q1 = 160.835 μs, Median = 161.940 μs, Q3 = 163.667 μs, Max = 167.420 μs
+IQR = 2.833 μs, LowerFence = 156.585 μs, UpperFence = 167.917 μs
+ConfidenceInterval = [160.075 μs; 164.972 μs] (CI 99.9%), Margin = 2.449 μs (1.51% of Mean)
+Skewness = 0.93, Kurtosis = 2.53, MValue = 2
+-------------------- Histogram --------------------
+[159.729 μs ; 163.327 μs) | @@@@@@@@@@
+[163.327 μs ; 168.602 μs) | @@@@
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.8524)
+Unknown processor
+.NET SDK 9.0.309
+  [Host]   : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+  .NET 8.0 : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+
+Job=.NET 8.0  Runtime=.NET 8.0  
+
+| Method                           | Count | Mean         | Error       | StdDev      | Ratio | RatioSD | Gen0    | Gen1    | Allocated | Alloc Ratio |
+|--------------------------------- |------ |-------------:|------------:|------------:|------:|--------:|--------:|--------:|----------:|------------:|
+| SceneLoader_LoadAll              | 1     |           NA |          NA |          NA |     ? |       ? |      NA |      NA |        NA |           ? |
+| MarkdownLocalizationLoader_Parse | 1     |     334.8 ns |     6.61 ns |     9.69 ns |     ? |       ? |  0.1059 |       - |   1.63 KB |           ? |
+|                                  |       |              |             |             |       |         |         |         |           |             |
+| SceneLoader_LoadAll              | 10    |           NA |          NA |          NA |     ? |       ? |      NA |      NA |        NA |           ? |
+| MarkdownLocalizationLoader_Parse | 10    |   1,797.9 ns |    22.26 ns |    20.82 ns |     ? |       ? |  0.5226 |  0.0019 |   8.02 KB |           ? |
+|                                  |       |              |             |             |       |         |         |         |           |             |
+| SceneLoader_LoadAll              | 100   |           NA |          NA |          NA |     ? |       ? |      NA |      NA |        NA |           ? |
+| MarkdownLocalizationLoader_Parse | 100   |  15,680.5 ns |   312.96 ns |   334.86 ns |     ? |       ? |  4.9896 |  0.3204 |  76.58 KB |           ? |
+|                                  |       |              |             |             |       |         |         |         |           |             |
+| SceneLoader_LoadAll              | 1000  |           NA |          NA |          NA |     ? |       ? |      NA |      NA |        NA |           ? |
+| MarkdownLocalizationLoader_Parse | 1000  | 162,523.8 ns | 2,448.51 ns | 2,170.54 ns |     ? |       ? | 51.0254 | 20.2637 |  784.3 KB |           ? |
+
+Benchmarks with issues:
+  JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1]
+  JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=10]
+  JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=100]
+  JsonLoaderBenchmarks.SceneLoader_LoadAll: .NET 8.0(Runtime=.NET 8.0) [Count=1000]
+
+// * Warnings *
+BaselineCustomAnalyzer
+  Summary -> A question mark '?' symbol indicates that it was not possible to compute the (Ratio, RatioSD, Alloc Ratio) column(s) because the baseline value is too close to zero.
+Environment
+  Summary -> Detected error exit code from one of the benchmarks. It might be caused by following antivirus software:
+        - Windows Defender (windowsdefender://)
+Use InProcessEmitToolchain or InProcessNoEmitToolchain to avoid new process creation.
+
+
+// * Hints *
+Outliers
+  JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0 -> 2 outliers were removed, 5 outliers were detected (308.25 ns..311.98 ns, 347.05 ns, 361.03 ns)
+  JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0 -> 2 outliers were removed, 4 outliers were detected (14.72 μs, 14.85 μs, 16.20 μs, 16.38 μs)
+  JsonLoaderBenchmarks.MarkdownLocalizationLoader_Parse: .NET 8.0 -> 1 outlier  was  removed (170.28 μs)
+
+// * Legends *
+  Count       : Value of the 'Count' parameter
+  Mean        : Arithmetic mean of all measurements
+  Error       : Half of 99.9% confidence interval
+  StdDev      : Standard deviation of all measurements
+  Ratio       : Mean of the ratio distribution ([Current]/[Baseline])
+  RatioSD     : Standard deviation of the ratio distribution ([Current]/[Baseline])
+  Gen0        : GC Generation 0 collects per 1000 operations
+  Gen1        : GC Generation 1 collects per 1000 operations
+  Allocated   : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  Alloc Ratio : Allocated memory ratio distribution ([Current]/[Baseline])
+  1 ns        : 1 Nanosecond (0.000000001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:01:49 (109.25 sec), executed benchmarks: 8
+
+Global total time: 00:02:16 (136.61 sec), executed benchmarks: 8
+// * Artifacts cleanup *
+Artifacts cleanup is finished

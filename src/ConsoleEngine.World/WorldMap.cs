@@ -26,6 +26,7 @@ public sealed class WorldMap
     /// <exception cref="ArgumentException">Thrown if any two locations share the same ID.</exception>
     public WorldMap(IEnumerable<LocationDefinition> locations)
     {
+        ArgumentNullException.ThrowIfNull(locations);
         _locations = new Dictionary<string, LocationDefinition>(StringComparer.OrdinalIgnoreCase);
         foreach (var loc in locations)
         {

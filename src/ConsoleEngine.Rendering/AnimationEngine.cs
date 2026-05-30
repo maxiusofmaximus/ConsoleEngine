@@ -30,11 +30,11 @@ public static class AnimationEngine
     /// </summary>
     public static void DrawAt(int x, int y, string text, ConsoleColor color = ConsoleColor.Gray)
     {
-        if (y < 0 || y >= Console.WindowHeight) return;
-        int safeX = Math.Max(0, x);
-        if (safeX >= Console.WindowWidth) return;
         try
         {
+            if (y < 0 || y >= Console.WindowHeight) return;
+            int safeX = Math.Max(0, x);
+            if (safeX >= Console.WindowWidth) return;
             Console.SetCursorPosition(safeX, y);
             int maxLen = Console.WindowWidth - safeX;
             string safe = text.Length > maxLen ? text[..maxLen] : text;
@@ -43,7 +43,7 @@ public static class AnimationEngine
             Console.Write(safe);
             Console.ForegroundColor = prev;
         }
-        catch { /* ignore out-of-bounds positioning errors */ }
+        catch { /* ignore out-of-bounds and headless-environment errors */ }
     }
 
     /// <summary>
@@ -62,7 +62,9 @@ public static class AnimationEngine
     /// </summary>
     public static void ClearRect(int x, int y, int w, int h)
     {
-        int safeW = Math.Max(0, Math.Min(w, Console.WindowWidth - Math.Max(0, x)));
+        int winW;
+        try { winW = Console.WindowWidth; } catch { return; }
+        int safeW = Math.Max(0, Math.Min(w, winW - Math.Max(0, x)));
         if (safeW == 0) return;
         string blank = new string(' ', safeW);
         for (int i = 0; i < h; i++)

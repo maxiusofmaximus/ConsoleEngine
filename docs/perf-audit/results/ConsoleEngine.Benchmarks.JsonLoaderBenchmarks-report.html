@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ConsoleEngine.Benchmarks.JsonLoaderBenchmarks-20260529-194739</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.8524)
+Unknown processor
+.NET SDK 9.0.309
+  [Host]   : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+  .NET 8.0 : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+</code></pre>
+<pre><code>Job=.NET 8.0  Runtime=.NET 8.0  
+</code></pre>
+
+<table>
+<thead><tr><th>Method                    </th><th>Count</th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>SceneLoader_LoadAll</td><td>1</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
+</tr><tr><td>MarkdownLocalizationLoader_Parse</td><td>1</td><td>334.8 ns</td><td>6.61 ns</td><td>9.69 ns</td><td>?</td><td>?</td><td>0.1059</td><td>-</td><td>1.63 KB</td><td>?</td>
+</tr><tr><td>SceneLoader_LoadAll</td><td>10</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
+</tr><tr><td>MarkdownLocalizationLoader_Parse</td><td>10</td><td>1,797.9 ns</td><td>22.26 ns</td><td>20.82 ns</td><td>?</td><td>?</td><td>0.5226</td><td>0.0019</td><td>8.02 KB</td><td>?</td>
+</tr><tr><td>SceneLoader_LoadAll</td><td>100</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
+</tr><tr><td>MarkdownLocalizationLoader_Parse</td><td>100</td><td>15,680.5 ns</td><td>312.96 ns</td><td>334.86 ns</td><td>?</td><td>?</td><td>4.9896</td><td>0.3204</td><td>76.58 KB</td><td>?</td>
+</tr><tr><td>SceneLoader_LoadAll</td><td>1000</td><td>NA</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>NA</td><td>NA</td><td>NA</td><td>?</td>
+</tr><tr><td>MarkdownLocalizationLoader_Parse</td><td>1000</td><td>162,523.8 ns</td><td>2,448.51 ns</td><td>2,170.54 ns</td><td>?</td><td>?</td><td>51.0254</td><td>20.2637</td><td>784.3 KB</td><td>?</td>
+</tr></tbody></table>
+</body>
+</html>

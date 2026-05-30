@@ -63,7 +63,12 @@ public sealed class SaveRepository<T> where T : class
         if (files.Length == 0)
             throw new InvalidOperationException("No save files found.");
 
-        string newest = files.OrderByDescending(File.GetLastWriteTimeUtc).First();
+        // Pre-materialize timestamps to avoid O(n log n) File I/O syscalls in comparator.
+        // The previous form called GetLastWriteTimeUtc per comparison, not per file.
+        string newest = files
+            .Select(f => (Path: f, Time: File.GetLastWriteTimeUtc(f)))
+            .OrderByDescending(x => x.Time)
+            .First().Path;
         return JsonSerializer.Deserialize<T>(File.ReadAllText(newest), JsonOptions)
                ?? throw new InvalidOperationException("Failed to deserialise the most recent save.");
     }

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ConsoleEngine.Core;
 
 namespace ConsoleEngine.World;
 
@@ -118,8 +119,8 @@ public static class WorldLoader
                 Name        = Name,
                 Description = Description  ?? [],
                 AsciiArt    = AsciiArt     ?? [],
-                ArtColor    = ParseColor(ArtColor,  ConsoleColor.DarkGray),
-                TextColor   = ParseColor(TextColor, ConsoleColor.Gray),
+                ArtColor    = ConsoleColorParser.Parse(ArtColor,  ConsoleColor.DarkGray),
+                TextColor   = ConsoleColorParser.Parse(TextColor, ConsoleColor.Gray),
                 SpritePath  = SpritePath,
                 SpriteWidth = SpriteWidth  ?? 32,
                 SpriteRows  = SpriteRows   ?? 16,
@@ -128,9 +129,5 @@ public static class WorldLoader
             };
         }
 
-        private static ConsoleColor ParseColor(string? name, ConsoleColor fallback) =>
-            name is not null && Enum.TryParse(name, ignoreCase: true, out ConsoleColor c)
-                ? c
-                : fallback;
     }
 }
