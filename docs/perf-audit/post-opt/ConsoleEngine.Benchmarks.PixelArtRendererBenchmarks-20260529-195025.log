@@ -1,0 +1,111 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 18 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\obj\Release\net8.0/" /p:OutDir="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0/" /p:OutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0/" in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4
+// command took 1.58 sec and exited with 0
+// start dotnet  build -c Release --no-restore /p:UseSharedCompilation=false /p:BuildInParallel=false /m:1 /p:Deterministic=true /p:Optimize=true /p:IntermediateOutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\obj\Release\net8.0/" /p:OutDir="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0/" /p:OutputPath="C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0/" --output "C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0/" in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4
+// command took 26.01 sec and exited with 0
+// ***** Done, took 00:00:27 (27.71 sec)   *****
+// Found 18 benchmarks:
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=32]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=32]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=32]
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=64]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=64]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=64]
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=128]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=128]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=128]
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=256]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=256]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=256]
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=512]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=512]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=512]
+//   PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=1024]
+//   PixelArtRendererBenchmarks.ToAnsiString_HalfTransparent: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=1024]
+//   PixelArtRendererBenchmarks.BuildSprite: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=1024]
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: Alto rendimiento)
+// **************************
+// Benchmark: PixelArtRendererBenchmarks.ToAnsiString_FromGrid: .NET 8.0(Runtime=.NET 8.0) [SpriteSize=32]
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet 913e12f9-05a9-42a1-b976-db90e1bd41c4.dll --anonymousPipes 1964 1976 --benchmarkName "ConsoleEngine.Benchmarks.PixelArtRendererBenchmarks.ToAnsiString_FromGrid(SpriteSize: 32)" --job ".NET 8.0" --benchmarkId 0 in C:\Users\maxli\ConsoleEngine\src\ConsoleEngine.Benchmarks\bin\Release\net8.0\913e12f9-05a9-42a1-b976-db90e1bd41c4\bin\Release\net8.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.14.0
+// Runtime=.NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2,AES,BMI1,BMI2,FMA,LZCNT,PCLMUL,POPCNT,AvxVnni,SERIALIZE VectorSize=256
+// Job: .NET 8.0
+
+OverheadJitting  1: 1 op, 159900.00 ns, 159.9000 us/op
+WorkloadJitting  1: 1 op, 1018600.00 ns, 1.0186 ms/op
+
+OverheadJitting  2: 16 op, 237600.00 ns, 14.8500 us/op
+WorkloadJitting  2: 16 op, 2743000.00 ns, 171.4375 us/op
+
+WorkloadPilot    1: 16 op, 1843100.00 ns, 115.1938 us/op
+WorkloadPilot    2: 32 op, 2992000.00 ns, 93.5000 us/op
+WorkloadPilot    3: 64 op, 6470300.00 ns, 101.0984 us/op
+WorkloadPilot    4: 128 op, 11129900.00 ns, 86.9523 us/op
+WorkloadPilot    5: 256 op, 17703100.00 ns, 69.1527 us/op
+WorkloadPilot    6: 512 op, 33901900.00 ns, 66.2146 us/op
+WorkloadPilot    7: 1024 op, 70582500.00 ns, 68.9282 us/op
+WorkloadPilot    8: 2048 op, 135946900.00 ns, 66.3803 us/op
+WorkloadPilot    9: 4096 op, 52959500.00 ns, 12.9296 us/op
+WorkloadPilot   10: 8192 op, 102455500.00 ns, 12.5068 us/op
+WorkloadPilot   11: 16384 op, 205545600.00 ns, 12.5455 us/op
+WorkloadPilot   12: 32768 op, 431022100.00 ns, 13.1538 us/op
+WorkloadPilot   13: 65536 op, 835574200.00 ns, 12.7499 us/op
+
+OverheadWarmup   1: 65536 op, 129800.00 ns, 1.9806 ns/op
+OverheadWarmup   2: 65536 op, 128300.00 ns, 1.9577 ns/op
+OverheadWarmup   3: 65536 op, 128000.00 ns, 1.9531 ns/op
+OverheadWarmup   4: 65536 op, 128500.00 ns, 1.9608 ns/op
+OverheadWarmup   5: 65536 op, 128200.00 ns, 1.9562 ns/op
+OverheadWarmup   6: 65536 op, 128100.00 ns, 1.9547 ns/op
+OverheadWarmup   7: 65536 op, 127800.00 ns, 1.9501 ns/op
+OverheadWarmup   8: 65536 op, 127700.00 ns, 1.9485 ns/op
+OverheadWarmup   9: 65536 op, 127800.00 ns, 1.9501 ns/op
+OverheadWarmup  10: 65536 op, 127900.00 ns, 1.9516 ns/op
+
+OverheadActual   1: 65536 op, 128400.00 ns, 1.9592 ns/op
+OverheadActual   2: 65536 op, 128600.00 ns, 1.9623 ns/op
+OverheadActual   3: 65536 op, 128700.00 ns, 1.9638 ns/op
+OverheadActual   4: 65536 op, 128200.00 ns, 1.9562 ns/op
+OverheadActual   5: 65536 op, 128300.00 ns, 1.9577 ns/op
+OverheadActual   6: 65536 op, 128100.00 ns, 1.9547 ns/op
+OverheadActual   7: 65536 op, 127900.00 ns, 1.9516 ns/op
+OverheadActual   8: 65536 op, 128000.00 ns, 1.9531 ns/op
+OverheadActual   9: 65536 op, 128000.00 ns, 1.9531 ns/op
+OverheadActual  10: 65536 op, 128100.00 ns, 1.9547 ns/op
+OverheadActual  11: 65536 op, 131200.00 ns, 2.0020 ns/op
+OverheadActual  12: 65536 op, 127900.00 ns, 1.9516 ns/op
+OverheadActual  13: 65536 op, 127800.00 ns, 1.9501 ns/op
+OverheadActual  14: 65536 op, 128100.00 ns, 1.9547 ns/op
+OverheadActual  15: 65536 op, 128200.00 ns, 1.9562 ns/op
+
+WorkloadWarmup   1: 65536 op, 840235600.00 ns, 12.8210 us/op
+WorkloadWarmup   2: 65536 op, 1409929300.00 ns, 21.5138 us/op
+WorkloadWarmup   3: 65536 op, 1194441800.00 ns, 18.2257 us/op
+WorkloadWarmup   4: 65536 op, 1570629800.00 ns, 23.9659 us/op
+WorkloadWarmup   5: 65536 op, 1242219800.00 ns, 18.9548 us/op
+WorkloadWarmup   6: 65536 op, 1168558800.00 ns, 17.8308 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 65536 op, 1101627100.00 ns, 16.8095 us/op
+WorkloadActual   2: 65536 op, 1087058900.00 ns, 16.5872 us/op
+WorkloadActual   3: 65536 op, 1070773600.00 ns, 16.3387 us/op
+WorkloadActual   4: 65536 op, 1267011500.00 ns, 19.3331 us/op
+WorkloadActual   5: 65536 op, 1168200600.00 ns, 17.8253 us/op
+WorkloadActual   6: 65536 op, 1204490200.00 ns, 18.3791 us/op
+WorkloadActual   7: 65536 op, 1439147800.00 ns, 21.9597 us/op
+WorkloadActual   8: 65536 op, 1214006100.00 ns, 18.5243 us/op
+WorkloadActual   9: 65536 op, 1178089100.00 ns, 17.9762 us/op
+WorkloadActual  10: 65536 op, 1336425700.00 ns, 20.3922 us/op
+WorkloadActual  11: 65536 op, 1174278000.00 ns, 17.9181 us/op
+WorkloadActu
