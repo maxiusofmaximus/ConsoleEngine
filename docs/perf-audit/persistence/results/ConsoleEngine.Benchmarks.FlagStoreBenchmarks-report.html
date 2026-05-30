@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>ConsoleEngine.Benchmarks.FlagStoreBenchmarks-20260529-203905</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.8524)
+Unknown processor
+.NET SDK 9.0.309
+  [Host]   : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+  .NET 8.0 : .NET 8.0.22 (8.0.2225.52707), X64 RyuJIT AVX2
+</code></pre>
+<pre><code>Job=.NET 8.0  Runtime=.NET 8.0  
+</code></pre>
+
+<table>
+<thead><tr><th>Method</th><th>FlagCount</th><th>Mean    </th><th>Error  </th><th>StdDev </th><th>Median  </th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>ToJson</td><td>10</td><td>298.0 ns</td><td>5.97 ns</td><td>6.13 ns</td><td>297.3 ns</td><td>1.00</td><td>0.03</td><td>0.0329</td><td>-</td><td>-</td><td>520 B</td><td>1.00</td>
+</tr><tr><td>FromJson</td><td>10</td><td>1,333.8 ns</td><td>26.43 ns</td><td>31.46 ns</td><td>1,339.1 ns</td><td>4.48</td><td>0.14</td><td>0.2537</td><td>0.0019</td><td>-</td><td>3992 B</td><td>7.68</td>
+</tr><tr><td>Get_AllFlags</td><td>10</td><td>789.4 ns</td><td>31.68 ns</td><td>93.42 ns</td><td>733.7 ns</td><td>2.65</td><td>0.32</td><td>0.0401</td><td>-</td><td>-</td><td>640 B</td><td>1.23</td>
+</tr><tr><td>Set_AllFlags</td><td>10</td><td>1,348.2 ns</td><td>26.32 ns</td><td>32.32 ns</td><td>1,338.3 ns</td><td>4.53</td><td>0.14</td><td>0.1907</td><td>0.0019</td><td>-</td><td>2992 B</td><td>5.75</td>
+</tr><tr><td>ToJson</td><td>100</td><td>3,762.9 ns</td><td>153.67 ns</td><td>453.10 ns</td><td>3,923.3 ns</td><td>1.02</td><td>0.21</td><td>0.3281</td><td>-</td><td>-</td><td>5168 B</td><td>1.00</td>
+</tr><tr><td>FromJson</td><td>100</td><td>15,526.5 ns</td><td>207.77 ns</td><td>184.18 ns</td><td>15,585.5 ns</td><td>4.21</td><td>0.72</td><td>2.6093</td><td>0.2289</td><td>-</td><td>41000 B</td><td>7.93</td>
+</tr><tr><td>Get_AllFlags</td><td>100</td><td>10,017.9 ns</td><td>22.29 ns</td><td>20.85 ns</td><td>10,014.8 ns</td><td>2.72</td><td>0.46</td><td>0.3815</td><td>-</td><td>-</td><td>6160 B</td><td>1.19</td>
+</tr><tr><td>Set_AllFlags</td><td>100</td><td>16,795.4 ns</td><td>59.66 ns</td><td>46.58 ns</td><td>16,807.9 ns</td><td>4.56</td><td>0.78</td><td>1.9836</td><td>0.1678</td><td>-</td><td>31336 B</td><td>6.06</td>
+</tr><tr><td>ToJson</td><td>1000</td><td>38,752.6 ns</td><td>386.17 ns</td><td>361.23 ns</td><td>38,788.5 ns</td><td>1.00</td><td>0.01</td><td>3.4485</td><td>-</td><td>-</td><td>54672 B</td><td>1.00</td>
+</tr><tr><td>FromJson</td><td>1000</td><td>161,885.1 ns</td><td>820.89 ns</td><td>767.87 ns</td><td>161,763.5 ns</td><td>4.18</td><td>0.04</td><td>26.1230</td><td>14.1602</td><td>-</td><td>411944 B</td><td>7.53</td>
+</tr><tr><td>Get_AllFlags</td><td>1000</td><td>106,719.6 ns</td><td>198.30 ns</td><td>175.79 ns</td><td>106,755.5 ns</td><td>2.75</td><td>0.03</td><td>3.9063</td><td>-</td><td>-</td><td>61360 B</td><td>1.12</td>
+</tr><tr><td>Set_AllFlags</td><td>1000</td><td>172,286.3 ns</td><td>3,099.45 ns</td><td>2,747.58 ns</td><td>173,544.4 ns</td><td>4.45</td><td>0.08</td><td>20.0195</td><td>11.9629</td><td>-</td><td>315208 B</td><td>5.77</td>
+</tr><tr><td>ToJson</td><td>10000</td><td>518,009.7 ns</td><td>2,411.21 ns</td><td>2,255.44 ns</td><td>518,111.9 ns</td><td>1.00</td><td>0.01</td><td>137.6953</td><td>137.6953</td><td>137.6953</td><td>579761 B</td><td>1.00</td>
+</tr><tr><td>FromJson</td><td>10000</td><td>5,783,087.4 ns</td><td>115,031.35 ns</td><td>179,089.96 ns</td><td>5,815,769.9 ns</td><td>11.16</td><td>0.34</td><td>515.6250</td><td>507.8125</td><td>390.6250</td><td>3939946 B</td><td>6.80</td>
+</tr><tr><td>Get_AllFlags</td><td>10000</td><td>1,135,742.2 ns</td><td>3,250.42 ns</td><td>2,537.71 ns</td><td>1,136,180.1 ns</td><td>2.19</td><td>0.01</td><td>41.9922</td><td>-</td><td>-</td><td>661361 B</td><td>1.14</td>
+</tr><tr><td>Set_AllFlags</td><td>10000</td><td>3,994,679.0 ns</td><td>62,703.40 ns</td><td>58,652.80 ns</td><td>3,972,167.6 ns</td><td>7.71</td><td>0.11</td><td>375.0000</td><td>371.0938</td><td>242.1875</td><td>3051117 B</td><td>5.26</td>
+</tr></tbody></table>
+</body>
+</html>
