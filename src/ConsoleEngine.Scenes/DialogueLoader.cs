@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using ConsoleEngine.Core;
 
 namespace ConsoleEngine.Scenes;
 
@@ -95,21 +96,17 @@ public static class DialogueLoader
             return new DialogueDefinition
             {
                 LeftLabel      = LeftLabel      ?? string.Empty,
-                LeftColor      = ParseColor(LeftColor,  ConsoleColor.DarkCyan),
+                LeftColor      = ConsoleColorParser.Parse(LeftColor,  ConsoleColor.DarkCyan),
                 LeftArt        = LeftArt        ?? [],
                 LeftSpritePath = LeftSpritePath,
                 RightLabel     = RightLabel     ?? string.Empty,
-                RightColor     = ParseColor(RightColor, ConsoleColor.DarkYellow),
+                RightColor     = ConsoleColorParser.Parse(RightColor, ConsoleColor.DarkYellow),
                 RightArt       = RightArt       ?? [],
-                TextColor      = ParseColor(TextColor,  ConsoleColor.Gray),
+                TextColor      = ConsoleColorParser.Parse(TextColor,  ConsoleColor.Gray),
                 Lines          = Lines          ?? [],
                 PromptContinue = PromptContinue ?? true,
             };
         }
 
-        private static ConsoleColor ParseColor(string? name, ConsoleColor fallback) =>
-            name is not null && Enum.TryParse(name, ignoreCase: true, out ConsoleColor c)
-                ? c
-                : fallback;
     }
 }
