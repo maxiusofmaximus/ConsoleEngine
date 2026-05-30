@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -164,6 +165,7 @@ public static class PixelArtRenderer
         int h = pixels.GetLength(0), w = pixels.GetLength(1);
         int termRows = (h + 1) / 2;
         var result   = new string[termRows];
+        // Capacity: each pixel produces at most ~28 chars of ANSI escape codes
         var sb       = new StringBuilder(w * 28);
 
         for (int y = 0; y < h; y += 2)
@@ -179,9 +181,15 @@ public static class PixelArtRenderer
                 Rgb top = topOk ? pixels[y,     x] : default;
                 Rgb bot = botOk ? pixels[y + 1, x] : default;
 
-                if      (topOk && botOk) sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[48;2;{bot.R};{bot.G};{bot.B}m▀"));
-                else if (topOk)          sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[49m▀"));
-                else                     sb.Append(string.Create(System.Globalization.CultureInfo.InvariantCulture, $"\x1b[38;2;{bot.R};{bot.G};{bot.B}m\x1b[49m▄"));
+                // Use sb.Append($"...") directly — the C# 10+ interpolated string handler
+                // for StringBuilder avoids the intermediate string that string.Create() would allocate.
+                // Benchmark baseline showed Gen2 GC pressure from these allocations at 64×64+.
+                if (topOk && botOk)
+                    sb.Append(CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[48;2;{bot.R};{bot.G};{bot.B}m▀");
+                else if (topOk)
+                    sb.Append(CultureInfo.InvariantCulture, $"\x1b[38;2;{top.R};{top.G};{top.B}m\x1b[49m▀");
+                else
+                    sb.Append(CultureInfo.InvariantCulture, $"\x1b[38;2;{bot.R};{bot.G};{bot.B}m\x1b[49m▄");
             }
             sb.Append("\x1b[0m");
             result[y / 2] = sb.ToString();

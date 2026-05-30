@@ -66,8 +66,9 @@ public class JsonLoaderBenchmarks
 
     private static string BuildSceneJson(string title, int lineCount, int artRows)
     {
-        var lines   = Enumerable.Range(0, lineCount).Select(i => $"Line {i} text content here.");
-        var art     = Enumerable.Range(0, artRows).Select(_ => "  /\\  ");
+        var lines = Enumerable.Range(0, lineCount).Select(i => $"Line {i} text content here.");
+        // Use only JSON-safe characters in art strings (no backslash sequences)
+        var art   = Enumerable.Range(0, artRows).Select(_ => "  ^^^  ");
         return $$"""
         {
           "title": "{{title}}",

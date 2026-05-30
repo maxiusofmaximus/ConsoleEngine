@@ -26,6 +26,15 @@ public static class TransitionEngine
     /// <summary>Default milliseconds between animation frames.</summary>
     public const int DefaultStepMs = 50;
 
+    // OCP: adding a new TransitionType requires only a new entry here — Out() never changes.
+    private static readonly Dictionary<TransitionType, Action<int>> Effects = new()
+    {
+        [TransitionType.FadeToBlack] = DoFade,
+        [TransitionType.WipeDown]    = ms => DoWipe(topToBottom: true,  ms),
+        [TransitionType.WipeUp]      = ms => DoWipe(topToBottom: false, ms),
+        [TransitionType.CloseIn]     = ms => DoCloseIn(Math.Max(1, ms / 2)),
+    };
+
     /// <summary>
     /// Runs the outgoing transition effect, then calls <see cref="Console.Clear"/>
     /// so the next scene starts on a clean screen.
@@ -39,29 +48,14 @@ public static class TransitionEngine
     /// </param>
     public static void Out(TransitionType type, int stepMs = DefaultStepMs)
     {
-        switch (type)
+        if (type == TransitionType.Cut)
         {
-            case TransitionType.Cut:
-                Console.Clear();
-                return;
-
-            case TransitionType.FadeToBlack:
-                DoFade(stepMs);
-                break;
-
-            case TransitionType.WipeDown:
-                DoWipe(topToBottom: true,  stepMs);
-                break;
-
-            case TransitionType.WipeUp:
-                DoWipe(topToBottom: false, stepMs);
-                break;
-
-            case TransitionType.CloseIn:
-                // CloseIn generates many more frames, so halve the per-frame delay.
-                DoCloseIn(Math.Max(1, stepMs / 2));
-                break;
+            Console.Clear();
+            return;
         }
+
+        if (Effects.TryGetValue(type, out var effect))
+            effect(stepMs);
 
         Console.Clear();
     }
