@@ -47,6 +47,9 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private bool _previewDirty;
     private readonly DispatcherTimer _previewTimer;
 
+    // ── Terminal size preset ───────────────────────────────────────────────
+    private TerminalPreset _selectedPreset = TerminalPresets[0];
+
     // ── State ─────────────────────────────────────────────────────────────
     private string _projectPath   = string.Empty;
     private SceneFileEntry? _selectedFile;
@@ -75,6 +78,14 @@ public sealed class MainViewModel : INotifyPropertyChanged
     // ── Static metadata ───────────────────────────────────────────────────
     public static string WindowTitle { get; } = $"ConsoleEngine Editor — v{EngineVersion.Full}";
 
+    // ── Terminal size presets (Width × Height in terminal columns/rows) ───
+    public static IReadOnlyList<TerminalPreset> TerminalPresets { get; } =
+    [
+        new("80 × 24  (VT100)", 80, 24),
+        new("120 × 30", 120, 30),
+        new("160 × 40", 160, 40),
+    ];
+
     // ── Observable collections ────────────────────────────────────────────
     public ObservableCollection<SceneFileEntry> SceneFiles { get; } = new();
 
@@ -90,6 +101,19 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     public bool HasProject  => !string.IsNullOrEmpty(_projectPath);
     public bool CanReload   => HasProject;
+
+    public TerminalPreset SelectedPreset
+    {
+        get => _selectedPreset;
+        set
+        {
+            Set(ref _selectedPreset, value);
+            Notify(nameof(TerminalSizeLabel));
+            RebuildPreview();
+        }
+    }
+
+    public string TerminalSizeLabel => $"{_selectedPreset.Width} × {_selectedPreset.Height}";
 
     public SceneFileEntry? SelectedFile
     {
@@ -508,11 +532,20 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private void RebuildPreview()
     {
         if (_doc is null) { PreviewText = string.Empty; return; }
-        PreviewText = ScenePlayer.RenderToString(_doc.ToDefinition(), previewWidth: 54);
+        PreviewText = ScenePlayer.RenderToString(
+            _doc.ToDefinition(),
+            previewWidth:  _selectedPreset.Width,
+            previewHeight: _selectedPreset.Height);
     }
 
     private static string[] SplitLines(string text) =>
         text.Split('\n', StringSplitOptions.None)
             .Select(l => l.TrimEnd('\r'))
             .ToArray();
+}
+
+/// <summary>A named terminal dimension preset shown in the size picker.</summary>
+public sealed record TerminalPreset(string Label, int Width, int Height)
+{
+    public override string ToString() => Label;
 }

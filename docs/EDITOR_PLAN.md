@@ -282,7 +282,7 @@ Landing screen shown when the editor opens. Shows at a glance:
 - [x] Scene management (create, list, duplicate, delete) — reorder drag&drop pending
 - [x] Text editor with live preview
 - [x] Play / Stop / Reload modes (`ConsoleEngine.SceneRunner.exe` launched in real terminal)
-- [ ] Terminal simulator panel (80×24, embedded in editor — currently text-only preview)
+- [x] Terminal simulator panel (80×24, embedded in editor — terminal chrome with traffic-light dots, size preset picker 80×24 / 120×30 / 160×40)
 - [ ] Sprite import and preview
 - [ ] Embedded terminal panel (AI CLI, WebView2 + xterm.js)
 
