@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Description>Cross-platform pseudo-terminal (PTY) backend for ConsoleEngine — ConPTY on Windows, posix_spawn on Linux/macOS/ARM. UI-agnostic.</Description>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- No ProjectReference: this module is pure platform interop with zero engine deps. -->
+
+</Project>
