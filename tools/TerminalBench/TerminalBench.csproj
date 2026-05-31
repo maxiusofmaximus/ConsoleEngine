@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>TerminalBench</AssemblyName>
+    <RootNamespace>TerminalBench</RootNamespace>
+    <!-- Tooling, not a shipped package; keep it out of the NuGet pack set. -->
+    <IsPackable>false</IsPackable>
+    <!-- Server GC off so allocation/GC counters reflect the backend, not the host tuning. -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ConsoleEngine.Terminal\ConsoleEngine.Terminal.csproj" />
+  </ItemGroup>
+
+</Project>
