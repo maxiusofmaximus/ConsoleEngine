@@ -52,6 +52,7 @@ public sealed class Scenarios
     }
 
     private static double Round(double v) => Math.Round(v, 4);
+    private static double Round(double v, int digits) => Math.Round(v, digits);
 
     // ── scenarios ──────────────────────────────────────────────────────────────────
 
