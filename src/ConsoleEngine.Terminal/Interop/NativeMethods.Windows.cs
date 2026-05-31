@@ -82,16 +82,23 @@ internal static class NativeMethodsWindows
 
     // ── Pseudo Console ─────────────────────────────────────────────────────────
 
+    // COORD is a single packed 32-bit value (X = low word, Y = high word) passed by value. We pass
+    // it as a uint via PackSize() — wire-equivalent to the COORD struct used by the canonical ConPTY
+    // samples, but unambiguous across runtimes and marshallers.
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern int CreatePseudoConsole(
-        COORD size,
+        uint size,
         SafeFileHandle hInput,
         SafeFileHandle hOutput,
         uint dwFlags,
         out IntPtr phPC);
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    internal static extern int ResizePseudoConsole(IntPtr hPC, COORD size);
+    internal static extern int ResizePseudoConsole(IntPtr hPC, uint size);
+
+    /// <summary>Packs columns/rows into the Win32 COORD wire format (X = low word, Y = high word).</summary>
+    internal static uint PackSize(int cols, int rows)
+        => (ushort)cols | ((uint)(ushort)rows << 16);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern void ClosePseudoConsole(IntPtr hPC);

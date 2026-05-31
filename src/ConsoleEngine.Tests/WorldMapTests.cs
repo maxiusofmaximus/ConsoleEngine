@@ -22,7 +22,7 @@ public sealed class WorldMapTests
     public void Constructor_EmptyLocations_CreatesEmptyMap()
     {
         var map = new WorldMap([]);
-        Assert.Equal(0, map.AllLocations.Count);
+        Assert.Empty(map.AllLocations);
     }
 
     [Fact]

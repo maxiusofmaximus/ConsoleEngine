@@ -37,6 +37,9 @@ jobs:
           dotnet pack src/ConsoleEngine.Persistence/ConsoleEngine.Persistence.csproj --configuration Release --no-build --output ./artifacts
           dotnet pack src/ConsoleEngine.Scenes/ConsoleEngine.Scenes.csproj       --configuration Release --no-build --output ./artifacts
           dotnet pack src/ConsoleEngine.World/ConsoleEngine.World.csproj         --configuration Release --no-build --output ./artifacts
+          dotnet pack src/ConsoleEngine.Animation/ConsoleEngine.Animation.csproj --configuration Release --no-build --output ./artifacts
+          dotnet pack src/ConsoleEngine.Input/ConsoleEngine.Input.csproj         --configuration Release --no-build --output ./artifacts
+          dotnet pack src/ConsoleEngine.Terminal/ConsoleEngine.Terminal.csproj   --configuration Release --no-build --output ./artifacts
 
       - name: Push to NuGet.org
         # Pass the API key as an environment variable, not as a CLI argument.

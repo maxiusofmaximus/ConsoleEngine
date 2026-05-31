@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace ConsoleEngine.Terminal.Interop;
@@ -50,6 +51,8 @@ internal static class NativeMethodsPosix
     internal static extern IntPtr ptsname(int fd);   // returns char* to a static buffer; copy immediately
 
     [DllImport(Libc, SetLastError = true)]
+    [SuppressMessage("Globalization", "CA2101:Specify marshaling for P/Invoke string arguments",
+        Justification = "LPUTF8Str is the correct marshaling for POSIX libc, which expects UTF-8 char*; CA2101's Unicode preference is Windows-specific.")]
     internal static extern int open([MarshalAs(UnmanagedType.LPUTF8Str)] string path, int flags);
 
     [DllImport(Libc, SetLastError = true)]
@@ -78,6 +81,8 @@ internal static class NativeMethodsPosix
     internal static extern int posix_spawn_file_actions_destroy(IntPtr fileActions);
 
     [DllImport(Libc, SetLastError = true)]
+    [SuppressMessage("Globalization", "CA2101:Specify marshaling for P/Invoke string arguments",
+        Justification = "LPUTF8Str is the correct marshaling for POSIX libc, which expects UTF-8 char*; CA2101's Unicode preference is Windows-specific.")]
     internal static extern int posix_spawn_file_actions_addopen(
         IntPtr fileActions, int fd, [MarshalAs(UnmanagedType.LPUTF8Str)] string path, int oflag, uint mode);
 
@@ -97,6 +102,8 @@ internal static class NativeMethodsPosix
     internal static extern int posix_spawnattr_setflags(IntPtr attr, short flags);
 
     [DllImport(Libc, SetLastError = true)]
+    [SuppressMessage("Globalization", "CA2101:Specify marshaling for P/Invoke string arguments",
+        Justification = "LPUTF8Str is the correct marshaling for POSIX libc, which expects UTF-8 char*; CA2101's Unicode preference is Windows-specific.")]
     internal static extern int posix_spawnp(
         out int pid,
         [MarshalAs(UnmanagedType.LPUTF8Str)] string file,

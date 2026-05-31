@@ -19,8 +19,17 @@ internal sealed class PosixPtyBackend : ITerminalBackend
     private int  _exitCode;
     private bool _disposed;
 
-    public event Action<ReadOnlyMemory<byte>>? Output;
-    public event Action<int>?                  Exited;
+    private readonly BufferedOutput _output = new();
+
+    // Buffered so a subscriber attaching after Start() still receives the child's
+    // initial output (e.g. the shell prompt) instead of racing the read loop.
+    public event Action<ReadOnlyMemory<byte>>? Output
+    {
+        add    { if (value is not null) _output.Subscribe(value); }
+        remove { if (value is not null) _output.Unsubscribe(value); }
+    }
+
+    public event Action<int>? Exited;
 
     public bool IsRunning => _running;
     public int  ExitCode  => _exitCode;
@@ -132,7 +141,7 @@ internal sealed class PosixPtyBackend : ITerminalBackend
             nint n = read(_master, buffer, buffer.Length);
             if (n > 0)
             {
-                Output?.Invoke(new ReadOnlyMemory<byte>(buffer, 0, (int)n));
+                _output.Emit(new ReadOnlyMemory<byte>(buffer, 0, (int)n));
             }
             else
             {

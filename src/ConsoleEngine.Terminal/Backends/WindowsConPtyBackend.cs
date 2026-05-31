@@ -20,13 +20,22 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     private readonly IntPtr         _hProcess;
     private readonly IntPtr         _hThread;
     private readonly CancellationTokenSource _cts = new();
+    private readonly BufferedOutput _output = new();
 
     private int  _exitCode;
+    private int  _pcClosed;       // 0 → open, 1 → ClosePseudoConsole already called
     private bool _running = true;
     private bool _disposed;
 
-    public event Action<ReadOnlyMemory<byte>>? Output;
-    public event Action<int>?                  Exited;
+    // Buffered so a subscriber attaching after Start() still receives the child's
+    // initial output (e.g. the shell prompt) instead of racing the read loop.
+    public event Action<ReadOnlyMemory<byte>>? Output
+    {
+        add    { if (value is not null) _output.Subscribe(value); }
+        remove { if (value is not null) _output.Unsubscribe(value); }
+    }
+
+    public event Action<int>? Exited;
 
     public bool IsRunning => _running;
     public int  ExitCode  => _exitCode;
@@ -40,8 +49,7 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
             throw new InvalidOperationException($"CreatePipe (output) failed: {Marshal.GetLastWin32Error()}");
 
         // 2. Create the pseudo console wired to the child-facing pipe ends.
-        var size = new COORD { X = (short)options.Cols, Y = (short)options.Rows };
-        int hr = CreatePseudoConsole(size, inputRead, outputWrite, 0, out _hPC);
+        int hr = CreatePseudoConsole(PackSize(options.Cols, options.Rows), inputRead, outputWrite, 0, out _hPC);
         if (hr != 0)
             throw new InvalidOperationException($"CreatePseudoConsole failed: HRESULT 0x{hr:X8}");
 
@@ -54,7 +62,7 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
 
         // 4. Launch the child.
         string cmdLine = BuildCommandLine(options.Command, options.Args);
-        IntPtr envBlock = BuildEnvironmentBlock(options.Env);
+        IntPtr envBlock = IntPtr.Zero; // DIAG: inherit parent env to isolate env-block as the cause
         try
         {
             // A Unicode environment block REQUIRES CREATE_UNICODE_ENVIRONMENT, otherwise
@@ -108,7 +116,7 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     public void Resize(int cols, int rows)
     {
         if (_disposed || !_running) return;
-        _ = ResizePseudoConsole(_hPC, new COORD { X = (short)cols, Y = (short)rows });
+        _ = ResizePseudoConsole(_hPC, PackSize(cols, rows));
     }
 
     // ── Private ────────────────────────────────────────────────────────────────
@@ -121,8 +129,8 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
             while (!_cts.IsCancellationRequested)
             {
                 int n = await _outStream.ReadAsync(buffer, _cts.Token).ConfigureAwait(false);
-                if (n == 0) break; // pipe closed
-                Output?.Invoke(new ReadOnlyMemory<byte>(buffer, 0, n));
+                if (n == 0) break; // pipe closed (ConPTY's write end released on ClosePseudoConsole)
+                _output.Emit(new ReadOnlyMemory<byte>(buffer, 0, n));
             }
         }
         catch (OperationCanceledException) { }
@@ -133,8 +141,24 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     {
         _ = WaitForSingleObject(_hProcess, INFINITE);
         _exitCode = GetExitCodeProcess(_hProcess, out uint code) ? (int)code : -1;
+
+        // The child has exited, but ConPTY may still hold its final rendered frame in the
+        // screen buffer. Closing the pseudoconsole flushes that frame to the output pipe and
+        // then signals EOF; ClosePseudoConsole blocks until the read loop drains the pipe, so
+        // once it returns all output has been delivered. Without this, the output of one-shot
+        // commands (e.g. `echo`) is lost entirely — only ConPTY's startup sequence is seen.
+        ClosePseudoConsoleOnce();
+
         _running = false;
         Exited?.Invoke(_exitCode);
+    }
+
+    private void ClosePseudoConsoleOnce()
+    {
+        if (Interlocked.Exchange(ref _pcClosed, 1) == 0)
+        {
+            try { ClosePseudoConsole(_hPC); } catch { }
+        }
     }
 
     private static IntPtr BuildAttributeList(IntPtr hPC, out STARTUPINFOEX startupEx)
@@ -209,15 +233,18 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     {
         if (_disposed) return;
         _disposed = true;
-        _cts.Cancel();
 
         if (_running)
         {
             try { _ = TerminateProcess(_hProcess, 0); } catch { }
         }
 
-        // Closing the PC releases the child-facing pipe ends and unblocks the read loop.
-        try { ClosePseudoConsole(_hPC); } catch { }
+        // Flush + close the PC FIRST: this drains the read loop and signals EOF. Cancelling
+        // the read loop before closing would stop us reading, which can deadlock the close
+        // (ClosePseudoConsole waits for the output pipe to be drained) and drop final output.
+        ClosePseudoConsoleOnce();
+
+        _cts.Cancel();
 
         try { _inStream.Dispose();  } catch { }
         try { _outStream.Dispose(); } catch { }

@@ -11,9 +11,13 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build & verify
-    runs-on: ubuntu-latest
+  build-test:
+    name: Build & test (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
@@ -29,7 +33,29 @@ jobs:
       - name: Build (Release)
         run: dotnet build ConsoleEngine.sln --configuration Release --no-restore
 
-      - name: Pack (dry-run — verify packages build)
+      # On Linux/macOS the [PtyRenderFact] PTY-content tests run against a real pty;
+      # on Windows the vstest host can't render ConPTY content, so those tests self-skip.
+      - name: Test (Release)
+        run: dotnet test ConsoleEngine.sln --configuration Release --no-build --verbosity normal
+
+  pack:
+    name: Pack (dry-run — verify packages build)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9  # v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore & build
+        run: |
+          dotnet restore ConsoleEngine.sln
+          dotnet build ConsoleEngine.sln --configuration Release --no-restore
+
+      - name: Pack (verify)
         run: |
           dotnet pack src/ConsoleEngine.Core/ConsoleEngine.Core.csproj           --configuration Release --no-build
           dotnet pack src/ConsoleEngine.Locale/ConsoleEngine.Locale.csproj       --configuration Release --no-build
@@ -38,3 +64,6 @@ jobs:
           dotnet pack src/ConsoleEngine.Persistence/ConsoleEngine.Persistence.csproj --configuration Release --no-build
           dotnet pack src/ConsoleEngine.Scenes/ConsoleEngine.Scenes.csproj       --configuration Release --no-build
           dotnet pack src/ConsoleEngine.World/ConsoleEngine.World.csproj         --configuration Release --no-build
+          dotnet pack src/ConsoleEngine.Animation/ConsoleEngine.Animation.csproj --configuration Release --no-build
+          dotnet pack src/ConsoleEngine.Input/ConsoleEngine.Input.csproj         --configuration Release --no-build
+          dotnet pack src/ConsoleEngine.Terminal/ConsoleEngine.Terminal.csproj   --configuration Release --no-build
