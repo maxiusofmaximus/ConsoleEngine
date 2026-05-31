@@ -49,7 +49,10 @@ public sealed class BenchLogger : IDisposable
         _env = env;
         Directory.CreateDirectory(outputDir);
         LogPath = Path.Combine(outputDir, $"terminal-bench-{env.RunId}.jsonl");
-        _writer = new StreamWriter(LogPath, append: true, Encoding.UTF8) { AutoFlush = true };
+        // UTF-8 *without* BOM: a BOM on the first line breaks strict JSON parsers reading the
+        // file line-by-line (the first record would fail to deserialize).
+        var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        _writer = new StreamWriter(LogPath, append: true, utf8NoBom) { AutoFlush = true };
     }
 
     public void Record(
