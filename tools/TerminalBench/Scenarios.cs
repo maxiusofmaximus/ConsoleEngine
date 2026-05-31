@@ -179,29 +179,43 @@ public sealed class Scenarios
             // Let the shell settle (initial prompt).
             await Task.Delay(400);
 
-            async Task<bool> OneRoundTrip(string marker, List<double>? into)
+            async Task<bool> OneRoundTrip(string marker, int timeoutMs, List<double>? into)
             {
                 var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 lock (hit) { wanted = marker; pending = tcs; tail.Clear(); }
                 var sw = Stopwatch.StartNew();
                 backend!.Write(PlatformCommands.WriteCommand(marker));
-                var done = await Task.WhenAny(tcs.Task, Task.Delay(10_000));
+                var done = await Task.WhenAny(tcs.Task, Task.Delay(timeoutMs));
                 sw.Stop();
                 if (done != tcs.Task) return false;
                 into?.Add(sw.Elapsed.TotalMilliseconds);
                 return true;
             }
 
-            for (int i = 0; i < warmup; i++)
-                await OneRoundTrip($"CE_WARM_{i}_OK", null);
+            // Prime: retry (cheaply) until the shell first responds, so cold-start init doesn't
+            // pollute the measured samples or cost a 10s timeout per cold miss.
+            bool primed = false;
+            for (int i = 0; i < 25 && !primed; i++)
+                primed = await OneRoundTrip($"CE_PRIME_{i}_OK", 500, null);
 
+            for (int i = 0; i < warmup; i++)
+                await OneRoundTrip($"CE_WARM_{i}_OK", 3_000, null);
+
+            bool runningAtLoop = backend.IsRunning;
             int ok = 0;
             for (int i = 0; i < iterations; i++)
-                if (await OneRoundTrip($"CE_RT_{i}_OK", samples)) ok++;
+                if (await OneRoundTrip($"CE_RT_{i}_OK", 3_000, samples)) ok++;
+
+            string sampleTail;
+            lock (hit) sampleTail = tail.ToString();
+            sampleTail = sampleTail.Length > 300 ? sampleTail[^300..] : sampleTail;
 
             var m = DistMetrics("rtt", Distribution.From(samples));
-            m["iterations"]  = iterations;
-            m["succeeded"]   = ok;
+            m["iterations"]      = iterations;
+            m["succeeded"]       = ok;
+            m["running_at_loop"] = runningAtLoop;
+            m["running_at_end"]  = backend.IsRunning;
+            m["sample_tail"]     = sampleTail.Replace("", "<ESC>").Replace("\r", "\\r").Replace("\n", "\\n");
             _log.Record("write_roundtrip", ok == iterations ? "ok" : "partial", null,
                 new Dictionary<string, object> { ["iterations"] = iterations, ["warmup"] = warmup }, m);
         }

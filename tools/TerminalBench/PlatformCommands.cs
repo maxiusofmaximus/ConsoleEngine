@@ -42,7 +42,11 @@ public static class PlatformCommands
         ? new("cmd.exe", ["/c", "ping -n 60 127.0.0.1 >nul"], Cwd)
         : new("/bin/sh", ["-c", "sleep 60"], Cwd);
 
-    /// <summary>Bytes the child's echo command emits per <see cref="WriteCommand"/>, sans CRLF noise.</summary>
+    /// <summary>
+    /// An <c>echo &lt;marker&gt;</c> command terminated by a single CR — in a PTY, Enter is CR
+    /// (the line discipline turns it into a newline for the child). Sending CRLF can leave cmd.exe
+    /// in its <c>More?</c> continuation state, so we send only CR.
+    /// </summary>
     public static byte[] WriteCommand(string marker) =>
-        System.Text.Encoding.UTF8.GetBytes(IsWindows ? $"echo {marker}\r\n" : $"echo {marker}\n");
+        System.Text.Encoding.UTF8.GetBytes($"echo {marker}\r");
 }
