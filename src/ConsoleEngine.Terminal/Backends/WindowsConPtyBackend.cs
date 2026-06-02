@@ -19,7 +19,7 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     private readonly FileStream     _outStream;  // we read  ← child stdout/stderr
     private readonly IntPtr         _hProcess;
     private readonly IntPtr         _hThread;
-    private readonly CancellationTokenSource _cts = new();
+    private readonly Thread         _readThread;
     private readonly BufferedOutput _output = new();
 
     private int  _exitCode;
@@ -97,8 +97,12 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
         _inStream  = new FileStream(inputWrite, FileAccess.Write);
         _outStream = new FileStream(outputRead, FileAccess.Read);
 
-        // 6. Background readers/waiters.
-        _ = Task.Run(ReadLoopAsync);
+        // 6. Background readers/waiters. A dedicated blocking-read thread (mirrors the POSIX
+        // backend) avoids the per-read Task allocation and thread-pool hop that ReadAsync incurs
+        // on a synchronous pipe FileStream — the dominant allocation measured in the throughput
+        // benchmark (2.37 B/byte). See docs/perf-audit/terminal/baseline.md.
+        _readThread = new Thread(ReadLoop) { IsBackground = true, Name = "conpty-read" };
+        _readThread.Start();
         _ = Task.Run(WaitForExit);
     }
 
@@ -121,20 +125,19 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
 
     // ── Private ────────────────────────────────────────────────────────────────
 
-    private async Task ReadLoopAsync()
+    private void ReadLoop()
     {
         var buffer = new byte[4096];
         try
         {
-            while (!_cts.IsCancellationRequested)
+            while (!_disposed)
             {
-                int n = await _outStream.ReadAsync(buffer, _cts.Token).ConfigureAwait(false);
-                if (n == 0) break; // pipe closed (ConPTY's write end released on ClosePseudoConsole)
+                int n = _outStream.Read(buffer, 0, buffer.Length);
+                if (n <= 0) break; // EOF: ConPTY's write end released on ClosePseudoConsole
                 _output.Emit(new ReadOnlyMemory<byte>(buffer, 0, n));
             }
         }
-        catch (OperationCanceledException) { }
-        catch { /* pipe closed by child exit — expected */ }
+        catch { /* pipe closed by child exit / dispose — expected */ }
     }
 
     private void WaitForExit()
@@ -239,12 +242,10 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
             try { _ = TerminateProcess(_hProcess, 0); } catch { }
         }
 
-        // Flush + close the PC FIRST: this drains the read loop and signals EOF. Cancelling
-        // the read loop before closing would stop us reading, which can deadlock the close
-        // (ClosePseudoConsole waits for the output pipe to be drained) and drop final output.
+        // Flush + close the PC FIRST: this drains the read loop and signals EOF. Closing before
+        // draining would deadlock (ClosePseudoConsole waits for the output pipe to be drained) and
+        // drop final output. EOF then unblocks the read thread's blocking Read.
         ClosePseudoConsoleOnce();
-
-        _cts.Cancel();
 
         try { _inStream.Dispose();  } catch { }
         try { _outStream.Dispose(); } catch { }
@@ -258,7 +259,6 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
         if (_hThread  != IntPtr.Zero) _ = CloseHandle(_hThread);
         if (_hProcess != IntPtr.Zero) _ = CloseHandle(_hProcess);
 
-        _cts.Dispose();
         await Task.CompletedTask;
     }
 }
