@@ -62,7 +62,7 @@ internal static class NativeMethodsPosix
     internal static extern nint read(int fd, byte[] buf, nint count);
 
     [DllImport(Libc, SetLastError = true)]
-    internal static extern nint write(int fd, byte[] buf, nint count);
+    internal static extern unsafe nint write(int fd, byte* buf, nint count);
 
     [DllImport(Libc, SetLastError = true)]
     internal static extern int ioctl(int fd, nuint request, ref WinSize size);

@@ -101,17 +101,20 @@ internal sealed class PosixPtyBackend : ITerminalBackend
         new Thread(WaitForExit) { IsBackground = true, Name = "pty-wait" }.Start();
     }
 
-    public void Write(ReadOnlySpan<byte> data)
+    public unsafe void Write(ReadOnlySpan<byte> data)
     {
-        if (_disposed || !_running) return;
-        byte[] buf = data.ToArray();
-        nint remaining = buf.Length, offset = 0;
-        while (remaining > 0)
+        if (_disposed || !_running || data.IsEmpty) return;
+        // Zero-copy: write straight from the caller's span — no ToArray, no per-offset slice.
+        fixed (byte* p = data)
         {
-            nint n = WriteAt(buf, offset, remaining);
-            if (n <= 0) break;
-            offset += n;
-            remaining -= n;
+            nint remaining = data.Length, offset = 0;
+            while (remaining > 0)
+            {
+                nint n = write(_master, p + offset, remaining);
+                if (n <= 0) break;
+                offset += n;
+                remaining -= n;
+            }
         }
     }
 
@@ -123,15 +126,6 @@ internal sealed class PosixPtyBackend : ITerminalBackend
     }
 
     // ── Private ────────────────────────────────────────────────────────────────
-
-    private nint WriteAt(byte[] buf, nint offset, nint count)
-    {
-        if (offset == 0) return write(_master, buf, count);
-        // write() from an offset: slice into a temp buffer (writes are small — keystrokes).
-        var slice = new byte[count];
-        Array.Copy(buf, offset, slice, 0, count);
-        return write(_master, slice, count);
-    }
 
     private void ReadLoop()
     {
