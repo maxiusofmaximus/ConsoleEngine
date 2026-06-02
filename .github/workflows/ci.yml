@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, 'fix/**', 'perf/**' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 # Restrict GITHUB_TOKEN to read-only — this workflow never writes to the repo.
 permissions:

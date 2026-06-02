@@ -136,18 +136,25 @@ internal sealed class PosixPtyBackend : ITerminalBackend
             if (n > 0)
             {
                 _output.Emit(new ReadOnlyMemory<byte>(buffer, 0, (int)n));
+                continue;
             }
-            else
+            if (n < 0 && Marshal.GetLastWin32Error() == EINTR)
             {
-                // 0 = EOF; -1 = error (EIO on Linux when the slave side closes) → treat as end.
-                break;
+                // Interrupted by a runtime signal (GC/thread coordination), not EOF. If we broke
+                // here the reader would stop draining, the child would block once the pty buffer
+                // fills, and waitpid would hang forever. Retry.
+                continue;
             }
+            // n == 0 (EOF) or -1 with EIO (slave closed on Linux) / other error → child is gone.
+            break;
         }
     }
 
     private void WaitForExit()
     {
-        _ = waitpid(_pid, out int status, 0);
+        int rc, status;
+        do { rc = waitpid(_pid, out status, 0); }
+        while (rc < 0 && Marshal.GetLastWin32Error() == EINTR); // retry if a signal interrupted the wait
         _exitCode = ExitStatus(status);
         _running = false;
         Exited?.Invoke(_exitCode);
@@ -168,6 +175,12 @@ internal sealed class PosixPtyBackend : ITerminalBackend
             merged[(string)e.Key] = (string)(e.Value ?? string.Empty);
         if (extra is not null)
             foreach (var kv in extra) merged[kv.Key] = kv.Value;
+
+        // LINES/COLUMNS inherited from the parent describe the PARENT's terminal; ncurses tools
+        // (tput, less, …) prefer them over the pty's real winsize, so a child would report the
+        // wrong size after a resize. Drop them unless the caller set them on purpose.
+        if (extra is null || !extra.ContainsKey("LINES"))   merged.Remove("LINES");
+        if (extra is null || !extra.ContainsKey("COLUMNS")) merged.Remove("COLUMNS");
 
         return merged.Select(kv => $"{kv.Key}={kv.Value}").ToArray();
     }

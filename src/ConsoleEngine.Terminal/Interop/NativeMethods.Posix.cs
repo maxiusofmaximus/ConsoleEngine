@@ -123,6 +123,11 @@ internal static class NativeMethodsPosix
     internal const int SIGTERM = 15;
     internal const int SIGKILL = 9;
 
+    // errno: a blocking syscall interrupted by a signal. The .NET runtime delivers signals for
+    // GC/thread coordination, so read()/waitpid() can return EINTR and must be retried rather
+    // than mistaken for EOF. EINTR is 4 on both Linux and macOS.
+    internal const int EINTR = 4;
+
     /// <summary>Extracts the exit code from a <c>waitpid</c> status (WEXITSTATUS).</summary>
     internal static int ExitStatus(int status) => (status >> 8) & 0xFF;
 }

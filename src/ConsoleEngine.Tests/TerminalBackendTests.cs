@@ -172,6 +172,7 @@ public sealed class TerminalBackendTests
         await Task.Delay(80);
 
         string s; lock (sb) s = sb.ToString();
-        Assert.Contains("132", s, StringComparison.Ordinal);
+        Assert.True(s.Contains("132", StringComparison.Ordinal),
+            $"expected cols=132 after resize, child reported: '{s.Replace("", "<ESC>").Replace("\r", "\\r").Replace("\n", "\\n").Trim()}'");
     }
 }
