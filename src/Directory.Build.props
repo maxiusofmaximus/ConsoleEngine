@@ -22,7 +22,7 @@
 
   <PropertyGroup>
     <!-- NuGet package identity -->
-    <Version>0.7.1</Version>
+    <Version>0.7.2</Version>
     <Authors>maxiusofmaximus</Authors>
     <Company>maxiusofmaximus</Company>
     <Copyright>Copyright © 2026 maxiusofmaximus</Copyright>
