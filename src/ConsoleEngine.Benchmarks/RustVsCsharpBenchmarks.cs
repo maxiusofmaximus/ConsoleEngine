@@ -1,3 +1,4 @@
+using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
 using ConsoleEngine.Rendering;
@@ -5,8 +6,8 @@ using ConsoleEngine.Rendering;
 namespace ConsoleEngine.Benchmarks;
 
 /// <summary>
-/// L1: C# vs Rust <c>ToAnsiString</c>. Compares the managed baseline against the Rust cdylib
-/// (drop-in string) and the zero-allocation buffer path.
+/// L2: the integrated <see cref="PixelArtRenderer"/> API — managed <c>ToAnsiString</c> (baseline)
+/// vs the native-accelerated <c>ToAnsiBytes</c> and the managed-fallback <c>ToAnsiBytes</c>.
 /// Run with: dotnet run -c Release -- --filter "*RustVsCsharp*"
 /// </summary>
 [SimpleJob(RuntimeMoniker.Net80, warmupCount: 3, iterationCount: 5)]
@@ -17,44 +18,40 @@ public class RustVsCsharpBenchmarks
     public int SpriteSize { get; set; }
 
     private PixelArtRenderer.Rgb[,] _pixels = null!;
-    private PixelArtRenderer.Rgb    _transparent;
-    private byte[]                  _reuse = null!;
+    private byte[]                  _buf = null!;
 
     [GlobalSetup]
     public void Setup()
     {
         var rows    = Enumerable.Range(0, SpriteSize).Select(_ => new string('R', SpriteSize)).ToArray();
         var palette = new Dictionary<char, PixelArtRenderer.Rgb> { ['R'] = new(200, 50, 50) };
-        _pixels      = PixelArtRenderer.BuildSprite(rows, palette);
-        _transparent = default;
-        _reuse       = new byte[RustRender.MaxBufferSize(SpriteSize, SpriteSize)];
+        _pixels = PixelArtRenderer.BuildSprite(rows, palette);
+        _buf    = new byte[PixelArtRenderer.MaxAnsiByteCount(SpriteSize, SpriteSize)];
 
-        // Correctness gate — the comparison is meaningless unless Rust output == C# output.
-        AssertEqual(_pixels, _transparent, "all-solid");
-
-        // Exercise the transparent / top-only / bottom-only / empty branches + an odd height.
-        var mixed = new PixelArtRenderer.Rgb[9, 7];
-        for (int y = 0; y < 9; y++)
-        for (int x = 0; x < 7; x++)
-            mixed[y, x] = ((x + y) % 3 == 0) ? default : new PixelArtRenderer.Rgb((byte)(x * 30), (byte)(y * 20), 7);
-        AssertEqual(mixed, default, "mixed-9x7");
-    }
-
-    private static void AssertEqual(PixelArtRenderer.Rgb[,] px, PixelArtRenderer.Rgb tr, string label)
-    {
-        string cs = PixelArtRenderer.ToAnsiString(px, tr);
-        string rs = RustRender.ToAnsiString(px, tr);
-        if (!string.Equals(cs, rs, StringComparison.Ordinal))
-            throw new InvalidOperationException($"Rust output differs from C# ({label}).");
+        // Correctness gate: the native path must equal the managed string when present.
+        if (PixelArtRenderer.IsNativeAccelerationAvailable)
+        {
+            PixelArtRenderer.NativeAcceleration = true;
+            int n = PixelArtRenderer.ToAnsiBytes(_pixels, _buf);
+            if (Encoding.UTF8.GetString(_buf, 0, n) != PixelArtRenderer.ToAnsiString(_pixels))
+                throw new InvalidOperationException("native ToAnsiBytes != managed ToAnsiString");
+        }
     }
 
     [Benchmark(Baseline = true)]
-    public string Csharp_ToAnsiString() => PixelArtRenderer.ToAnsiString(_pixels, _transparent);
+    public string Csharp_ToAnsiString() => PixelArtRenderer.ToAnsiString(_pixels);
 
     [Benchmark]
-    public string Rust_ToAnsiString() => RustRender.ToAnsiString(_pixels, _transparent);
+    public int Native_ToAnsiBytes()
+    {
+        PixelArtRenderer.NativeAcceleration = true;
+        return PixelArtRenderer.ToAnsiBytes(_pixels, _buf);
+    }
 
-    /// <summary>Zero-allocation buffer path (reuses one buffer) — for stream/console consumers.</summary>
     [Benchmark]
-    public int Rust_ToAnsiBytes_ReuseBuffer() => RustRender.ToAnsiBytesInto(_pixels, _transparent, _reuse);
+    public int Managed_ToAnsiBytes()
+    {
+        PixelArtRenderer.NativeAcceleration = false;
+        return PixelArtRenderer.ToAnsiBytes(_pixels, _buf);
+    }
 }

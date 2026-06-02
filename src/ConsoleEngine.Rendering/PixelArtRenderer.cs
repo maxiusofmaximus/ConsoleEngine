@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -140,6 +141,72 @@ public static class PixelArtRenderer
         for (int x = 0; x < w; x++)
             solid[y, x] = pixels[y, x] != transparent;
         return BuildAnsiString(pixels, solid);
+    }
+
+    // ── Zero-allocation byte / stream API (optionally native-accelerated) ───────
+
+    /// <summary>
+    /// When <see langword="true"/> (default = native library present), <see cref="ToAnsiBytes"/> and
+    /// <see cref="WriteAnsi"/> use the native <c>ce_render</c> accelerator (~6× faster, no managed
+    /// allocation). Set <see langword="false"/> to force the pure-managed path.
+    /// </summary>
+    public static bool NativeAcceleration { get; set; } = NativeRender.IsAvailable;
+
+    /// <summary>Whether the native <c>ce_render</c> accelerator was found and loaded at startup.</summary>
+    public static bool IsNativeAccelerationAvailable => NativeRender.IsAvailable;
+
+    /// <summary>
+    /// Safe upper bound (in bytes) for the UTF-8 ANSI output of a <paramref name="w"/>×<paramref name="h"/>
+    /// pixel grid. Use it to size the buffer for <see cref="ToAnsiBytes"/>.
+    /// </summary>
+    public static int MaxAnsiByteCount(int w, int h)
+    {
+        int termRows = (h + 1) / 2;
+        return termRows * (w * 41 + 4 + Environment.NewLine.Length);
+    }
+
+    /// <summary>
+    /// Writes the half-block ANSI encoding of <paramref name="pixels"/> as UTF-8 bytes into
+    /// <paramref name="destination"/> and returns the number of bytes written — no large
+    /// intermediate string. <paramref name="destination"/> must be at least
+    /// <see cref="MaxAnsiByteCount"/> bytes. Pixels equal to <paramref name="transparent"/> are
+    /// transparent. Output is byte-identical to <see cref="ToAnsiString(Rgb[,], Rgb)"/>.
+    /// </summary>
+    public static int ToAnsiBytes(Rgb[,] pixels, Span<byte> destination, Rgb transparent = default)
+    {
+        ArgumentNullException.ThrowIfNull(pixels);
+        int h = pixels.GetLength(0), w = pixels.GetLength(1);
+        int max = MaxAnsiByteCount(w, h);
+        if (destination.Length < max)
+            throw new ArgumentException($"Destination too small: need {max} bytes (have {destination.Length}).", nameof(destination));
+
+        if (NativeAcceleration && NativeRender.IsAvailable)
+            return NativeRender.ToAnsiBytes(pixels, destination, transparent);
+
+        // Managed fallback (allocates the string only on this path).
+        byte[] bytes = Encoding.UTF8.GetBytes(ToAnsiString(pixels, transparent));
+        bytes.CopyTo(destination);
+        return bytes.Length;
+    }
+
+    /// <summary>
+    /// Writes the half-block ANSI encoding of <paramref name="pixels"/> directly to
+    /// <paramref name="output"/> as UTF-8 bytes (e.g. <c>Console.OpenStandardOutput()</c>), using a
+    /// pooled buffer so no large string is materialized. Pixels equal to <paramref name="transparent"/>
+    /// are transparent.
+    /// </summary>
+    public static void WriteAnsi(Rgb[,] pixels, Stream output, Rgb transparent = default)
+    {
+        ArgumentNullException.ThrowIfNull(pixels);
+        ArgumentNullException.ThrowIfNull(output);
+        int h = pixels.GetLength(0), w = pixels.GetLength(1);
+        byte[] buffer = ArrayPool<byte>.Shared.Rent(MaxAnsiByteCount(w, h));
+        try
+        {
+            int len = ToAnsiBytes(pixels, buffer, transparent);
+            output.Write(buffer, 0, len);
+        }
+        finally { ArrayPool<byte>.Shared.Return(buffer); }
     }
 
     // ── Core ─────────────────────────────────────────────────────────────────

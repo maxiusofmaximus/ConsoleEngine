@@ -6,8 +6,21 @@
     <Description>PNG → ANSI half-block pixel-art renderer and animation engine for ConsoleEngine terminal games.</Description>
     <PackageTags>$(PackageTags);rendering;ansi;pixel-art;animation</PackageTags>
     <NoWarn>$(NoWarn);CA1416</NoWarn>
+    <!-- fixed-pointer interop with the optional native ce_render accelerator -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+  <!-- L2a (dev only): if the native accelerator has been built locally, copy it next to the
+       assembly so it (and any referencing project, e.g. Tests) can load it. Skipped when absent
+       (CI / consumers without the native lib) → the managed fallback is used. Per-RID packaging
+       under runtimes/<rid>/native/ is L2b. -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\native\ce_render\target\release\ce_render.dll"
+             Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\ce_render\target\release\ce_render.dll')"
+             Link="ce_render.dll"
+             CopyToOutputDirectory="PreserveNewest"
+             Visible="false" />
   </ItemGroup>
 </Project>
