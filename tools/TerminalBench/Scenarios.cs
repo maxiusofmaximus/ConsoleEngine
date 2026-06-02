@@ -149,6 +149,70 @@ public sealed class Scenarios
         }
     }
 
+    /// <summary>
+    /// Burst characterization: a FAST producer floods output so reads coalesce. Records the chunk
+    /// SIZE distribution (max, avg, count over 4 KB / 16 KB) — the evidence that decides whether
+    /// the read buffer is ever the limiting factor. If <c>max_chunk_bytes</c> stays ≤ the current
+    /// buffer even here, a larger buffer cannot help on this platform (E1 would be a no-op).
+    /// </summary>
+    public async Task BurstThroughput(int lines)
+    {
+        try
+        {
+            long totalBytes = 0;
+            int chunks = 0, maxChunk = 0, over4k = 0, over16k = 0;
+
+            var backend = TerminalBackendFactory.Start(PlatformCommands.BurstOutput(lines));
+            var res = new ResourceSampler();
+            res.Start();
+            var sw = Stopwatch.StartNew();
+
+            backend.Output += chunk =>
+            {
+                int len = chunk.Length;
+                Interlocked.Increment(ref chunks);
+                Interlocked.Add(ref totalBytes, len);
+                // Lock-free running max.
+                int seen;
+                do { seen = maxChunk; if (len <= seen) break; }
+                while (Interlocked.CompareExchange(ref maxChunk, len, seen) != seen);
+                if (len > 4096)  Interlocked.Increment(ref over4k);
+                if (len > 16384) Interlocked.Increment(ref over16k);
+            };
+
+            await WaitForExitAsync(backend, 120_000);
+            await Task.Delay(50); // ConPTY final-frame flush
+            sw.Stop();
+            var usage = res.Stop();
+            await backend.DisposeAsync();
+
+            double seconds = sw.Elapsed.TotalSeconds;
+            double mb = totalBytes / (1024.0 * 1024.0);
+            var m = new Dictionary<string, object>
+            {
+                ["lines"]           = lines,
+                ["total_bytes"]     = totalBytes,
+                ["total_mb"]        = Round(mb),
+                ["chunks"]          = chunks,
+                ["avg_chunk_bytes"] = chunks > 0 ? totalBytes / chunks : 0,
+                ["max_chunk_bytes"] = maxChunk,
+                ["chunks_over_4k"]  = over4k,
+                ["chunks_over_16k"] = over16k,
+                ["elapsed_ms"]      = Round(sw.Elapsed.TotalMilliseconds),
+                ["throughput_mb_s"] = seconds > 0 ? Round(mb / seconds) : 0,
+                ["alloc_per_byte"]  = totalBytes > 0 ? Round((double)usage.AllocatedBytes / totalBytes, 4) : 0,
+            };
+            AddResource(m, usage);
+            _log.Record("burst_throughput", totalBytes > 0 ? "ok" : "no_output", null,
+                new Dictionary<string, object> { ["lines"] = lines }, m);
+        }
+        catch (Exception ex)
+        {
+            _log.Record("burst_throughput", "error", ex.Message,
+                new Dictionary<string, object> { ["lines"] = lines }, Empty);
+        }
+    }
+
     /// <summary>Write→echo round-trip latency: write a marker, time until it appears in output.</summary>
     public async Task WriteRoundTrip(int iterations, int warmup)
     {

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.InteropServices;
 using ConsoleEngine.Terminal;
 
@@ -30,6 +31,25 @@ public static class PlatformCommands
         return IsWindows
             ? new("cmd.exe", ["/c", $"for /L %n in (1,1,{lines}) do @echo {payload}"], Cwd)
             : new("/bin/sh", ["-c", $"i=0; while [ $i -lt {lines} ]; do echo {payload}; i=$((i+1)); done"], Cwd);
+    }
+
+    /// <summary>
+    /// A FAST flood producer: writes <paramref name="lines"/> wide lines as quickly as possible
+    /// (no per-line process overhead like <see cref="BulkOutput"/>'s `echo`), so the pipe
+    /// accumulates and reads coalesce into large chunks. This is the bursty case a real TUI/AI-CLI
+    /// frame paint creates — the only case where the read-buffer size could plausibly matter.
+    /// Runs on a wide 200-col terminal so the ~190-char rows don't wrap-reflow inside ConPTY.
+    /// </summary>
+    public static TerminalOptions BurstOutput(int lines)
+    {
+        // ~190-char payload (varied so nothing can RLE-collapse it) → ~192 B/line.
+        string payload = string.Concat(Enumerable.Repeat("0123456789-ABCDEF-", 11))[..190];
+        return IsWindows
+            ? new("powershell.exe",
+                  ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
+                   $"$l='{payload}'; for($i=0;$i -lt {lines};$i++){{[Console]::Out.WriteLine($l)}}"],
+                  Cwd, Cols: 200, Rows: 50)
+            : new("/bin/sh", ["-c", $"yes '{payload}' | head -n {lines}"], Cwd, Cols: 200, Rows: 50);
     }
 
     /// <summary>A long-lived interactive shell that echoes its stdin — measures write round-trip.</summary>

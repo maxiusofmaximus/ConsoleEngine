@@ -38,11 +38,13 @@ int rttIters     = quick ? 10  : 40;
 int resizeIters  = quick ? 100 : 1000;
 int disposeIters = quick ? 5   : 15;
 int tputLines    = quick ? 2000 : 20000;
+int burstLines   = quick ? 2000 : 20000;
 int stressN      = quick ? 4   : 12;
 int stressLines  = quick ? 500 : 2000;
 
 await Step("startup_latency",   () => scenarios.StartupLatency(spawnIters, warmup: quick ? 2 : 5));
 await Step("throughput",        () => scenarios.Throughput(tputLines));
+await Step("burst_throughput",  () => scenarios.BurstThroughput(burstLines));
 await Step("write_roundtrip",   () => scenarios.WriteRoundTrip(rttIters, warmup: 3));
 await Step("resize_latency",    () => scenarios.ResizeLatency(resizeIters, warmup: 50));
 await Step("dispose_latency",   () => scenarios.DisposeLatency(disposeIters, warmup: 2));
