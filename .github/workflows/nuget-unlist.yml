@@ -1,0 +1,45 @@
+name: Unlist from NuGet
+
+# Manual-only. Unlists (does NOT hard-delete) a version of every ConsoleEngine package on
+# nuget.org. Used to retire 0.7.1, which shipped with POSIX bugs fixed in 0.7.2.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to unlist (e.g. 0.7.1)"
+        required: true
+        default: "0.7.1"
+
+# Publishing/unlisting uses NUGET_API_KEY, never GITHUB_TOKEN.
+permissions:
+  contents: read
+
+jobs:
+  unlist:
+    name: Unlist ${{ inputs.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2  # v5.3.0 (Node 24)
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Unlist all packages
+        # API key via env (not the command line), so it is not exposed in /proc/<pid>/cmdline.
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          for pkg in \
+            ConsoleEngine.Core ConsoleEngine.Locale ConsoleEngine.Rendering \
+            ConsoleEngine.Config ConsoleEngine.Persistence ConsoleEngine.Scenes \
+            ConsoleEngine.World ConsoleEngine.Animation ConsoleEngine.Input \
+            ConsoleEngine.Terminal; do
+            echo "::group::Unlisting $pkg $VERSION"
+            dotnet nuget delete "$pkg" "$VERSION" \
+              --api-key "$NUGET_API_KEY" \
+              --source https://api.nuget.org/v3/index.json \
+              --non-interactive
+            echo "::endgroup::"
+          done
