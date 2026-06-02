@@ -67,6 +67,33 @@ internal static class NativeMethodsPosix
     [DllImport(Libc, SetLastError = true)]
     internal static extern int ioctl(int fd, nuint request, ref WinSize size);
 
+    // ioctl is variadic: int ioctl(int, unsigned long, ...). On Darwin ARM64 (Apple Silicon)
+    // ALL variadic arguments are passed on the STACK while the named args (fd, request) use
+    // x0/x1. A normal fixed-signature P/Invoke puts the winsize pointer in a register the callee
+    // never reads, corrupting the call (it sets a garbage window size). Filling x2..x7 with six
+    // padding args forces the winsize pointer onto the first stack slot, where ioctl's va_arg
+    // reads it. Used only on Darwin ARM64; every other platform uses the plain ioctl above.
+    [DllImport(Libc, SetLastError = true, EntryPoint = "ioctl")]
+    internal static extern unsafe int ioctl_darwin_varargs(
+        int fd, nuint request,
+        nint pad2, nint pad3, nint pad4, nint pad5, nint pad6, nint pad7,
+        WinSize* size);
+
+    private static readonly bool IsDarwinArm64 =
+        RuntimeInformation.IsOSPlatform(OSPlatform.OSX) &&
+        RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
+
+    /// <summary>Sets the terminal window size, routing around the Darwin ARM64 variadic ABI.</summary>
+    internal static unsafe int SetWinSize(int fd, ref WinSize ws)
+    {
+        if (IsDarwinArm64)
+        {
+            fixed (WinSize* p = &ws)
+                return ioctl_darwin_varargs(fd, TIOCSWINSZ, 0, 0, 0, 0, 0, 0, p);
+        }
+        return ioctl(fd, TIOCSWINSZ, ref ws);
+    }
+
     // ── posix_spawn ───────────────────────────────────────────────────────────────
     // file_actions and attr are opaque, platform-sized structs. We over-allocate a zeroed
     // buffer (passed by IntPtr) large enough for both glibc and macOS layouts.

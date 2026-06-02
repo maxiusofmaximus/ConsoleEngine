@@ -51,7 +51,7 @@ internal sealed class PosixPtyBackend : ITerminalBackend
 
         // 2. Set initial window size on the master.
         var ws = new WinSize { ws_col = (ushort)options.Cols, ws_row = (ushort)options.Rows };
-        _ = ioctl(_master, TIOCSWINSZ, ref ws);
+        _ = SetWinSize(_master, ref ws);
 
         // 3. Build file actions + attributes (over-allocated, zeroed buffers).
         IntPtr fa   = Marshal.AllocHGlobal(FileActionsBufSize);
@@ -122,7 +122,7 @@ internal sealed class PosixPtyBackend : ITerminalBackend
     {
         if (_disposed || !_running) return;
         var ws = new WinSize { ws_col = (ushort)cols, ws_row = (ushort)rows };
-        _ = ioctl(_master, TIOCSWINSZ, ref ws);
+        _ = SetWinSize(_master, ref ws);
     }
 
     // ── Private ────────────────────────────────────────────────────────────────
