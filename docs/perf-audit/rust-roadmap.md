@@ -15,7 +15,7 @@
 | Module | Workload | Rust value | Note |
 |---|---|---|---|
 | `PixelArtRenderer` (PNG → ▀ half-block + ANSI truecolor) | image decode + per-pixel→cell mapping + string building; CPU + alloc heavy | **High** | best first candidate (Rust `image` crate, tight loops, no GC) |
-| `AnimationEngine` / `DrawAt` draw primitive | hot per-frame draw/batching | **Medium** | candidate after the renderer proves the pattern |
+| `AnimationEngine.DrawAt(x,y,text,color)` | per-frame terminal draw | **Low** (revised) | it is the single **Console-IO** primitive (cursor move + `Console.Write`), not CPU-bound — Rust can't speed up terminal IO; the CPU cost is upstream in `PixelArtRenderer` |
 | `ConsoleEngine.Terminal` (ConPTY/POSIX PTY) | native interop, byte pumping | **Low now** | just optimized + stabilized in .NET (O1/E2, 0.7.2); a Rust `portable-pty` crate could unify platforms later, but ROI is low today — **defer** |
 | Scenes, Locale, Config, Persistence, World | JSON IO, orchestration, pure data | **None** | keep in .NET; Rust would add FFI cost for no gain |
 
@@ -37,8 +37,8 @@
   expose a narrow C ABI, call it via P/Invoke behind the existing C# API, feature-flagged.
   **Gate:** keep it only if it clears a pre-agreed threshold (suggest **≥2× faster or ≥50% less
   alloc**) — otherwise the FFI/build complexity isn't worth it and we revert.
-- **L2 — Extend to the `AnimationEngine` draw primitive** only if L1 validates the pattern and the
-  cross-boundary call cost is acceptable (batch at the boundary to avoid per-cell P/Invoke).
+- **L2 — Extend to the next CPU-bound candidate** only if L1 validates the pattern (e.g. PNG decode
+  or sprite-build paths). *Note: `DrawAt` is Console-IO, not a Rust candidate — dropped from scope.*
 - **L3 — Consider a Rust PTY crate** for `ConsoleEngine.Terminal` *only* if cross-platform
   maintenance cost rises; today the .NET backend is fast and stable, so this stays deferred.
 
