@@ -27,6 +27,12 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
     private bool _running = true;
     private bool _disposed;
 
+    // Exit is one-shot. Track it so a handler subscribing AFTER a fast child has already exited
+    // still receives the code (mirrors BufferedOutput's late-subscriber guarantee for Output).
+    private readonly object _exitLock = new();
+    private Action<int>? _exitedHandlers;
+    private bool _hasExited;
+
     // Buffered so a subscriber attaching after Start() still receives the child's
     // initial output (e.g. the shell prompt) instead of racing the read loop.
     public event Action<ReadOnlyMemory<byte>>? Output
@@ -35,7 +41,17 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
         remove { if (value is not null) _output.Unsubscribe(value); }
     }
 
-    public event Action<int>? Exited;
+    public event Action<int>? Exited
+    {
+        add
+        {
+            if (value is null) return;
+            bool fireNow;
+            lock (_exitLock) { _exitedHandlers += value; fireNow = _hasExited; }
+            if (fireNow) value(_exitCode); // already exited → replay to this late subscriber
+        }
+        remove { if (value is not null) lock (_exitLock) _exitedHandlers -= value; }
+    }
 
     public bool IsRunning => _running;
     public int  ExitCode  => _exitCode;
@@ -153,7 +169,10 @@ internal sealed class WindowsConPtyBackend : ITerminalBackend
         ClosePseudoConsoleOnce();
 
         _running = false;
-        Exited?.Invoke(_exitCode);
+
+        Action<int>? handlers;
+        lock (_exitLock) { _hasExited = true; handlers = _exitedHandlers; }
+        handlers?.Invoke(_exitCode);
     }
 
     private void ClosePseudoConsoleOnce()

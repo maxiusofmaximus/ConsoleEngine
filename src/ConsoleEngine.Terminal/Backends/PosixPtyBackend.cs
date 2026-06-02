@@ -21,6 +21,14 @@ internal sealed class PosixPtyBackend : ITerminalBackend
 
     private readonly BufferedOutput _output = new();
 
+    // Exit is one-shot. Track it under a lock so a handler that subscribes AFTER a fast child has
+    // already exited still receives the code (mirrors BufferedOutput's late-subscriber guarantee
+    // for Output). Without this, a child that exits between Start() and a consumer's `Exited +=`
+    // fires the event into the void and the consumer waits forever.
+    private readonly object _exitLock = new();
+    private Action<int>? _exitedHandlers;
+    private bool _hasExited;
+
     // Buffered so a subscriber attaching after Start() still receives the child's
     // initial output (e.g. the shell prompt) instead of racing the read loop.
     public event Action<ReadOnlyMemory<byte>>? Output
@@ -29,7 +37,17 @@ internal sealed class PosixPtyBackend : ITerminalBackend
         remove { if (value is not null) _output.Unsubscribe(value); }
     }
 
-    public event Action<int>? Exited;
+    public event Action<int>? Exited
+    {
+        add
+        {
+            if (value is null) return;
+            bool fireNow;
+            lock (_exitLock) { _exitedHandlers += value; fireNow = _hasExited; }
+            if (fireNow) value(_exitCode); // already exited → replay to this late subscriber
+        }
+        remove { if (value is not null) lock (_exitLock) _exitedHandlers -= value; }
+    }
 
     public bool IsRunning => _running;
     public int  ExitCode  => _exitCode;
@@ -152,12 +170,14 @@ internal sealed class PosixPtyBackend : ITerminalBackend
 
     private void WaitForExit()
     {
-        int rc, status;
-        do { rc = waitpid(_pid, out status, 0); }
+        int rc;
+        do { rc = waitpid(_pid, out int status, 0); _exitCode = ExitStatus(status); }
         while (rc < 0 && Marshal.GetLastWin32Error() == EINTR); // retry if a signal interrupted the wait
-        _exitCode = ExitStatus(status);
         _running = false;
-        Exited?.Invoke(_exitCode);
+
+        Action<int>? handlers;
+        lock (_exitLock) { _hasExited = true; handlers = _exitedHandlers; }
+        handlers?.Invoke(_exitCode);
     }
 
     private static string[] Prepend(string first, string[] rest)
