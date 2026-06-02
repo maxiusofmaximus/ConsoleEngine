@@ -28,6 +28,12 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # Build the optional native accelerator so the native-gated rendering tests run on every OS
+      # (cargo/rustup are preinstalled on GitHub runners). If this ever fails, the managed fallback
+      # still keeps the suite correct — but we want the native path covered cross-platform.
+      - name: Build native accelerator (ce_render)
+        run: cargo build --release --manifest-path native/ce_render/Cargo.toml
+
       - name: Restore
         run: dotnet restore ConsoleEngine.sln
 

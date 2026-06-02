@@ -4,16 +4,57 @@ on:
   push:
     tags:
       - 'v*'
+  # Manual dry-run: builds the per-RID natives and packs the .nupkgs as artifacts, but never
+  # pushes (push is gated on an actual tag-push event below). Use to validate packaging.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Pack only (never pushes; push happens only on a v* tag push)."
+        type: boolean
+        default: true
 
-# Restrict GITHUB_TOKEN to read-only — publishing uses NUGET_API_KEY, not GITHUB_TOKEN.
 permissions:
   contents: read
 
 jobs:
-  publish:
-    name: Pack & publish
-    runs-on: ubuntu-latest
+  # 1) Build the native ce_render accelerator on each target's platform.
+  build-natives:
+    name: native ${{ matrix.rid }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: win-x64,    os: windows-latest,   lib: ce_render.dll }
+          - { rid: linux-x64,  os: ubuntu-latest,    lib: libce_render.so }
+          - { rid: osx-arm64,  os: macos-latest,     lib: libce_render.dylib }
+          # Native ARM runner (RPi target). If unavailable to this repo, switch to cross-compile
+          # on ubuntu-latest: rustup target add aarch64-unknown-linux-gnu + gcc-aarch64-linux-gnu.
+          - { rid: linux-arm64, os: ubuntu-24.04-arm, lib: libce_render.so }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2 (Node 24)
 
+      - name: Build native (release)
+        run: cargo build --release --manifest-path native/ce_render/Cargo.toml
+
+      - name: Stage lib
+        shell: bash
+        run: |
+          mkdir -p staged
+          cp "native/ce_render/target/release/${{ matrix.lib }}" "staged/${{ matrix.lib }}"
+
+      - name: Upload native artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: native-${{ matrix.rid }}
+          path: staged/${{ matrix.lib }}
+          if-no-files-found: error
+
+  # 2) Pack the NuGets with the per-RID natives under runtimes/<rid>/native/.
+  pack:
+    name: Pack & publish
+    needs: build-natives
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2 (Node 24)
 
@@ -22,30 +63,54 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore
-        run: dotnet restore ConsoleEngine.sln
+      - name: Download native artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          path: dl
 
-      - name: Build (Release)
-        run: dotnet build ConsoleEngine.sln --configuration Release --no-restore
+      - name: Stage natives into artifacts/native/<rid>/
+        shell: bash
+        run: |
+          for rid in win-x64 linux-x64 osx-arm64 linux-arm64; do
+            mkdir -p "artifacts/native/$rid"
+            cp dl/native-$rid/* "artifacts/native/$rid/"
+          done
+          echo "Staged natives:"; find artifacts/native -type f -print
+
+      - name: Restore & build
+        run: |
+          dotnet restore ConsoleEngine.sln
+          dotnet build ConsoleEngine.sln --configuration Release --no-restore
 
       - name: Pack
         run: |
-          dotnet pack src/ConsoleEngine.Core/ConsoleEngine.Core.csproj           --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Locale/ConsoleEngine.Locale.csproj       --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Rendering/ConsoleEngine.Rendering.csproj --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Config/ConsoleEngine.Config.csproj       --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Persistence/ConsoleEngine.Persistence.csproj --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Scenes/ConsoleEngine.Scenes.csproj       --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.World/ConsoleEngine.World.csproj         --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Animation/ConsoleEngine.Animation.csproj --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Input/ConsoleEngine.Input.csproj         --configuration Release --no-build --output ./artifacts
-          dotnet pack src/ConsoleEngine.Terminal/ConsoleEngine.Terminal.csproj   --configuration Release --no-build --output ./artifacts
+          dotnet pack src/ConsoleEngine.Core/ConsoleEngine.Core.csproj           --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Locale/ConsoleEngine.Locale.csproj       --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Rendering/ConsoleEngine.Rendering.csproj --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Config/ConsoleEngine.Config.csproj       --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Persistence/ConsoleEngine.Persistence.csproj --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Scenes/ConsoleEngine.Scenes.csproj       --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.World/ConsoleEngine.World.csproj         --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Animation/ConsoleEngine.Animation.csproj --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Input/ConsoleEngine.Input.csproj         --configuration Release --no-build --output ./nupkgs
+          dotnet pack src/ConsoleEngine.Terminal/ConsoleEngine.Terminal.csproj   --configuration Release --no-build --output ./nupkgs
+
+      - name: Verify Rendering package carries the per-RID natives
+        shell: bash
+        run: |
+          pkg=$(ls ./nupkgs/ConsoleEngine.Rendering.*.nupkg | head -1)
+          echo "Inspecting $pkg"; unzip -l "$pkg" | grep -E 'runtimes/.*/native/' || (echo "no runtimes/ natives!" && exit 1)
+
+      - name: Upload packages
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: nupkgs
+          path: nupkgs/*.nupkg
+          if-no-files-found: error
 
       - name: Push to NuGet.org
-        # Pass the API key as an environment variable, not as a CLI argument.
-        # ${{ secrets.* }} interpolation in `run:` embeds the value in the process
-        # command line (/proc/<pid>/cmdline); env: passes it via the environment
-        # block, which is not visible to other processes on the runner.
+        # Only on a real tag push — workflow_dispatch (dry-run) never reaches this.
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: dotnet nuget push "./artifacts/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "./nupkgs/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate

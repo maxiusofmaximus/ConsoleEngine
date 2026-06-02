@@ -12,15 +12,37 @@
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
   </ItemGroup>
-  <!-- L2a (dev only): if the native accelerator has been built locally, copy it next to the
-       assembly so it (and any referencing project, e.g. Tests) can load it. Skipped when absent
-       (CI / consumers without the native lib) → the managed fallback is used. Per-RID packaging
-       under runtimes/<rid>/native/ is L2b. -->
+
+  <PropertyGroup>
+    <!-- Where the cargo release build drops the native lib (dev + CI), and where the publish
+         workflow stages the per-RID natives it downloaded as artifacts. -->
+    <CeNativeDir>$(MSBuildThisFileDirectory)..\..\native\ce_render\target\release\</CeNativeDir>
+    <CeNativeStage>$(MSBuildThisFileDirectory)..\..\artifacts\native\</CeNativeStage>
+  </PropertyGroup>
+
+  <!-- Dev/CI: copy whichever native was built locally next to the assembly (and transitively to
+       referencing projects, e.g. Tests) so the native path is used + tested. Skipped when absent →
+       managed fallback. Not packed here (packing is the per-RID block below). -->
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)..\..\native\ce_render\target\release\ce_render.dll"
-             Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\ce_render\target\release\ce_render.dll')"
-             Link="ce_render.dll"
-             CopyToOutputDirectory="PreserveNewest"
-             Visible="false" />
+    <Content Include="$(CeNativeDir)ce_render.dll" Condition="Exists('$(CeNativeDir)ce_render.dll')"
+             Link="ce_render.dll" CopyToOutputDirectory="PreserveNewest" Visible="false" Pack="false" />
+    <Content Include="$(CeNativeDir)libce_render.so" Condition="Exists('$(CeNativeDir)libce_render.so')"
+             Link="libce_render.so" CopyToOutputDirectory="PreserveNewest" Visible="false" Pack="false" />
+    <Content Include="$(CeNativeDir)libce_render.dylib" Condition="Exists('$(CeNativeDir)libce_render.dylib')"
+             Link="libce_render.dylib" CopyToOutputDirectory="PreserveNewest" Visible="false" Pack="false" />
+  </ItemGroup>
+
+  <!-- L2b packaging: ship the per-RID natives under runtimes/<rid>/native/ so consumers get the
+       fast path automatically (.NET resolves the matching RID; managed fallback covers the rest).
+       Only active when the publish workflow has staged the artifacts; otherwise skipped. -->
+  <ItemGroup>
+    <None Include="$(CeNativeStage)win-x64\ce_render.dll" Condition="Exists('$(CeNativeStage)win-x64\ce_render.dll')"
+          Pack="true" PackagePath="runtimes/win-x64/native/ce_render.dll" Visible="false" />
+    <None Include="$(CeNativeStage)linux-x64\libce_render.so" Condition="Exists('$(CeNativeStage)linux-x64\libce_render.so')"
+          Pack="true" PackagePath="runtimes/linux-x64/native/libce_render.so" Visible="false" />
+    <None Include="$(CeNativeStage)linux-arm64\libce_render.so" Condition="Exists('$(CeNativeStage)linux-arm64\libce_render.so')"
+          Pack="true" PackagePath="runtimes/linux-arm64/native/libce_render.so" Visible="false" />
+    <None Include="$(CeNativeStage)osx-arm64\libce_render.dylib" Condition="Exists('$(CeNativeStage)osx-arm64\libce_render.dylib')"
+          Pack="true" PackagePath="runtimes/osx-arm64/native/libce_render.dylib" Visible="false" />
   </ItemGroup>
 </Project>
