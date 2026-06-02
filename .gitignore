@@ -8,6 +8,9 @@ obj/
 *.snupkg
 BenchmarkDotNet.Artifacts/
 
+## Rust (native crates)
+native/**/target/
+
 ## Rider / JetBrains
 .idea/
 
