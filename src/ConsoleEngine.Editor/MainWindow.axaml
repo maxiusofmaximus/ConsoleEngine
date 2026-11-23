@@ -285,7 +285,7 @@
                                     <TextBlock Grid.Column="0"
                                                Text="{Binding SpritePath}"
                                                FontSize="11" Foreground="#999"
-                                               TextTrimming="LeadingEllipsis"
+                                               TextTrimming="PrefixCharacterEllipsis"
                                                VerticalAlignment="Center"
                                                ToolTip.Tip="{Binding SpritePath}"/>
                                     <Button Grid.Column="1" Content="📂" Padding="6,3" Margin="4,0,0,0"
