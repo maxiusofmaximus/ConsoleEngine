@@ -12,8 +12,8 @@ public sealed class SceneFileEntry
     public SceneFileEntry(string filePath, bool isNew = false)
     {
         FilePath    = filePath;
-        DisplayName = isNew ? "* " + Path.GetFileNameWithoutExtension(filePath)
-                            : Path.GetFileNameWithoutExtension(filePath);
+        string stem = Path.GetFileNameWithoutExtension(filePath);
+        DisplayName = (isNew ? "* " : "") + (stem.EndsWith(".scene", StringComparison.OrdinalIgnoreCase) ? stem[..^6] : stem);
         IsNew       = isNew;
     }
 

@@ -15,7 +15,8 @@
 
         <!-- ── Toolbar ── -->
         <Border Grid.Row="0" Background="#252526" BorderBrush="#3C3C3C" BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="8,0">
+            <Grid ColumnDefinitions="Auto,*">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Spacing="4" Margin="8,0">
 
                 <!-- Group 1: Project -->
                 <Button x:Name="BtnOpen"    Content="📁  Open Project" Padding="8,4" Click="OnOpenProject"/>
@@ -57,7 +58,7 @@
                 <Rectangle Width="1" Fill="#444" Margin="4,4"/>
 
                 <!-- Group 5: Terminal size preset -->
-                <TextBlock Text="SIZE" FontSize="10" Foreground="#555"
+                <TextBlock Text="SIZE" FontSize="10" Foreground="#8A8A8A"
                            VerticalAlignment="Center" Margin="2,0,4,0"/>
                 <ComboBox ItemsSource="{Binding TerminalPresets}"
                           SelectedItem="{Binding SelectedPreset, Mode=TwoWay}"
@@ -65,12 +66,13 @@
                           ToolTip.Tip="Terminal dimensions used in the preview panel"/>
 
                 <Rectangle Width="1" Fill="#444" Margin="4,4"/>
-
-                <!-- Project path breadcrumb -->
-                <TextBlock Text="{Binding ProjectPath}" VerticalAlignment="Center"
-                           FontSize="11" Opacity="0.55"
-                           TextTrimming="PrefixCharacterEllipsis"/>
             </StackPanel>
+
+            <!-- Project path breadcrumb -->
+            <TextBlock Grid.Column="1" Text="{Binding ProjectPath}" VerticalAlignment="Center"
+                       FontSize="11" Opacity="0.55" Margin="8,0,8,0"
+                       TextTrimming="PrefixCharacterEllipsis"/>
+            </Grid>
         </Border>
 
         <!-- ── Three-panel body ── -->
@@ -82,7 +84,7 @@
                     <Border DockPanel.Dock="Top" Background="#2D2D2D"
                             BorderBrush="#3C3C3C" BorderThickness="0,0,0,1" Padding="10,6">
                         <TextBlock Text="SCENES" FontSize="10" FontWeight="Bold"
-                                   Foreground="#888" LetterSpacing="2"/>
+                                   Foreground="#A0A0A0" LetterSpacing="2"/>
                     </Border>
                     <ListBox x:Name="SceneList"
                              ItemsSource="{Binding SceneFiles}"
@@ -115,11 +117,11 @@
                             BorderBrush="#2A2A2A" BorderThickness="0,0,0,1" Padding="10,6">
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="TERMINAL PREVIEW" FontSize="10" FontWeight="Bold"
-                                       Foreground="#888" LetterSpacing="2"
+                                       Foreground="#A0A0A0" LetterSpacing="2"
                                        VerticalAlignment="Center"/>
                             <TextBlock Grid.Column="1"
                                        Text="{Binding TerminalSizeLabel}"
-                                       FontSize="10" Foreground="#555"
+                                       FontSize="10" Foreground="#8A8A8A"
                                        VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
@@ -133,6 +135,7 @@
                                 CornerRadius="5"
                                 BorderBrush="#484848"
                                 BorderThickness="1"
+                                MinWidth="440"
                                 BoxShadow="0 4 24 0 #60000000">
 
                             <DockPanel>
@@ -154,7 +157,7 @@
                                         <!-- Window title -->
                                         <TextBlock Grid.Column="1"
                                                    Text="ConsoleEngine  —  Scene Preview"
-                                                   FontSize="11" Foreground="#777"
+                                                   FontSize="11" Foreground="#9A9A9A"
                                                    HorizontalAlignment="Center"
                                                    VerticalAlignment="Center"/>
                                         <!-- Dimensions chip -->
@@ -165,13 +168,13 @@
                                             <TextBlock Text="{Binding TerminalSizeLabel}"
                                                        FontSize="10"
                                                        FontFamily="Cascadia Mono,Consolas,monospace"
-                                                       Foreground="#555"/>
+                                                       Foreground="#8A8A8A"/>
                                         </Border>
                                     </Grid>
                                 </Border>
 
                                 <!-- Terminal content: text preview + sprite overlay -->
-                                <Panel>
+                                <Panel MinHeight="160">
                                     <TextBlock x:Name="PreviewBlock"
                                                Text="{Binding PreviewText}"
                                                FontFamily="Cascadia Mono,Consolas,Courier New,monospace"
@@ -208,7 +211,7 @@
                     <Border DockPanel.Dock="Top" Background="#2D2D2D"
                             BorderBrush="#3C3C3C" BorderThickness="0,0,0,1" Padding="10,6">
                         <TextBlock Text="PROPERTIES" FontSize="10" FontWeight="Bold"
-                                   Foreground="#888" LetterSpacing="2"/>
+                                   Foreground="#A0A0A0" LetterSpacing="2"/>
                     </Border>
 
                     <ScrollViewer IsEnabled="{Binding HasDocument}" Padding="0">
@@ -216,14 +219,14 @@
 
                             <!-- Title -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="TITLE" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="TITLE" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
                                 <TextBox Text="{Binding SceneTitle, Mode=TwoWay}"
                                          FontSize="13" PlaceholderText="Scene title…"/>
                             </StackPanel>
 
                             <!-- Text Color -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="TEXT COLOR" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="TEXT COLOR" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
                                 <ComboBox SelectedItem="{Binding TextColor, Mode=TwoWay}"
                                           ItemsSource="{Binding AvailableColors}"
                                           HorizontalAlignment="Stretch" FontSize="12"/>
@@ -231,7 +234,7 @@
 
                             <!-- Art Color -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="ART COLOR" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="ART COLOR" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
                                 <ComboBox SelectedItem="{Binding ArtColor, Mode=TwoWay}"
                                           ItemsSource="{Binding AvailableColors}"
                                           HorizontalAlignment="Stretch" FontSize="12"/>
@@ -239,7 +242,7 @@
 
                             <!-- Continue prompt -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="SHOW CONTINUE PROMPT" FontSize="10" Foreground="#888" LetterSpacing="1"/>
+                                <TextBlock Text="SHOW CONTINUE PROMPT" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
                                 <CheckBox IsChecked="{Binding PromptContinue, Mode=TwoWay}"
                                           Content="[ PRESS ENTER TO CONTINUE ]"
                                           FontSize="11"/>
@@ -249,8 +252,8 @@
 
                             <!-- Narration lines -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="NARRATION LINES" FontSize="10" Foreground="#888" LetterSpacing="1"/>
-                                <TextBlock Text="One line per row." FontSize="10" Foreground="#555"/>
+                                <TextBlock Text="NARRATION LINES" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
+                                <TextBlock Text="One line per row." FontSize="10" Foreground="#8A8A8A"/>
                                 <TextBox Text="{Binding LinesText, Mode=TwoWay}"
                                          AcceptsReturn="True"
                                          MinHeight="130"
@@ -262,8 +265,8 @@
 
                             <!-- ASCII art -->
                             <StackPanel Spacing="4">
-                                <TextBlock Text="ASCII ART" FontSize="10" Foreground="#888" LetterSpacing="1"/>
-                                <TextBlock Text="One row per line. Use monospace characters." FontSize="10" Foreground="#555"/>
+                                <TextBlock Text="ASCII ART" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
+                                <TextBlock Text="One row per line. Use monospace characters." FontSize="10" Foreground="#8A8A8A"/>
                                 <TextBox Text="{Binding AsciiArtText, Mode=TwoWay}"
                                          AcceptsReturn="True"
                                          MinHeight="110"
@@ -277,8 +280,8 @@
 
                             <!-- Sprite (PNG) -->
                             <StackPanel Spacing="6">
-                                <TextBlock Text="SPRITE  (PNG)" FontSize="10" Foreground="#888" LetterSpacing="1"/>
-                                <TextBlock Text="Bottom-anchored, right-aligned in the terminal." FontSize="10" Foreground="#555"/>
+                                <TextBlock Text="SPRITE  (PNG)" FontSize="10" Foreground="#A0A0A0" LetterSpacing="1"/>
+                                <TextBlock Text="Bottom-anchored, right-aligned in the terminal." FontSize="10" Foreground="#8A8A8A"/>
 
                                 <!-- Path display + picker + clear -->
                                 <Grid ColumnDefinitions="*,Auto,Auto">
@@ -301,13 +304,13 @@
                                 <!-- Computed dims — auto-detected from PNG, editable for override -->
                                 <Grid ColumnDefinitions="*,8,*" IsEnabled="{Binding HasSprite}">
                                     <StackPanel Grid.Column="0" Spacing="2">
-                                        <TextBlock Text="WIDTH (cols)" FontSize="9" Foreground="#666"/>
+                                        <TextBlock Text="WIDTH (cols)" FontSize="9" Foreground="#8A8A8A"/>
                                         <TextBox Text="{Binding SpriteWidth, Mode=TwoWay}"
                                                  FontSize="12"
                                                  ToolTip.Tip="Terminal columns (= PNG pixel width)"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2" Spacing="2">
-                                        <TextBlock Text="ROWS (term. rows)" FontSize="9" Foreground="#666"/>
+                                        <TextBlock Text="ROWS (term. rows)" FontSize="9" Foreground="#8A8A8A"/>
                                         <TextBox Text="{Binding SpriteRows, Mode=TwoWay}"
                                                  FontSize="12"
                                                  ToolTip.Tip="Terminal rows (= PNG pixel height / 2)"/>
@@ -352,7 +355,7 @@
                     <Grid ColumnDefinitions="*,6,Auto,4,Auto,4,Auto,4,Auto">
                         <TextBlock Grid.Column="0"
                                    Text="AI  TERMINAL" FontSize="10" FontWeight="Bold"
-                                   Foreground="#888" LetterSpacing="2"
+                                   Foreground="#A0A0A0" LetterSpacing="2"
                                    VerticalAlignment="Center"/>
                         <!-- AI command textbox -->
                         <TextBox Grid.Column="2"
